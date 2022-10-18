@@ -1,26 +1,34 @@
 <aside class="w-64" aria-label="Sidebar">
-   <div class="overflow-y-auto py-4 px-3 bg-gray-50 rounded dark:bg-gray-800">
+   <div class="overflow-y-auto py-4 px-3 bg-teal-400 rounded dark:bg-gray-800">
       <ul class="space-y-2">
         <li>
-          <%= link_to 'Purchase Order', root_path, class: 'py-2 text-red-900'  %>
+          <%= sidebar_link_to(root_path, 'Purchase Order') %>
         </li>
         <li>
-          <%= link_to 'Invoices', root_path  %>
+          <%= sidebar_link_to(root_path, 'Invoices') %>
         </li>
         <li>
-          <%= link_to 'Item Info', root_path  %>
+          <%= sidebar_link_to(root_path, 'Item Info') %>
         </li>
         <li>
-          <%= link_to 'Shpping Labels', root_path  %>
+          <%= sidebar_link_to(root_path, 'Carton Labels') %>
         </li>
         <li>
-          <%= link_to 'Sign up', new_user_registration_path %>
+          <%= sidebar_link_to(new_user_registration_path, 'Sign up') %>
         </li>
         <li>
-          <%= link_to 'Sign in', new_user_session_path %>
+          <%= sidebar_link_to(new_user_session_path, 'Sign in') %>
         </li>
         <li>
-          <%= link_to 'Log out', destroy_user_session_path, :method => :delete %>
+          <%=
+            link_to(
+              destroy_user_session_path,
+              :method => :delete,
+              class: 'my-1 py-2 px-4 rounded text-white text-white hover:bg-teal-600'
+            ) do
+              tag.span { 'Log out' }
+            end
+          %>
         </li>
       </ul>
    </div>
