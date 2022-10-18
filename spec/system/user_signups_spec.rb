@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe "UserSignups", type: :system do
+RSpec.describe 'UserSignups', type: :system do
   before do
     driven_by(:rack_test)
   end
@@ -37,14 +39,14 @@ RSpec.describe "UserSignups", type: :system do
     fill_in 'Password confirmation', with: 'password'
     click_button 'Sign up'
 
-    expect(page).to have_content "Email has already been taken"
+    expect(page).to have_content 'Email has already been taken'
   end
 
   scenario 'a guest failed to sign up without password' do
     visit root_path
     first(:link, 'Sign up').click
     fill_in 'Email', with: 'test@example.com'
-    fill_in 'Password', with: nil 
+    fill_in 'Password', with: nil
     fill_in 'Password confirmation', with: 'password'
     click_button 'Sign up'
 

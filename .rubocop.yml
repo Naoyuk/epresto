@@ -1,0 +1,27 @@
+AllCops:
+  Exclude:
+    - '**/db/migrate/*'
+    - 'db/schema.rb'
+    - '**/Gemfile.lock'
+    - '**/Rakefile'
+    - '**/rails'
+    - '**/vendor/**/*'
+    - '**/spec_helper.rb'
+    - 'node_modules/**/*'
+    - 'bin/*'
+    - 'config/initializers/devise.rb'
+
+Metrics/AbcSize:
+ Max: 45
+
+Metrics/BlockLength:
+  CountComments: false
+  Max: 50
+  Exclude:
+    - '**/spec/**/*'
+    - '**/*.rake'
+    - '**/factories/**/*'
+    - '**/config/routes.rb'
+
+Style/Documentation:
+  Enabled: false

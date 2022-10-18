@@ -1,14 +1,16 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe "Users", type: :request do
+RSpec.describe 'Users', type: :request do
   let(:user) { create(:user) }
 
-  describe "GET #edit" do
+  describe 'GET #edit' do
     context 'when user is logged in' do
       before do
         sign_in user
       end
-      
+
       it 'return 200 success' do
         get edit_user_registration_path
         expect(response).to have_http_status(:success)
@@ -22,6 +24,4 @@ RSpec.describe "Users", type: :request do
       end
     end
   end
-
 end
-
