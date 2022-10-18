@@ -1,0 +1,27 @@
+<aside class="w-64" aria-label="Sidebar">
+   <div class="overflow-y-auto py-4 px-3 bg-gray-50 rounded dark:bg-gray-800">
+      <ul class="space-y-2">
+        <li>
+          <%= link_to 'Purchase Order', root_path, class: 'py-2 text-red-900'  %>
+        </li>
+        <li>
+          <%= link_to 'Invoices', root_path  %>
+        </li>
+        <li>
+          <%= link_to 'Item Info', root_path  %>
+        </li>
+        <li>
+          <%= link_to 'Shpping Labels', root_path  %>
+        </li>
+        <li>
+          <%= link_to 'Sign up', new_user_registration_path %>
+        </li>
+        <li>
+          <%= link_to 'Sign in', new_user_session_path %>
+        </li>
+        <li>
+          <%= link_to 'Log out', destroy_user_session_path, :method => :delete %>
+        </li>
+      </ul>
+   </div>
+</aside>
