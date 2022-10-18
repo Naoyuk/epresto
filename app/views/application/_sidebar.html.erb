@@ -1,6 +1,8 @@
 <aside class="w-64" aria-label="Sidebar">
-   <div class="overflow-y-auto py-4 px-3 bg-teal-400 rounded dark:bg-gray-800">
-      <ul class="space-y-2">
+   <div class="overflow-y-auto h-screen px-3 bg-gray-700">
+      <ul class="space-y-2 text-lg">
+        <li class="mb-4">
+          <%= link_to "ePresto", root_path, class: "text-white display-6 text-decoration-none" %>
         <li>
           <%= sidebar_link_to(root_path, 'Purchase Order') %>
         </li>
@@ -13,23 +15,26 @@
         <li>
           <%= sidebar_link_to(root_path, 'Carton Labels') %>
         </li>
-        <li>
-          <%= sidebar_link_to(new_user_registration_path, 'Sign up') %>
-        </li>
-        <li>
-          <%= sidebar_link_to(new_user_session_path, 'Sign in') %>
-        </li>
-        <li>
-          <%=
-            link_to(
-              destroy_user_session_path,
-              :method => :delete,
-              class: 'my-1 py-2 px-4 rounded text-white text-white hover:bg-teal-600'
-            ) do
-              tag.span { 'Log out' }
-            end
-          %>
-        </li>
+        <% unless user_signed_in? %>
+          <li class='pt-6'>
+            <%= sidebar_link_to(new_user_registration_path, 'Sign up') %>
+          </li>
+          <li>
+            <%= sidebar_link_to(new_user_session_path, 'Sign in') %>
+          </li>
+        <% else %>
+          <li class='pt-6'>
+            <%=
+              link_to(
+                destroy_user_session_path,
+                data: { turbo_method: :delete },
+                class: 'my-1 py-2 px-4 rounded text-white text-white hover:bg-teal-600'
+              ) do
+                tag.span { 'Log out' }
+              end
+            %>
+          </li>
+        <% end %>
       </ul>
    </div>
 </aside>
