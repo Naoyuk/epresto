@@ -1,0 +1,61 @@
+<!-- Search -->
+<div class="w-full bg-white rounded-lg border shadow-md dark:bg-gray-800 dark:border-gray-700">
+  <div class="py-2 px-2 flex flex-wrap text-sm font-medium text-center text-gray-500 bg-gray-50 rounded-t-lg border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
+    Search
+  </div>
+
+  <div class="mb-3 text-gray-500 dark:text-gray-400">
+    <%= search_form_for @search, html: { data: { turbo_frame: "items-list" } } do |f| %>
+      <div class="grid md:grid-cols-2 md:gap-2 p-2">
+        <div>
+          <%= f.label :title_cont, "Title", class: "block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300" %>
+          <%= f.search_field :title_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %>
+        </div>
+        <div>
+          <%= f.label :asin_cont, "ASIN", class: "block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300" %>
+          <%= f.search_field :asin_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %>
+        </div>
+        <div>
+          <%= button_tag(icon_with_text("search", "Search"), class: "inline-flex items-center py-2 px-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800") %>
+          <%= link_to "Clear", items_path, class: "text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-3 py-2 text-center dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- 一覧 -->
+<div class="w-full bg-white rounded-lg border shadow-md dark:bg-gray-800 dark:border-gray-700">
+  <div class="flex flex-wrap text-sm font-medium text-center text-gray-500 bg-gray-50 rounded-t-lg border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
+    <%= icon_with_text("table", "Item List") %>
+  </div>
+
+  <div class="mb-3 text-gray-500 dark:text-gray-400">
+    <%= turbo_frame_tag 'items-list' do %>
+      <div class="grid md:grid-cols-2 md:gap-2  py-2">
+        <div>
+          <%= sort_link(@search, :asin) %>
+        </div>
+        <div>
+          <%= sort_link(@search, :title) %>
+        </div>
+        <div class="col-4 d-flex justify-content-end">
+          <%= link_to icon_with_text("plus-circle", "New"),
+                      new_item_path,
+                      class: "text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800",
+                      data: { turbo_frame: dom_id(Item.new) }
+          %>
+        </div>
+      </div>
+
+      <%= turbo_frame_tag Item.new %>
+      <div id='items'>
+        <%= render @items %>
+      </div>
+
+      <div class="d-flex justify-content-end mt-3">
+        <%= paginate @items %>
+      </div>
+    <% end %>
+  </div>
+</div>
