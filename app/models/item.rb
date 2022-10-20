@@ -15,4 +15,6 @@ class Item < ApplicationRecord
     Active: 0,
     Obsolete: 1
   }
+
+  belongs_to :vendor
 end

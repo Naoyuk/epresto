@@ -7,17 +7,6 @@ RSpec.describe 'UserSignups', type: :system do
     driven_by(:rack_test)
   end
 
-  scenario 'a guest sign up successfully with valid email, password and password confirmation' do
-    visit root_path
-    first(:link, 'Sign up').click
-    fill_in 'Email', with: 'test@example.com'
-    fill_in 'Password', with: 'password'
-    fill_in 'Password confirmation', with: 'password'
-    click_button 'Sign up'
-
-    expect(page).to have_content 'Welcome! You have signed up successfully.'
-  end
-
   scenario 'a guest failed to sign up without email' do
     visit root_path
     first(:link, 'Sign up').click
