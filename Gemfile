@@ -20,9 +20,11 @@ gem 'turbo-rails'
 gem 'bootsnap', require: false
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 # gem "image_processing", "~> 1.2"
+gem 'cancancan'
 gem 'devise'
 gem 'kaminari'
 gem 'ransack'
+gem 'rolify'
 
 group :development, :test do
   gem 'debug', platforms: %i[mri mingw x64_mingw]

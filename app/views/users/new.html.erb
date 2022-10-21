@@ -1,11 +1,11 @@
 <div class="bg-white py-6 sm:py-8 lg:py-12">
   <div class="max-w-screen-2xl px-4 md:px-8 mx-auto">
-    <h2 class="text-gray-800 text-2xl lg:text-3xl font-bold text-center mb-4 md:mb-8">Sign up</h2>
+    <h2 class="text-gray-800 text-2xl lg:text-3xl font-bold text-center mb-4 md:mb-8">Register a new user</h2>
 
-    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: 'max-w-lg border rounded-lg mx-auto' }) do |f| %>
+    <%= form_with(model: @user, url: users_path, html: { class: 'max-w-lg border rounded-lg mx-auto' }) do |f| %>
       <div class="flex flex-col gap-4 p-4 md:p-8">
         <div>
-          <%= render "devise/shared/error_messages", resource: resource %>
+          <%= render "application/flash" %>
         </div>
 
         <div>
@@ -38,9 +38,8 @@
         </div>
 
         <%= f.submit "Register", class: 'block bg-blue-500 hover:bg-blue-700 text-white active:bg-gray-600 focus-visible:ring ring-gray-300 text-sm md:text-base font-semibold text-center rounded-lg outline-none transition duration-100 px-8 py-3' %>
-
-        <%= render "devise/shared/links" %>
       </div>
     <% end %>
   </div>
 </div>
+
