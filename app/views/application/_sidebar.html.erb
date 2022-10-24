@@ -3,14 +3,14 @@
       <ul class="space-y-2 text-lg">
         <% unless user_signed_in? %>
           <li class="mb-4">
-            <%= link_to "ePresto", new_user_session_path, class: "text-white display-6 text-decoration-none" %>
+            <%= link_to "ePresto Connection1", new_user_session_path, class: "text-white display-6 text-decoration-none" %>
           </li>
           <li>
             <%= sidebar_link_to(new_user_session_path, 'Sign in') %>
           </li>
         <% else %>
-          <li class="mb-4">
-            <%= link_to "ePresto", root_path, class: "text-white display-6 text-decoration-none" %>
+          <li class="my-4">
+            <%= link_to "ePresto Connection1", root_path, class: "text-white display-6 text-decoration-none" %>
           </li>
           <li>
             <%= sidebar_link_to(root_path, 'Purchase Order') %>
