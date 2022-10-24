@@ -9,7 +9,11 @@ Rails.application.routes.draw do
   get '/profile', to: 'users#show'
   get 'pages/home'
 
-  resources :items
+  resources :items do
+    collection do
+      post :import
+    end
+  end
 
   root 'pages#home'
 end

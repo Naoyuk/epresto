@@ -25,37 +25,89 @@
 </div>
 
 <!-- 一覧 -->
-<div class="w-full bg-white rounded-lg border shadow-md dark:bg-gray-800 dark:border-gray-700">
-  <div class="flex flex-wrap text-sm font-medium text-center text-gray-500 bg-gray-50 rounded-t-lg border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
+<div class="mt-4 w-full bg-white rounded-lg border shadow-md dark:bg-gray-800 dark:border-gray-700">
+  <div class="p-2 flex flex-wrap text-sm font-medium text-center text-gray-500 bg-gray-50 rounded-t-lg border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
     <%= icon_with_text("table", "Item List") %>
+    <%= form_with url: import_items_path, local: true do |f| %>
+      <%= f.file_field :file %>
+      <%= f.submit %>
+    <% end %>
   </div>
 
-  <div class="mb-3 text-gray-500 dark:text-gray-400">
-    <%= turbo_frame_tag 'items-list' do %>
-      <div class="grid md:grid-cols-2 md:gap-2  py-2">
-        <div>
-          <%= sort_link(@search, :asin) %>
-        </div>
-        <div>
+  <table class="mb-3 text-gray-500 dark:text-gray-400">
+      <tr>
+        <th>
+          <%= sort_link(@search, :item_code) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :upc) %>
+        </th>
+        <th>
           <%= sort_link(@search, :title) %>
-        </div>
-        <div class="col-4 d-flex justify-content-end">
-          <%= link_to icon_with_text("plus-circle", "New"),
-                      new_item_path,
-                      class: "text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800",
-                      data: { turbo_frame: dom_id(Item.new) }
-          %>
-        </div>
-      </div>
+        </th>
+        <th>
+          <%= sort_link(@search, :brand) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :size) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :pack) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :price) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :z_price) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :stock) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :depertment) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :availability_status) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :case_upc) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :asin) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :ean_upc) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :model_number) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :description) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :replenishment_status) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :effective_date) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :current_cost) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :cost) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :current_cost_currency) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :cost_currency) %>
+        </th>
+      </tr>
 
-      <%= turbo_frame_tag Item.new %>
-      <div id='items'>
         <%= render @items %>
-      </div>
 
       <div class="d-flex justify-content-end mt-3">
         <%= paginate @items %>
       </div>
-    <% end %>
-  </div>
+  </table>
 </div>

@@ -6,4 +6,9 @@ class ItemsController < ApplicationController
     @search.sorts = 'id desc' if @search.sorts.empty?
     @items = @search.result.page(params[:page])
   end
+
+  def import
+    Item.import(params[:file])
+    redirect_to items_url
+  end
 end

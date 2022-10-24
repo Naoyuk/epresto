@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_20_211022) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_24_165902) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -31,7 +31,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_20_211022) do
     t.string "ean_upc"
     t.string "model_number"
     t.text "description"
-    t.integer "replenishment_status"
+    t.string "replenishment_status"
     t.date "effective_date"
     t.float "current_cost"
     t.float "cost"

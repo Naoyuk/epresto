@@ -1,11 +1,75 @@
-<%= turbo_frame_tag item do %>
-  <div class="row py-2 border-top">
-    <div class="col-4 my-auto">
-      <%= item.asin %>
-    </div>
-    <div class="col-4 my-auto">
+  <tr>
+    <td>
+      <%= item.created_at %>
+    </td>
+    <td>
+      <%= item.updated_at %>
+    </td>
+    <td>
+      <%= item.item_code %>
+    </td>
+    <td>
+      <%= item.upc %>
+    </td>
+    <td>
       <%= item.title %>
-    </div>
-  </div>
-<% end %>
+    </td>
+    <td>
+      <%= item.brand %>
+    </td>
+    <td>
+      <%= item.size %>
+    </td>
+    <td>
+      <%= item.pack %>
+    </td>
+    <td>
+      <%= item.price %>
+    </td>
+    <td>
+      <%= item.z_price %>
+    </td>
+    <td>
+      <%= item.stock %>
+    </td>
+    <td>
+      <%= item.depertment %>
+    </td>
+    <td>
+      <%= item.availability_status %>
+    </td>
+    <td>
+      <%= item.case_upc %>
+    </td>
+    <td>
+      <%= item.asin %>
+    </td>
+    <td>
+      <%= item.ean_upc %>
+    </td>
+    <td>
+      <%= item.model_number %>
+    </td>
+    <td>
+      <%= item.description %>
+    </td>
+    <td>
+      <%= item.replenishment_status %>
+    </td>
+    <td>
+      <%= item.effective_date %>
+    </td>
+    <td>
+      <%= item.current_cost %>
+    </td>
+    <td>
+      <%= item.cost %>
+    </td>
+    <td>
+      <%= item.current_cost_currency %>
+    </td>
+    <td>
+      <%= item.cost_currency %>
+    </td>
+  </tr>
 

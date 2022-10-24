@@ -25,6 +25,7 @@ gem 'devise'
 gem 'kaminari'
 gem 'ransack'
 gem 'rolify'
+gem 'roo'
 
 group :development, :test do
   gem 'debug', platforms: %i[mri mingw x64_mingw]
