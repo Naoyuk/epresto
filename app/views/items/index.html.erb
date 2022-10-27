@@ -30,7 +30,7 @@
     <%= icon_with_text("table", "Item List") %>
     <%= form_with url: import_items_path, local: true do |f| %>
       <%= f.file_field :file %>
-      <%= f.submit %>
+      <%= f.submit 'Upload' %>
     <% end %>
   </div>
 

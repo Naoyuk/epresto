@@ -13,14 +13,14 @@ class Item < ApplicationRecord
 
   belongs_to :vendor
 
-  def self.import(file)
+  def self.import(file, vendor_id)
     data = Roo::Spreadsheet.open(file)
     headers = data.row(1)
     data.each_with_index do |row, idx|
       next if idx == 0
       item_params = Hash[[headers, row].transpose]
       item_params[:price] = row[6].delete("$").to_f
-      item_params[:vendor_id] = 1
+      item_params[:vendor_id] = vendor_id
       item = Item.new(item_params)
 
       if Item.exists?(asin: item.asin)
