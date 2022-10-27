@@ -8,7 +8,7 @@ class ItemsController < ApplicationController
   end
 
   def import
-    Item.import(params[:file])
+    Item.import(params[:file], current_user.vendor_id)
     redirect_to items_url
   end
 end
