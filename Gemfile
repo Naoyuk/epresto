@@ -41,6 +41,7 @@ group :development do
   # gem "spring"
   gem 'capistrano' , '~> 3.7'
   gem 'capistrano-rails', '~> 1.2'
+  gem 'capistrano-rbenv'
   gem 'capistrano-yarn'
   gem 'capistrano3-puma'
 end

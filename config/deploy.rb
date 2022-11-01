@@ -1,14 +1,33 @@
-# config valid for current version and patch releases of Capistrano
-lock "~> 3.17.1"
+framework_tasks = %w{starting started updating updated publishing published finishing finished}
 
-set :application, "epresto"
-set :repo_url, "git@github.com:Naoyuk/epresto.git"
-set :branch, 'main'
-set :deploy_to, "/var/www/epresto"
-set :linked_files, %w(config/master.key)
-set :linked_dirs, %w(log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system)
-set :rbenv_ruby, '3.1.2'
-set :log_level, :debug
+framework_tasks.each do |t|
+  Rake::Task["deploy:#{t}"].clear
+end
+
+Rake::Task[:deploy].clear
+
+task :uptime do
+  run_locally do
+    output = capture "uptime"
+    info output
+  end
+
+  on roles(:web) do
+    output = capture "uptime"
+    info output
+  end
+end
+# config valid for current version and patch releases of Capistrano
+#lock "~> 3.17.1"
+#
+#set :application, "epresto"
+#set :repo_url, "git@github.com:Naoyuk/epresto.git"
+#set :branch, 'main'
+#set :deploy_to, "/var/www/epresto"
+#set :linked_files, %w(config/master.key)
+#set :linked_dirs, %w(log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system)
+#set :rbenv_ruby, '3.1.2'
+#set :log_level, :debug
 
 # set :passenger_restart_with_touch, true
 # set :rails_env, :development

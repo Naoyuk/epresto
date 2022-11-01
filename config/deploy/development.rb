@@ -1,13 +1,15 @@
-# set :stage, :production
-# set :rails_env, :production
-# set :branch, "main"
-# 
-# role :app, %w{ec2-user@52.11.210.21}
-# role :web, %w{ec2-user@52.11.210.21}
-# role :db, %w{ec2-user@10.0.2.101}
-# 
-# server "52.11.210.21", user: "ec2-user", roles: %w{web app db}
+role :app, %w{naoyuki@localhost}
+role :web, %w{naoyuki@localhost}
+role :db, %w{naoyuki@localhost}
 
+server "localhost", user: "naoyuki", roles: %w{web app db}
+
+desc 'my first capistrano task'
+task :first_task do
+  run_locally do
+    execute "echo hello world"
+  end
+end
 # server-based syntax
 # ======================
 # Defines a single server with a list of roles and multiple properties.
