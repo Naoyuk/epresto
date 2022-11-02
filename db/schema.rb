@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_24_165902) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_02_200440) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -43,6 +43,54 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_24_165902) do
     t.index ["vendor_id"], name: "index_items_on_vendor_id"
   end
 
+  create_table "orders", force: :cascade do |t|
+    t.string "po_number"
+    t.string "po_state"
+    t.datetime "po_date"
+    t.datetime "po_changed_date"
+    t.datetime "po_state_changed_date"
+    t.string "po_type"
+    t.string "import_method_of_payment"
+    t.string "import_international_commercial_terms"
+    t.string "import_port_of_delivery"
+    t.string "import_containers"
+    t.text "import_shipping_instructions"
+    t.string "deal_code"
+    t.string "payment_method"
+    t.string "buying_party_id"
+    t.string "buying_address_name"
+    t.string "buying_address_line1"
+    t.string "buying_address_city"
+    t.string "buying_address_state_or_region"
+    t.string "buying_address_postal_code"
+    t.string "buying_address_country_code"
+    t.string "buying_address_phone"
+    t.string "selling_party_id"
+    t.string "ship_to_party_id"
+    t.string "ship_to_address_name"
+    t.string "ship_to_address_line1"
+    t.string "ship_to_address_city"
+    t.string "ship_to_address_state_or_region"
+    t.string "ship_to_address_postal_code"
+    t.string "ship_to_address_country_code"
+    t.string "ship_to_address_phone"
+    t.string "bill_to_party_id"
+    t.string "bill_to_address_name"
+    t.string "bill_to_address_line1"
+    t.string "bill_to_address_city"
+    t.string "bill_to_address_state_or_region"
+    t.string "bill_to_address_postal_code"
+    t.string "bill_to_address_country_code"
+    t.string "bill_to_address_phone"
+    t.string "tax_type"
+    t.string "tax_registration_number"
+    t.string "delivery_window"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "vendor_id", null: false
+    t.index ["vendor_id"], name: "index_orders_on_vendor_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -66,5 +114,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_24_165902) do
   end
 
   add_foreign_key "items", "vendors"
+  add_foreign_key "orders", "vendors"
   add_foreign_key "users", "vendors"
 end
