@@ -1,17 +1,15 @@
+# frozen_string_literal: true
+
 class OrdersController < ApplicationController
   def index
     @orders = Order.all
   end
 
-  def show
-  end
+  def show; end
 
-  def import
-  end
+  def import; end
 
-  def create
-  end
+  def create; end
 
-  def update
-  end
+  def update; end
 end

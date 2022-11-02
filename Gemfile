@@ -39,10 +39,10 @@ group :development do
   gem 'web-console'
   # gem "rack-mini-profiler"
   # gem "spring"
-  gem 'capistrano' , '~> 3.7'
+  gem 'capistrano', '~> 3.7'
+  gem 'capistrano3-puma'
   gem 'capistrano-rails', '~> 1.2'
   gem 'capistrano-yarn'
-  gem 'capistrano3-puma'
 end
 
 group :test do

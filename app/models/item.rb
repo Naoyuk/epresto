@@ -17,19 +17,20 @@ class Item < ApplicationRecord
     data = Roo::Spreadsheet.open(file)
     headers = data.row(1)
     data.each_with_index do |row, idx|
-      next if idx == 0
+      next if idx.zero?
+
       item_params = Hash[[headers, row].transpose]
-      item_params[:price] = row[6].delete("$").to_f
+      item_params[:price] = row[6].delete('$').to_f
       item_params[:vendor_id] = vendor_id
       item = Item.new(item_params)
 
       if Item.exists?(asin: item.asin)
         item_to_update = Item.find_by(asin: item.asin)
         item_to_update_attributes = item_to_update.attributes.reject do |key|
-          key == "id" or key == "created_at" or key == "updated_at"
+          ['id', 'created_at', 'updated_at'].include?(key)
         end
         item_attributes = item.attributes.reject do |key|
-          key == "id" or key == "created_at" or key == "updated_at"
+          ['id', 'created_at', 'updated_at'].include?(key)
         end
         # debugger
         if item_to_update_attributes != item_attributes
