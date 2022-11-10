@@ -12,9 +12,9 @@ class OrdersController < ApplicationController
   def import
     @orders = Order.import_po(current_user.vendor_id)
     if @orders.is_a?(String)
-      redirect_to ({action: :index}), notice: "Error: \"#{@orders}\", Contact ePresto administrator." 
+      redirect_to ({ action: :index }), notice: "Error: \"#{@orders}\", Contact ePresto administrator."
     else
-      render 'index'
+      redirect_to({ action: :index })
     end
   end
 

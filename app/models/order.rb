@@ -6,7 +6,8 @@ class Order < ApplicationRecord
 
   # Class methods
   def self.import_po(vendor_id)
-    pos = fetch_po(vendor_id)
+    # AmazonからPOを取得
+    pos = Order.fetch_origin
     # posが文字列の場合はエラーなのでそのままコントローラに返す
     return pos if pos.is_a?(String)
 
@@ -29,7 +30,8 @@ class Order < ApplicationRecord
       odr.delivery_window = order['shipWindow']
       # odr.deal_code = order['orderDetails']['dealCode']
       # odr.import_method_of_payment = order['orderDetails']['importDetails']['methodOfPayment']
-      # odr.import_international_commercial_terms = order['orderDetails']['importDetails']['internationalCommercialTerms']
+      # odr.import_international_commercial_terms =
+      #   order['orderDetails']['importDetails']['internationalCommercialTerms']
       # odr.import_port_of_delivery = order['orderDetails']['importDetails']['portOfDelivery']
       # odr.import_containers = order['orderDetails']['importdetails']['importContainers']
       # odr.import_shipping_instructions = order['orderDetails']['importdetails']['shippingInstructions']
@@ -60,8 +62,11 @@ class Order < ApplicationRecord
 
       # OrderItemsの作成
       order['orderDetails']['items'].each do |item|
-        itm = OrderItem.find_or_initialize_by(order_id: odr.id, amazon_product_identifier: item['amazonProductIdentifier'])
-        #itm.order_id = order_id
+        itm = OrderItem.find_or_initialize_by(
+          order_id: odr.id,
+          amazon_product_identifier: item['amazonProductIdentifier']
+        )
+        # itm.order_id = order_id
         itm.item_seq_number = item['itemSequenceNumber']
         itm.amazon_product_identifier = item['amazonProductIdentifier']
         itm.vendor_product_identifier = item['vendorProductIdentifier']
@@ -79,19 +84,6 @@ class Order < ApplicationRecord
     Order.all
   end
 
-  def self.fetch_po(vendor_id)
-    # 最新のItemを検索
-    items = Item.find_by(vendor_id: vendor_id)
-
-    # AmazonからPOを取得
-    pos_from_amazon = Order.fetch_origin
-    if pos_from_amazon.is_a?(Hash)
-      pos_hash = pos_from_amazon
-    else
-      error_message = pos_from_amazon
-    end
-  end
-
   require 'uri'
   require 'net/http'
 
@@ -104,25 +96,25 @@ class Order < ApplicationRecord
 
   def self.fetch_origin
     # Request Values
-    access_token = get_access_token
+    access_token = generate_access_token
     access_key_id = Rails.application.credentials[:IAM_ACCESS_KEY]
     secret_access_key = Rails.application.credentials[:IAM_SECRET_ACCESS_KEY]
     method = 'GET'
     service = 'execute-api'
     host = 'sandbox.sellingpartnerapi-na.amazon.com'
     region = 'us-east-1'
-    endpoint = 'https://' + host
+    endpoint = "https://#{host}"
     path = '/vendor/orders/v1/purchaseOrders'
     t = Time.now.utc
     @query_hash = {
       'limit' => 54,
-      'createdAfter' => (t - 24*60*60*7).strftime("%Y-%m-%dT%H:%M:%S").gsub(':', '%3A'),
-      'createdBefor' => t.strftime("%Y-%m-%dT%H:%M:%S").gsub(':', '%3A'),
+      'createdAfter' => (t - 24 * 60 * 60 * 7).strftime('%Y-%m-%dT%H:%M:%S').gsub(':', '%3A'),
+      'createdBefor' => t.strftime('%Y-%m-%dT%H:%M:%S').gsub(':', '%3A'),
       'sortOrder' => 'DESC'
     }
 
     query = Order.formatted_query
-    url = URI(endpoint + path + '?' + query)
+    url = URI("#{endpoint}#{path}?#{query}")
 
     signer = Aws::Sigv4::Signer.new(
       service: service,
@@ -150,6 +142,7 @@ class Order < ApplicationRecord
     res = https.request(req)
 
     return JSON.parse(res.read_body) if res.is_a?(Net::HTTPSuccess)
+
     JSON.parse(res.read_body)['errors'][0]['code']
   end
 
@@ -165,8 +158,8 @@ class Order < ApplicationRecord
     end.join('&')
   end
 
-  def self.get_access_token
-    url = URI("https://api.amazon.com/auth/o2/token")
+  def self.generate_access_token
+    url = URI('https://api.amazon.com/auth/o2/token')
 
     https = Net::HTTP.new(url.host, url.port)
     https.use_ssl = true
@@ -176,24 +169,27 @@ class Order < ApplicationRecord
     refresh_token = Rails.application.credentials[:DEV_CENTRAL_REFRESH_TOKEN]
 
     request = Net::HTTP::Post.new(url)
-    request["Content-Type"] = "application/x-www-form-urlencoded"
-    request.body = "grant_type=refresh_token&refresh_token=#{refresh_token}&client_id=#{access_key}&client_secret=#{secret_key}"
+    request['Content-Type'] = 'application/x-www-form-urlencoded'
+    request.body =
+      "grant_type=refresh_token&"\
+      "refresh_token=#{refresh_token}&"\
+      "client_id=#{access_key}&"\
+      "client_secret=#{secret_key}"
 
     response = https.request(request)
     JSON.parse(response.body)['access_token']
   end
 
   # 取得したPOをOrdersテーブルとOrderItemsテーブルにUpdate Import
-  #import_to_orders(pos_hash)
+  # import_to_orders(pos_hash)
 
   # Acknowledgeする
-  #@orders = acknowledge(pos_from_amazon, items)
+  # @orders = acknowledge(pos_from_amazon, items)
 
   def self.import_to_orders(pos)
-    #pos['
+    # pos['
   end
 
   # Instance methods
-  def acknowledge(items)
-  end
+  def acknowledge(items); end
 end

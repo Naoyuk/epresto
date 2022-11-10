@@ -33,12 +33,12 @@ RSpec.describe 'ImportItems', type: :system do
     expect(page.all('.z-price')[7]).to have_content '21.28'
 
     # For checking to be updated or passed
-    before_updated_at_10001 = Item.find_by(item_code: 'ANI10001').updated_at
-    before_updated_at_10120 = Item.find_by(item_code: 'ANI10120').updated_at
-    before_updated_at_11300 = Item.find_by(item_code: 'ANI11300').updated_at
-    before_updated_at_12005 = Item.find_by(item_code: 'ANI12005').updated_at
-    before_updated_at_40001 = Item.find_by(item_code: 'ANI40001').updated_at
-    before_updated_at_40002 = Item.find_by(item_code: 'ANI40002').updated_at
+    before_updated_at10001 = Item.find_by(item_code: 'ANI10001').updated_at
+    before_updated_at10120 = Item.find_by(item_code: 'ANI10120').updated_at
+    before_updated_at11300 = Item.find_by(item_code: 'ANI11300').updated_at
+    before_updated_at12005 = Item.find_by(item_code: 'ANI12005').updated_at
+    before_updated_at40001 = Item.find_by(item_code: 'ANI40001').updated_at
+    before_updated_at40002 = Item.find_by(item_code: 'ANI40002').updated_at
 
     file_path = Rails.root.join('spec', 'fixtures', 'item2.xlsx')
     attach_file('file', file_path)
@@ -53,17 +53,17 @@ RSpec.describe 'ImportItems', type: :system do
     expect(page.all('.stock')[2]).to have_content '1'
     expect(page.all('.item-code')[7]).to have_content 'ANI12020'
     expect(page.all('.z-price')[7]).to have_content '100.12'
-    after_updated_at_10001 = Item.find_by(item_code: 'ANI10001').updated_at
-    after_updated_at_10120 = Item.find_by(item_code: 'ANI10120').updated_at
-    after_updated_at_11300 = Item.find_by(item_code: 'ANI11300').updated_at
-    after_updated_at_12005 = Item.find_by(item_code: 'ANI12005').updated_at
-    after_updated_at_40001 = Item.find_by(item_code: 'ANI40001').updated_at
-    after_updated_at_40002 = Item.find_by(item_code: 'ANI40002').updated_at
-    expect(before_updated_at_10001).to eq after_updated_at_10001
-    expect(before_updated_at_10120).not_to eq after_updated_at_10120
-    expect(before_updated_at_11300).to eq after_updated_at_11300
-    expect(before_updated_at_12005).not_to eq after_updated_at_12005
-    expect(before_updated_at_40001).to eq after_updated_at_40001
-    expect(before_updated_at_40002).not_to eq after_updated_at_40002
+    after_updated_at10001 = Item.find_by(item_code: 'ANI10001').updated_at
+    after_updated_at10120 = Item.find_by(item_code: 'ANI10120').updated_at
+    after_updated_at11300 = Item.find_by(item_code: 'ANI11300').updated_at
+    after_updated_at12005 = Item.find_by(item_code: 'ANI12005').updated_at
+    after_updated_at40001 = Item.find_by(item_code: 'ANI40001').updated_at
+    after_updated_at40002 = Item.find_by(item_code: 'ANI40002').updated_at
+    expect(before_updated_at10001).to eq after_updated_at10001
+    expect(before_updated_at10120).not_to eq after_updated_at10120
+    expect(before_updated_at11300).to eq after_updated_at11300
+    expect(before_updated_at12005).not_to eq after_updated_at12005
+    expect(before_updated_at40001).to eq after_updated_at40001
+    expect(before_updated_at40002).not_to eq after_updated_at40002
   end
 end

@@ -11,32 +11,13 @@ AllCops:
     - 'bin/*'
     - 'config/initializers/devise.rb'
 
-Metrics/AbcSize:
- Max: 45
+Metrics:
+  Enabled: false
 
-Metrics/BlockLength:
-  CountComments: false
-  Max: 50
+Style:
+  Enabled: false
+
+Layout/LineLength:
   Exclude:
-    - '**/spec/**/*'
-    - '**/*.rake'
-    - '**/factories/**/*'
-    - '**/config/routes.rb'
+    - '**/config/deploy.rb'
 
-Style/Documentation:
-  Enabled: false
-
-Style/BlockDelimiters:
-  Enabled: false
-
-Style/ClassAndModuleChildren:
-  Enabled: false
-
-Style/GuardClause:
-  Enabled: false
-
-Style/IfUnlessModifier:
-  Enabled: false
-
-Style/NegatedIf:
-  Enabled: false
