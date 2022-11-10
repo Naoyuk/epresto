@@ -1,23 +1,82 @@
 <tr class='order border-b' id= '<%= dom_id(order) %>'>
-    <td class='px-2 po-number'>
-      <%= order.po_number %>
-    </td>
-    <td class='px-2 po-state'>
-      <%= order.po_state %>
-    </td>
-    <td class='px-2 po-date'>
-      <%= order.po_date %>
-    </td>
-    <td class='px-2 po-type'>
-      <%= order.po_type %>
-    </td>
-    <td class='px-2 deal-code'>
-      <%= order.deal_code %>
-    </td>
-    <td class='px-2 payment-method'>
-      <%= order.payment_method %>
-    </td>
-    <td class='px-2 delivery-window'>
-      <%= order.delivery_window %>
-    </td>
-  </tr>
+  <td class='px-2 po-number text-center'>
+    <%= order.po_number %>
+  </td>
+  <td class='px-2 po-state text-center'>
+    <%= order.po_state %>
+  </td>
+  <td class='px-2 po-date text-center'>
+    <%= order.po_date %>
+  </td>
+  <td class='px-2 po-type text-center'>
+    <%= order.po_type %>
+  </td>
+  <td class='px-2 payment-method text-center'>
+    <%= order.payment_method %>
+  </td>
+  <td class='px-2 buying-party text-center'>
+    <%= order.buying_party_id %>
+  </td>
+  <td class='px-2 selling-party text-center'>
+    <%= order.selling_party_id %>
+  </td>
+  <td class='px-2 ship-to-party text-center'>
+    <%= order.ship_to_party_id %>
+  </td>
+  <td class='px-2 bill-to-party text-center'>
+    <%= order.bill_to_party_id %>
+  </td>
+  <td class='px-2 delivery-window text-center'>
+    <%= order.delivery_window %>
+  </td>
+</tr>
+  <% if order.order_items %>
+      <tr class='border-b overflow-x-auto'>
+        <th>
+          #
+        </th>
+        <th>
+          ASIN
+        </th>
+        <th>
+          Item Code
+        </th>
+        <th>
+          Amount
+        </th>
+        <th>
+          Unit
+        </th>
+        <th>
+          Unit Size
+        </th>
+        <th>
+          Back order allowed
+        </th>
+        <th>
+          NetCost
+        </th>
+        <th>
+        </th>
+        <th>
+          ListPrice
+        </th>
+        <th>
+        </th>
+      </tr>
+      <% order.order_items.each do |item| %>
+        <tr class='bg-slate-50 border'>
+          <td class='text-center'><%= item.item_seq_number %></td>
+          <td><%= item.amazon_product_identifier %></td>
+          <td><%= item.vendor_product_identifier %></td>
+          <td class='text-center'><%= item.ordered_quantity_amount %></td>
+          <td class='text-center'><%= item.ordered_quantity_unit_of_measure %></td>
+          <td class='text-center'><%= item.ordered_quantity_unit_size %></td>
+          <td class='text-center'><%= item.back_order_allowed %></td>
+          <td class='text-right'><%= item.netcost_amount %></td>
+          <td class='text-center'><%= item.netcost_currency_code %></td>
+          <td class='text-right'><%= item.listprice_amount %></td>
+          <td class='text-center'><%= item.listprice_currency_code %></td>
+        </tr>
+      <% end %>
+  <% end %>

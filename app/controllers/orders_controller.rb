@@ -10,8 +10,12 @@ class OrdersController < ApplicationController
   def show; end
 
   def import
-    Order.import(params[:file], current_user.vendor_id)
-    redirect_to orders_url
+    @orders = Order.import_po(current_user.vendor_id)
+    if @orders.is_a?(String)
+      redirect_to ({action: :index}), notice: "Error: \"#{@orders}\", Contact ePresto administrator." 
+    else
+      render 'index'
+    end
   end
 
   def create; end

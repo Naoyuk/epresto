@@ -71,6 +71,9 @@ GEM
     airbrussh (1.4.1)
       sshkit (>= 1.6.1, != 1.7.0)
     ast (2.4.2)
+    aws-eventstream (1.2.0)
+    aws-sigv4 (1.5.2)
+      aws-eventstream (~> 1, >= 1.0.2)
     bcrypt (3.1.18)
     bindex (0.8.1)
     bootsnap (1.13.0)
@@ -317,6 +320,7 @@ PLATFORMS
   arm64-darwin-21
 
 DEPENDENCIES
+  aws-sigv4
   bootsnap
   cancancan
   capistrano (~> 3.7)

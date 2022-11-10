@@ -25,16 +25,15 @@
 </div>
 
 <!-- 一覧 -->
-<div class="mt-4 w-full bg-white rounded-lg border shadow-md dark:bg-gray-800 dark:border-gray-700">
-  <div class="p-2 flex flex-wrap text-sm font-medium text-center text-gray-500 bg-gray-50 rounded-t-lg border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
-    <%= icon_with_text("table", "Item List") %>
+<div class="mt-4 w-full bg-white rounded-lg border shadow-md dark:bg-gray-800 dark:border-gray-700 overflow-x-auto">
+  <div class="p-2 flex text-sm font-medium text-center text-gray-500 dark:text-gray-400 dark:bg-gray-800">
     <%= form_with url: import_items_path, local: true do |f| %>
       <%= f.file_field :file %>
       <%= f.submit 'Upload' %>
     <% end %>
   </div>
 
-  <table class="mb-3 text-gray-500 dark:text-gray-400">
+  <table class="mb-3 border-t text-gray-500 dark:text-gray-400">
       <tr class="border-b">
         <th>
           <%= sort_link(@search, :item_code) %>

@@ -28,6 +28,11 @@
 <div class="mt-4 w-full bg-white rounded-lg border shadow-md dark:bg-gray-800 dark:border-gray-700">
   <div class="p-2 flex flex-wrap text-sm font-medium text-center text-gray-500 bg-gray-50 rounded-t-lg border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
     <%= icon_with_text("table", "Purchase Orders") %>
+
+    <%= form_with url: import_orders_path, local: true do |f| %>
+      <%= f.submit 'Update', class: "p-2 flex flex-wrap text-sm font-medium text-center text-gray-500 bg-gray-50 rounded-t-lg border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800" %>
+    <% end %>
+
   </div>
 
   <table class="mb-3 text-gray-500 dark:text-gray-400">
@@ -45,13 +50,22 @@
           <%= sort_link(@search, :po_type) %>
         </th>
         <th>
-          <%= sort_link(@search, :deal_code) %>
-        </th>
-        <th>
           <%= sort_link(@search, :payment_method) %>
         </th>
         <th>
-          <%= sort_link(@search, :delivery_window) %>
+          <%= sort_link(@search, :buying_party_id) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :selling_party_id) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :ship_to_party_id) %>
+        </th>
+        <th>
+          <%= sort_link(@search, :bill_to_party_id) %>
+        </th>
+        <th>
+          <%= sort_link(@search, 'Shipping Window', :delivery_window) %>
         </th>
       </tr>
 
