@@ -29,10 +29,17 @@
   <div class="p-2 flex flex-wrap text-sm font-medium text-center text-gray-500 bg-gray-50 rounded-t-lg border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
     <%= icon_with_text("table", "Purchase Orders") %>
 
-    <%= form_with url: import_orders_path, data: { turbo_confirm: 'Fetch PO and acknowledge automatically?' },local: true do |f| %>
-      <%= f.submit 'Update',  class: "p-2 flex flex-wrap text-sm font-medium text-center text-gray-500 bg-gray-50 rounded-t-lg border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800" %>
+    <%= form_with url: import_orders_path, data: { turbo_confirm: 'Fetch PO and acknowledge automatically?' }, class: 'flex items-center px-4', local: true do |f| %>
+      <%= f.label :created_after, 'From: ', class: 'text-sm font-medium text-gray-900 dark:text-gray-300' %>
+      <%= f.date_field :created_after, value: (Time.now - 24 * 60 * 60 * 7).strftime("%Y-%m-%d"), class: 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' %>
+      <%= f.label :created_before, 'To: ', class: 'text-sm font-medium text-gray-900 dark:text-gray-300' %>
+      <%= f.date_field :created_before, value: Time.now.strftime("%Y-%m-%d"), class: 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' %>
+      <%= f.submit 'Update', class: "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm w-full sm:w-auto px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" %>
     <% end %>
 
+    <%= form_with url: acknowledge_orders_path, data: { turbo_confirm: 'Acknowledge Purchase Orders?' }, local: true do |f| %>
+      <%= f.submit 'Acknowledge', class: "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm w-full sm:w-auto px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" %>
+    <% end %>
   </div>
 
   <table class="mb-3 text-gray-500 dark:text-gray-400">
@@ -65,7 +72,7 @@
           <%= sort_link(@search, :bill_to_party_id) %>
         </th>
         <th>
-          <%= sort_link(@search, 'Shipping Window', :delivery_window) %>
+          <%= sort_link(@search, :delivery_window, 'Shipping Window') %>
         </th>
       </tr>
 

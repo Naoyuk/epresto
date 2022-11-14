@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   resources :orders do
     collection do
       post :import
+      post :acknowledge
     end
   end
 

@@ -10,15 +10,25 @@ class OrdersController < ApplicationController
   def show; end
 
   def import
-    @orders = Order.import_po(current_user.vendor_id)
-    if @orders.is_a?(String)
-      redirect_to ({ action: :index }), notice: "Error: \"#{@orders}\", Contact ePresto administrator."
+    if params[:created_after].blank? || params[:created_before].blank?
+      redirect_to ({ action: :index }), alert: 'Error: "From" and "To" are required.' 
     else
-      redirect_to({ action: :index })
+      @orders = Order.import_po(current_user.vendor_id, params[:created_after], params[:created_before])
+      if @orders.kind_of?(ActiveRecord::Relation)
+        redirect_to({ action: :index })
+      else
+        redirect_to ({ action: :index }), alert: "Error: \"#{@orders['errors'][0]['code']}\", Contact ePresto administrator."
+      end
     end
   end
 
   def create; end
 
   def update; end
+
+  def acknowledge
+    Order.acknowledge(params[:po_number])
+    @orders = Order.all
+    redirect_to({ action: :index })
+  end
 end
