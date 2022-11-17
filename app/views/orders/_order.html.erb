@@ -43,7 +43,7 @@
       <th class='w-1/10 px-4 border-b border-l'>ListPrice</th>
     </tr>
     <% order.order_items.each_with_index do |item, index| %>
-      <tr>
+      <tr id= '<%= dom_id(item) %>'>
         <% if index == order.order_items.size - 1 %>
           <td class='pl-2 text-center border-b'>┗ <%= item.item_seq_number %></td>
         <% else %>

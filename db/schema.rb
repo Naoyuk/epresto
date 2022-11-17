@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_10_041357) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_17_044006) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -43,6 +43,20 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_10_041357) do
     t.index ["vendor_id"], name: "index_items_on_vendor_id"
   end
 
+  create_table "order_item_acknowledgements", force: :cascade do |t|
+    t.integer "acknowledgement_code"
+    t.integer "acknowledged_quantity_amount"
+    t.integer "acknowledged_quantity_unit_of_measure"
+    t.integer "acknowledged_quantity_unit_size"
+    t.bigint "order_item_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "scheduled_ship_date"
+    t.datetime "scheduled_delivery_date"
+    t.integer "rejection_reason"
+    t.index ["order_item_id"], name: "index_order_item_acknowledgements_on_order_item_id"
+  end
+
   create_table "order_items", force: :cascade do |t|
     t.string "item_seq_number"
     t.string "amazon_product_identifier"
@@ -58,6 +72,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_10_041357) do
     t.bigint "order_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "item_id", null: false
+    t.index ["item_id"], name: "index_order_items_on_item_id"
     t.index ["order_id"], name: "index_order_items_on_order_id"
   end
 
@@ -106,6 +122,26 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_10_041357) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "vendor_id", null: false
+    t.string "selling_address_name"
+    t.string "selling_address_line1"
+    t.string "selling_address_line2"
+    t.string "selling_address_line3"
+    t.string "selling_address_city"
+    t.string "selling_address_district"
+    t.string "selling_address_state_or_region"
+    t.string "selling_address_postal_code"
+    t.string "selling_address_country_code"
+    t.string "selling_address_phone"
+    t.string "buying_address_line2"
+    t.string "buying_address_line3"
+    t.string "buying_address_district"
+    t.string "ship_to_address_line2"
+    t.string "ship_to_address_line3"
+    t.string "ship_to_address_district"
+    t.string "bill_to_address_line2"
+    t.string "bill_to_address_line3"
+    t.string "bill_to_address_district"
+    t.string "ship_window"
     t.index ["vendor_id"], name: "index_orders_on_vendor_id"
   end
 
@@ -132,6 +168,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_10_041357) do
   end
 
   add_foreign_key "items", "vendors"
+  add_foreign_key "order_item_acknowledgements", "order_items"
+  add_foreign_key "order_items", "items"
   add_foreign_key "order_items", "orders"
   add_foreign_key "orders", "vendors"
   add_foreign_key "users", "vendors"

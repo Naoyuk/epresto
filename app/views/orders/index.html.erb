@@ -51,11 +51,12 @@
     <% end %>
 
     <%= form_with url: acknowledge_orders_path, data: { turbo_confirm: 'Acknowledge Purchase Orders?' }, class: 'items-center mt-1', local: true do |f| %>
+      <%= f.hidden_field :po_numbers, :value => @orders.pluck(:po_number) %>
       <%= f.submit 'Acknowledge', class: "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm w-full sm:w-auto px-4 py-2 text-center" %>
     <% end %>
   </div>
 
-  <ul class="list-reset flex mt-2 border-b border-blue-600">
+  <ul class="list-reset flex mt-2 border-b-2 border-blue-600">
     <li class="mr-1">
       <a class="bg-gray-200 inline-block py-2 px-4 text-grey-light font-semibold rounded-t-lg" href="#">New</a>
     </li>

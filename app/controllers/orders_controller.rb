@@ -27,7 +27,7 @@ class OrdersController < ApplicationController
   def update; end
 
   def acknowledge
-    Order.acknowledge(params[:po_number])
+    Order.acknowledge(params[:po_numbers])
     @orders = Order.all
     redirect_to({ action: :index })
   end

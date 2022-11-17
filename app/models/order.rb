@@ -65,11 +65,28 @@ class Order < ApplicationRecord
         odr.import_containers = order['orderDetails']['importDetails']['importContainers']
         odr.import_shipping_instructions = order['orderDetails']['importDetails']['shippingInstructions']
       end
+      unless order['orderDetails']['sellingParty'].nil?
+        unless order['orderDetails']['sellingParty']['address'].nil?
+          odr.selling_address_name = order['orderDetails']['sellingParty']['address']['name']
+          odr.selling_address_line1 = order['orderDetails']['sellingParty']['address']['addressLine1']
+          odr.selling_address_line2 = order['orderDetails']['sellingParty']['address']['addressLine2']
+          odr.selling_address_line3 = order['orderDetails']['sellingParty']['address']['addressLine3']
+          odr.selling_address_city = order['orderDetails']['sellingParty']['address']['city']
+          odr.selling_address_district = order['orderDetails']['sellingParty']['address']['district']
+          odr.selling_address_state_or_region = order['orderDetails']['sellingParty']['address']['stateOrRegion']
+          odr.selling_address_postal_code = order['orderDetails']['sellingParty']['address']['postalCode']
+          odr.selling_address_country_code = order['orderDetails']['sellingParty']['address']['countryCode']
+          odr.selling_address_phone = order['orderDetails']['sellingParty']['address']['phone']
+        end
+      end
       unless order['orderDetails']['buyingParty'].nil?
         unless order['orderDetails']['buyingParty']['address'].nil?
           odr.buying_address_name = order['orderDetails']['buyingParty']['address']['name']
           odr.buying_address_line1 = order['orderDetails']['buyingParty']['address']['addressLine1']
+          odr.buying_address_line2 = order['orderDetails']['buyingParty']['address']['addressLine2']
+          odr.buying_address_line3 = order['orderDetails']['buyingParty']['address']['addressLine3']
           odr.buying_address_city = order['orderDetails']['buyingParty']['address']['city']
+          odr.buying_address_district = order['orderDetails']['buyingParty']['address']['district']
           odr.buying_address_state_or_region = order['orderDetails']['buyingParty']['address']['stateOrRegion']
           odr.buying_address_postal_code = order['orderDetails']['buyingParty']['address']['postalCode']
           odr.buying_address_country_code = order['orderDetails']['buyingParty']['address']['countryCode']
@@ -80,7 +97,10 @@ class Order < ApplicationRecord
         unless order['orderDetails']['shipToParty']['address'].nil?
           odr.ship_to_address_name = order['orderDetails']['shipToParty']['address']['name']
           odr.ship_to_address_line1 = order['orderDetails']['shipToParty']['address']['addressLine1']
+          odr.ship_to_address_line2 = order['orderDetails']['shipToParty']['address']['addressLine2']
+          odr.ship_to_address_line3 = order['orderDetails']['shipToParty']['address']['addressLine3']
           odr.ship_to_address_city = order['orderDetails']['shipToParty']['address']['city']
+          odr.ship_to_address_district = order['orderDetails']['shipToParty']['address']['district']
           odr.ship_to_address_state_or_region = order['orderDetails']['shipToParty']['address']['stateOrRegion']
           odr.ship_to_address_postal_code = order['orderDetails']['shipToParty']['address']['postalCode']
           odr.ship_to_address_country_code = order['orderDetails']['shipToParty']['address']['countryCode']
@@ -88,10 +108,13 @@ class Order < ApplicationRecord
         end
       end
       unless order['orderDetails']['billToParty'].nil?
-        unless order['orderDetails']['shipToParty']['address'].nil?
+        unless order['orderDetails']['billToParty']['address'].nil?
           odr.bill_to_address_name = order['orderDetails']['billToParty']['address']['name']
           odr.bill_to_address_line1 = order['orderDetails']['billToParty']['address']['addressLine1']
+          odr.bill_to_address_line2 = order['orderDetails']['billToParty']['address']['addressLine2']
+          odr.bill_to_address_line3 = order['orderDetails']['billToParty']['address']['addressLine3']
           odr.bill_to_address_city = order['orderDetails']['billToParty']['address']['city']
+          odr.bill_to_address_district = order['orderDetails']['billToParty']['address']['district']
           odr.bill_to_address_state_or_region = order['orderDetails']['billToParty']['address']['stateOrRegion']
           odr.bill_to_address_postal_code = order['orderDetails']['billToParty']['address']['postalCode']
           odr.bill_to_address_country_code = order['orderDetails']['billToParty']['address']['countryCode']
@@ -112,6 +135,7 @@ class Order < ApplicationRecord
           amazon_product_identifier: item['amazonProductIdentifier']
         )
         # itm.order_id = order_id
+        itm.item_id = Item.find_by(asin: item['amazonProductIdentifier']).id
         itm.item_seq_number = item['itemSequenceNumber']
         itm.amazon_product_identifier = item['amazonProductIdentifier']
         itm.vendor_product_identifier = item['vendorProductIdentifier']
@@ -141,17 +165,129 @@ class Order < ApplicationRecord
     Order.send_http_request
   end
 
-  def self.acknowledge(po_number)
-    # order_id = Order.find_by(po_number: po_number).id
-    # item_codes = OrderItem.where(order_id: order_id)
-    # items = {}
-    # item_codes.each do |item|
-    #   
-    # end
+  def self.acknowledge(po_numbers)
+    order_ids = Order.where(po_number: po_numbers.split(' ')).ids
+    orders = Order.where(id: order_ids)
+
+    req_body = {}
+    acknowledgements = []
+
+    orders.each do |order|
+      acknowledgement_date = Time.now.strftime('%Y-%m-%dT%H:%M:%SZ')
+      order_body = {}
+      order_body["purchaseOrderNumber"] = order.po_number unless order.po_number.nil?
+      selling_party = {}
+      selling_party["partyId"] = order.selling_party_id unless order.selling_party_id.nil?
+      selling_party_address = {}
+      selling_party_address["name"] = order.selling_address_name unless order.selling_address_name.nil?
+      selling_party_address["addressLine1"] = order.selling_address_line1 unless order.selling_address_line1.nil?
+      selling_party_address["addressLine2"] = order.selling_address_line2 unless order.selling_address_line2.nil?
+      selling_party_address["addressLine3"] = order.selling_address_line3 unless order.selling_address_line3.nil?
+      selling_party_address["city"] = order.selling_address_city unless order.selling_address_city.nil?
+      selling_party_address["county"] = order.selling_address_country_code unless order.selling_address_country_code.nil?
+      selling_party_address["district"] = order.selling_address_district unless order.selling_address_district.nil?
+      selling_party_address["stateOrRegion"] = order.selling_address_state_or_region unless order.selling_address_state_or_region.nil?
+      selling_party_address["postalCode"] = order.selling_address_postal_code unless order.selling_address_postal_code.nil?
+      selling_party_address["countryCode"] = order.selling_address_country_code unless order.selling_address_country_code.nil?
+      selling_party_address["phone"] = order.selling_address_phone unless order.selling_address_phone.nil?
+      selling_party["address"] = selling_party_address unless selling_party_address.empty?
+      order_body["sellingParty"] = selling_party unless selling_party.empty?
+      order_body["acknowledgementDate"] = acknowledgement_date
+      tax_info = {}
+      tax_info["taxRegistrationType"] = order.tax_type unless order.tax_type.nil?
+      tax_info["taxRegistrationNumber"] = order.tax_registration_number unless order.tax_registration_number.nil?
+      order_body["taxInfo"] = tax_info unless tax_info.empty?
+
+      items = []
+      order.order_items.each do |item|
+        item_body = {}
+        item_body["itemSequenceNumber"] = item.item_seq_number unless item.item_seq_number.nil?
+        item_body["amazonProductIdentifier"] = item.amazon_product_identifier unless item.amazon_product_identifier.nil?
+        item_body["vendorProductIdentifier"] = item.vendor_product_identifier unless item.vendor_product_identifier.nil?
+        ordered_quantity = {}
+        ordered_quantity["amount"] = item.ordered_quantity_amount unless item.ordered_quantity_amount.nil?
+        ordered_quantity["unitOfMeasure"] = item.ordered_quantity_unit_of_measure unless item.ordered_quantity_unit_of_measure.nil?
+        ordered_quantity["unitSize"] = item.ordered_quantity_unit_size unless item.ordered_quantity_unit_size.nil?
+        item_body["orderedQuantity"] = ordered_quantity unless ordered_quantity.empty?
+        net_cost = {}
+        net_cost["currencyCode"] = item.netcost_currency_code unless item.netcost_currency_code.nil?
+        net_cost["amount"] = item.netcost_amount unless item.netcost_amount.nil?
+        item_body['netCost'] = net_cost unless net_cost.empty?
+        list_price = {}
+        list_price["currencyCode"] = item.listprice_currency_code unless item.listprice_currency_code.nil?
+        list_price["amount"] = item.listprice_amount unless item.listprice_amount.nil?
+        item_body["listPrice"] = list_price unless list_price.empty?
+
+        item_acknowledgements = []
+        acknowledge_detail = {}
+        if item.acks.exists?
+          acknowledge_detail['acknowledgementCode'] = item.acks.acknowledgement_code unless item.acks.acknowledgement_code.nil?
+          acknowledge_detail['scheduledShipDate'] = item.acks.scheduled_ship_date unless item.acks.scheduled_ship_date.nil?
+          acknowledge_detail['scheduledDeliveryDate'] = item.acks.scheduled_delivery_date unless item.acks.scheduled_delivery_date.nil?
+          acknowledge_detail['rejectionReason'] = item.acks.rejection_reason unless item.acks.rejection_reason.nil?
+          
+          acknowledged_quantity = {}
+          acknowledged_quantity['amount'] = item.acks.acknowledged_quantity_amount unless item.acks.acknowledged_quantity_amount.nil?
+          acknowledged_quantity['unitOfMeasure'] = item.acks.acknowledged_quantity_unit_of_measure unless item.acks.acknowledged_quantity_unit_of_measure.nil?
+          acknowledged_quantity['unitSize'] = item.acks.acknowledged_quantity_unit_size unless item.acks.acknowledged_quantity_unit_size.nil?
+          acknowledge_detail['acknowledgedQuantity'] = acknowledged_quantity unless acknowledged_quantity.empty?
+          item_acknowledgements << acknowledge_detail unless acknowledge_detail.empty?
+        else
+          if item.item.Current? && (item.netcost_amount == item.item.cost)
+            acknowledge_detail['acknowledgementCode'] = 'Accepted'
+          else
+            acknowledge_detail['acknowledgementCode'] = 'Rejected'
+          end
+          window = item.order.ship_window
+          unless window.nil?
+            acknowledge_detail['scheduledShipDate'] = window.slice(0, window.index('--'))
+            acknowledge_detail['scheduledDeliveryDate'] = window.slice(window.index('--') + 2..window.size)
+          end
+          if item.item.nil?
+            acknowledge_detail['rejectionReason'] = 'InvalidProductIdentifier'
+          elsif item.item.Discontinued?
+            acknowledge_detail['rejectionReason'] = 'ObsoleteProduct'
+          elsif item.item.cost != item.netcost_amount
+            acknowledge_detail['rejectionReason'] = 'TemporarilyUnavailable'
+          end
+          item_acknowledgements << acknowledge_detail unless acknowledge_detail.empty?
+          
+          # 以下はPhase2以降で実装予定
+          # if # 在庫がオーダー数よりも少なかった場合
+          #   # 配列itemAcknowledgementを1個追加
+          #   acknowledge_additional = acknowledge_detail
+          #   acknowledged_additional_quantity = {}
+          #   if item.item.Current? && (item.netcost_amount == item.item.cost)
+          #     acknowledge_additional['acknowledgementCode'] = 'Accepted'
+          #   elsif # バックオーダーの条件
+          #     acknowledge_additional['acknowledgementCode'] = 'Backordered'
+          #     acknowledge_additional['rejectionReason'] = 'TemporarilyUnavailable'
+          #   else
+          #     # ディスコンの場合
+          #     acknowledge_additional['acknowledgementCode'] = 'Rejected'
+          #     acknowledge_additional['rejectionReason'] = 'ObsoleteProduct'
+          #   end
+          #   acknowledged_additional_quantity['amount'] = item.ordered_quantity_amount - 
+          #   acknowledged_additional_quantity['unitOfMeasure'] = item.acks.acknowledged_quantity_unit_of_measure
+          #   acknowledged_additional_quantity['unitSize'] = item.acks.acknowledged_quantity_unit_size
+          #   acknowledge_additional['acknowledgedQuantity'] = acknowledged_additional_quantity
+
+          #   item_acknowledgements << acknowledge_additional
+          # end
+        end
+        item_body['itemAcknowledgements'] = item_acknowledgements unless item_acknowledgements.empty?
+
+        items << item_body
+      end
+      order_body['items'] = items
+      acknowledgements << order_body
+      req_body["acknowledgements"] = acknowledgements
+    end
+
     if Rails.env.development? || Rails.env.test?
       params = {api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements'}
     else
-      params = {api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements', po_number:, selling_party:, items:}
+      params = {api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements', req_body:}
     end
     url_and_signature = Order.generate_url_and_sign(params)
     @url = url_and_signature[:url]
@@ -210,8 +346,7 @@ class Order < ApplicationRecord
       url = URI("#{endpoint}#{path}?#{query}")
     elsif params[:api] == 'acknowledgement'
       if (Rails.env.development? || Rails.env.test?)
-        path = '/vendor/orders/v1/acknowledgements'
-        acknowledgement_date = '2021-03-12T17:35:26.308Z'.gsub(':', '%3A')
+        # acknowledgement_date = '2021-03-12T17:35:26.308Z'.gsub(':', '%3A')
         body_values = {
           "acknowledgements": [
             {
@@ -243,11 +378,13 @@ class Order < ApplicationRecord
           ]
         }
       else
-        po_number = params[:po_number]
-        selling_party = params[:selling_party]
-        acknowledgement_date = Time.now.strftime('%Y-%m-%dT%H:%M:%S').gsub(':', '%3A')
-        items = params[:items]
+
+        body_values = params[:req_body]
+        # po_number = params[:po_number]
+        # selling_party = params[:selling_party]
+        # items = params[:items]
       end
+      path = '/vendor/orders/v1/acknowledgements'
       method = 'POST'
       url = URI("#{endpoint}#{path}")
     end
