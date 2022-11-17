@@ -5,19 +5,26 @@ class OrdersController < ApplicationController
     @search = Order.ransack(params[:q])
     @search.sorts = 'id desc' if @search.sorts.empty?
     @orders = @search.result.page(params[:page])
+    # TODO: POのインポート時のエラーをflashで表示したい
+    # @import_errors.each do |k, v|
+    #   v.each do |msg|
+    #     flash.now[:k] = msg
+    #   end
+    # end
   end
 
   def show; end
 
   def import
     if params[:created_after].blank? || params[:created_before].blank?
-      redirect_to ({ action: :index }), alert: 'Error: "From" and "To" are required.' 
+      redirect_to ({ action: :index }), alert: 'Error: "From" and "To" are required.'
     else
       @orders = Order.import_po(current_user.vendor_id, params[:created_after], params[:created_before])
       if @orders.kind_of?(ActiveRecord::Relation)
         redirect_to({ action: :index })
       else
-        redirect_to ({ action: :index }), alert: "Error: \"#{@orders['errors'][0]['code']}\", Contact ePresto administrator."
+        redirect_to ({ action: :index }),
+                    alert: "Error: \"#{@orders['errors'][0]['code']}\", Contact ePresto administrator."
       end
     end
   end

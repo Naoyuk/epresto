@@ -18,5 +18,4 @@ class OrderItemAcknowledgement < ApplicationRecord
     Cases: 0,
     Eaches: 1
   }
-
 end

@@ -17,7 +17,7 @@ RSpec.describe 'ImportItems', type: :system do
     fill_in 'Password', with: user.password
     click_button 'Log in'
 
-    click_link 'Item Info'
+    click_link 'Item Master'
     file_path = Rails.root.join('spec', 'fixtures', 'item1.xlsx')
     attach_file('file', file_path)
     click_on 'Upload'

@@ -33,8 +33,10 @@ class Order < ApplicationRecord
   end
 
   def self.import_po(vendor_id, created_after, created_before)
+    # エラーメッセージ
+    @import_errors = {}
     # AmazonからPOを取得
-    get_pos_params = {api: 'pos', path: '/vendor/orders/v1/purchaseOrders', created_after:, created_before:}
+    get_pos_params = { api: 'pos', path: '/vendor/orders/v1/purchaseOrders', created_after:, created_before: }
     pos = Order.fetch_original_po(get_pos_params)
     # なんらかのエラーでPOを取得できなかったらエラーコードをviewに渡して終了
     return pos if pos.has_key?('errors')
@@ -126,7 +128,12 @@ class Order < ApplicationRecord
         odr.tax_registration_number = order['orderDetails']['taxInfo']['taxRegistrationNumber']
       end
 
-      odr.save
+      debugger
+      if odr.valid?
+        odr.save
+      else
+        @import_errors['Import Purchase Order Error'] = odr.errors.full_messages
+      end
 
       # OrderItemsの作成
       order['orderDetails']['items'].each do |item|
@@ -135,7 +142,7 @@ class Order < ApplicationRecord
           amazon_product_identifier: item['amazonProductIdentifier']
         )
         # itm.order_id = order_id
-        itm.item_id = Item.find_by(asin: item['amazonProductIdentifier']).id
+        itm.item_id = Item.find_by(asin: item['amazonProductIdentifier'])&.id
         itm.item_seq_number = item['itemSequenceNumber']
         itm.amazon_product_identifier = item['amazonProductIdentifier']
         itm.vendor_product_identifier = item['vendorProductIdentifier']
@@ -148,7 +155,12 @@ class Order < ApplicationRecord
         itm.listprice_amount = item['listPrice']['amount'] unless item['listPrice'].nil?
         itm.listprice_currency_code = item['listPrice']['currencyCode'] unless item['listPrice'].nil?
 
-        itm.save
+        debugger
+        if itm.valid?
+          @import_errors['Item Master'] = itm.errors.full_messages
+        else
+          itm.save
+        end
       end
     end
     Order.all
@@ -184,11 +196,15 @@ class Order < ApplicationRecord
       selling_party_address["addressLine2"] = order.selling_address_line2 unless order.selling_address_line2.nil?
       selling_party_address["addressLine3"] = order.selling_address_line3 unless order.selling_address_line3.nil?
       selling_party_address["city"] = order.selling_address_city unless order.selling_address_city.nil?
-      selling_party_address["county"] = order.selling_address_country_code unless order.selling_address_country_code.nil?
+      selling_party_address["county"] =
+        order.selling_address_country_code unless order.selling_address_country_code.nil?
       selling_party_address["district"] = order.selling_address_district unless order.selling_address_district.nil?
-      selling_party_address["stateOrRegion"] = order.selling_address_state_or_region unless order.selling_address_state_or_region.nil?
-      selling_party_address["postalCode"] = order.selling_address_postal_code unless order.selling_address_postal_code.nil?
-      selling_party_address["countryCode"] = order.selling_address_country_code unless order.selling_address_country_code.nil?
+      selling_party_address["stateOrRegion"] =
+        order.selling_address_state_or_region unless order.selling_address_state_or_region.nil?
+      selling_party_address["postalCode"] =
+        order.selling_address_postal_code unless order.selling_address_postal_code.nil?
+      selling_party_address["countryCode"] =
+        order.selling_address_country_code unless order.selling_address_country_code.nil?
       selling_party_address["phone"] = order.selling_address_phone unless order.selling_address_phone.nil?
       selling_party["address"] = selling_party_address unless selling_party_address.empty?
       order_body["sellingParty"] = selling_party unless selling_party.empty?
@@ -206,7 +222,8 @@ class Order < ApplicationRecord
         item_body["vendorProductIdentifier"] = item.vendor_product_identifier unless item.vendor_product_identifier.nil?
         ordered_quantity = {}
         ordered_quantity["amount"] = item.ordered_quantity_amount unless item.ordered_quantity_amount.nil?
-        ordered_quantity["unitOfMeasure"] = item.ordered_quantity_unit_of_measure unless item.ordered_quantity_unit_of_measure.nil?
+        ordered_quantity["unitOfMeasure"] =
+          item.ordered_quantity_unit_of_measure unless item.ordered_quantity_unit_of_measure.nil?
         ordered_quantity["unitSize"] = item.ordered_quantity_unit_size unless item.ordered_quantity_unit_size.nil?
         item_body["orderedQuantity"] = ordered_quantity unless ordered_quantity.empty?
         net_cost = {}
@@ -221,15 +238,21 @@ class Order < ApplicationRecord
         item_acknowledgements = []
         acknowledge_detail = {}
         if item.acks.exists?
-          acknowledge_detail['acknowledgementCode'] = item.acks.acknowledgement_code unless item.acks.acknowledgement_code.nil?
-          acknowledge_detail['scheduledShipDate'] = item.acks.scheduled_ship_date unless item.acks.scheduled_ship_date.nil?
-          acknowledge_detail['scheduledDeliveryDate'] = item.acks.scheduled_delivery_date unless item.acks.scheduled_delivery_date.nil?
+          acknowledge_detail['acknowledgementCode'] =
+            item.acks.acknowledgement_code unless item.acks.acknowledgement_code.nil?
+          acknowledge_detail['scheduledShipDate'] =
+            item.acks.scheduled_ship_date unless item.acks.scheduled_ship_date.nil?
+          acknowledge_detail['scheduledDeliveryDate'] =
+            item.acks.scheduled_delivery_date unless item.acks.scheduled_delivery_date.nil?
           acknowledge_detail['rejectionReason'] = item.acks.rejection_reason unless item.acks.rejection_reason.nil?
-          
+
           acknowledged_quantity = {}
-          acknowledged_quantity['amount'] = item.acks.acknowledged_quantity_amount unless item.acks.acknowledged_quantity_amount.nil?
-          acknowledged_quantity['unitOfMeasure'] = item.acks.acknowledged_quantity_unit_of_measure unless item.acks.acknowledged_quantity_unit_of_measure.nil?
-          acknowledged_quantity['unitSize'] = item.acks.acknowledged_quantity_unit_size unless item.acks.acknowledged_quantity_unit_size.nil?
+          acknowledged_quantity['amount'] =
+            item.acks.acknowledged_quantity_amount unless item.acks.acknowledged_quantity_amount.nil?
+          acknowledged_quantity['unitOfMeasure'] =
+            item.acks.acknowledged_quantity_unit_of_measure unless item.acks.acknowledged_quantity_unit_of_measure.nil?
+          acknowledged_quantity['unitSize'] =
+            item.acks.acknowledged_quantity_unit_size unless item.acks.acknowledged_quantity_unit_size.nil?
           acknowledge_detail['acknowledgedQuantity'] = acknowledged_quantity unless acknowledged_quantity.empty?
           item_acknowledgements << acknowledge_detail unless acknowledge_detail.empty?
         else
@@ -251,7 +274,7 @@ class Order < ApplicationRecord
             acknowledge_detail['rejectionReason'] = 'TemporarilyUnavailable'
           end
           item_acknowledgements << acknowledge_detail unless acknowledge_detail.empty?
-          
+
           # 以下はPhase2以降で実装予定
           # if # 在庫がオーダー数よりも少なかった場合
           #   # 配列itemAcknowledgementを1個追加
@@ -267,7 +290,7 @@ class Order < ApplicationRecord
           #     acknowledge_additional['acknowledgementCode'] = 'Rejected'
           #     acknowledge_additional['rejectionReason'] = 'ObsoleteProduct'
           #   end
-          #   acknowledged_additional_quantity['amount'] = item.ordered_quantity_amount - 
+          #   acknowledged_additional_quantity['amount'] = item.ordered_quantity_amount -
           #   acknowledged_additional_quantity['unitOfMeasure'] = item.acks.acknowledged_quantity_unit_of_measure
           #   acknowledged_additional_quantity['unitSize'] = item.acks.acknowledged_quantity_unit_size
           #   acknowledge_additional['acknowledgedQuantity'] = acknowledged_additional_quantity
@@ -285,9 +308,9 @@ class Order < ApplicationRecord
     end
 
     if Rails.env.development? || Rails.env.test?
-      params = {api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements'}
+      params = { api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements' }
     else
-      params = {api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements', req_body:}
+      params = { api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements', req_body: }
     end
     url_and_signature = Order.generate_url_and_sign(params)
     @url = url_and_signature[:url]
@@ -410,7 +433,7 @@ class Order < ApplicationRecord
       )
     end
 
-    {url:, signature:, body_values:}
+    { url:, signature:, body_values: }
   end
 
   def self.http_header

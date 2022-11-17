@@ -6,7 +6,7 @@ RSpec.describe "FetchAndAcknowledgePos", type: :system do
   end
 
   scenario 'a user get po data from Amazon and update orders and order items', vcr: true do
-    vendor = create(:vendor)
+    create(:vendor)
     user = create(:user)
 
     visit root_path
