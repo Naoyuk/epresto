@@ -5,12 +5,23 @@ class OrdersController < ApplicationController
     @search = Order.ransack(params[:q])
     @search.sorts = 'id desc' if @search.sorts.empty?
     @orders = @search.result.page(params[:page])
+    # TODO: 以下のオブジェクトをちゃんと条件ごとにセットする
+    @orders_acknowledged = @orders
+    @orders_rejected = @orders
     # TODO: POのインポート時のエラーをflashで表示したい
     # @import_errors.each do |k, v|
     #   v.each do |msg|
     #     flash.now[:k] = msg
     #   end
     # end
+    
+    respond_to do |format|
+      format.html
+      format.xlsx do
+        response.headers['Content-Disposition'] =
+          "attachment; filename=PO_#{@orders[0].po_date.strftime('%Y%m%d_%H%M%S')}.xlsx"
+      end
+    end
   end
 
   def show; end

@@ -54,6 +54,8 @@
       <%= f.hidden_field :po_numbers, :value => @orders.pluck(:po_number) %>
       <%= f.submit 'Acknowledge', class: "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm w-full sm:w-auto px-4 py-2 text-center" %>
     <% end %>
+
+    <%= link_to 'Download POs', orders_path(@orders_acknowledged, format: :xlsx), class: 'mx-4 py-2 px-4 bg-red-400' %>
   </div>
 
   <ul class="list-reset flex mt-2 border-b-2 border-blue-600">

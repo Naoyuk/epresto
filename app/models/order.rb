@@ -256,23 +256,49 @@ class Order < ApplicationRecord
           acknowledge_detail['acknowledgedQuantity'] = acknowledged_quantity unless acknowledged_quantity.empty?
           item_acknowledgements << acknowledge_detail unless acknowledge_detail.empty?
         else
+          ack = item.acks.build
+          ack.acknowledged_quantity_amount
+          ack.acknowledged_quantity_unit_of_measure
+          ack.acknowledged_quantity_unit_size
+          window = item.order.ship_window
+          window_from = window.slice(0, window.index('--'))
+          window_to = window.slice(window.index('--') + 2..window.size)
+          ack.scheduled_ship_date = window
+          if item.order.ship_to_address_state_or_region == 'BC'
+            # Shipping within B.C. = 3 days
+            ack.scheduled_delivery_date = (Time.now + 24 * 60 * 60 * 3).strftime('%Y-%m-%dT%H:%M:%SZ')
+          elsif item.order.ship_to_address_state_or_region == 'AB'
+            # Calgary = 1 week
+            ack.scheduled_delivery_date = (Time.now + 24 * 60 * 60 * 7).strftime('%Y-%m-%dT%H:%M:%SZ')
+          elsif item.order.ship_to_address_state_or_region == 'ON'
+            # Ontario = 3 weeks
+            ack.scheduled_delivery_date = (Time.now + 24 * 60 * 60 * 21).strftime('%Y-%m-%dT%H:%M:%SZ')
+          else
+            # Not given any directions
+          end
           if item.item.Current? && (item.netcost_amount == item.item.cost)
+            ack.acknowledgement_code = 'Accepted'
             acknowledge_detail['acknowledgementCode'] = 'Accepted'
           else
+            ack.acknowledgement_code = 'Rejected'
             acknowledge_detail['acknowledgementCode'] = 'Rejected'
           end
-          window = item.order.ship_window
           unless window.nil?
-            acknowledge_detail['scheduledShipDate'] = window.slice(0, window.index('--'))
-            acknowledge_detail['scheduledDeliveryDate'] = window.slice(window.index('--') + 2..window.size)
+            acknowledge_detail['scheduledShipDate'] = window_to
+            acknowledge_detail['scheduledDeliveryDate'] = ack.scheduled_delivery_date
           end
           if item.item.nil?
+            ack.rejection_reason = 'InvalidProductIdentifier'
             acknowledge_detail['rejectionReason'] = 'InvalidProductIdentifier'
           elsif item.item.Discontinued?
+            ack.rejection_reason = 'ObsoleteProduct'
             acknowledge_detail['rejectionReason'] = 'ObsoleteProduct'
           elsif item.item.cost != item.netcost_amount
+            ack.rejection_reason = 'TemporarilyUnavailable'
             acknowledge_detail['rejectionReason'] = 'TemporarilyUnavailable'
           end
+          debugger
+          ack.save
           item_acknowledgements << acknowledge_detail unless acknowledge_detail.empty?
 
           # 以下はPhase2以降で実装予定
