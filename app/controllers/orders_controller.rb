@@ -6,8 +6,8 @@ class OrdersController < ApplicationController
     @search.sorts = 'id desc' if @search.sorts.empty?
     @orders = @search.result.page(params[:page])
     # TODO: 以下のオブジェクトをちゃんと条件ごとにセットする
-    @orders_acknowledged = @orders
-    @orders_rejected = @orders
+    @orders_acknowledged = (Order.includes(order_items: :acks).references(:acks).where(:acks => {rejection_reason: 0})
+    @orders_rejected = (Order.includes(order_items: :acks).references(:acks).where(:acks => {rejection_reason: 2})
     # TODO: POのインポート時のエラーをflashで表示したい
     # @import_errors.each do |k, v|
     #   v.each do |msg|
