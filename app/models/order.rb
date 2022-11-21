@@ -4,6 +4,26 @@ class Order < ApplicationRecord
   belongs_to :vendor
   has_many :order_items
 
+  # definitions of enum
+  enum po_state: {
+    New: 0,
+    Acknowledgement: 1,
+    Close: 2
+  }
+
+  enum po_type: {
+    RegularOrder: 0,
+    ConsignedOrder: 1,
+    NewProductionIntroduction: 2
+  }
+
+  enum payment_method: {
+    Invoice: 0,
+    Consignment: 1,
+    CreditCard: 2,
+    Prepaid: 3
+  }
+
   # Class methods
   def self.api_credentials
     @aws_access_key = Rails.application.credentials[:AWS_ACCESS_KEY_ID]

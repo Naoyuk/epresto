@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_17_044006) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_21_200410) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -62,7 +62,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_17_044006) do
     t.string "amazon_product_identifier"
     t.string "vendor_product_identifier"
     t.integer "ordered_quantity_amount"
-    t.string "ordered_quantity_unit_of_measure"
+    t.integer "ordered_quantity_unit_of_measure"
     t.integer "ordered_quantity_unit_size"
     t.boolean "back_order_allowed"
     t.float "netcost_amount"
@@ -79,18 +79,18 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_17_044006) do
 
   create_table "orders", force: :cascade do |t|
     t.string "po_number"
-    t.string "po_state"
+    t.integer "po_state"
     t.datetime "po_date"
     t.datetime "po_changed_date"
     t.datetime "po_state_changed_date"
-    t.string "po_type"
+    t.integer "po_type"
     t.string "import_method_of_payment"
     t.string "import_international_commercial_terms"
     t.string "import_port_of_delivery"
     t.string "import_containers"
     t.text "import_shipping_instructions"
     t.string "deal_code"
-    t.string "payment_method"
+    t.integer "payment_method"
     t.string "buying_party_id"
     t.string "buying_address_name"
     t.string "buying_address_line1"
@@ -116,8 +116,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_17_044006) do
     t.string "bill_to_address_postal_code"
     t.string "bill_to_address_country_code"
     t.string "bill_to_address_phone"
-    t.string "tax_type"
-    t.string "tax_registration_number"
+    t.integer "buying_tax_type"
+    t.string "buying_tax_number"
     t.string "delivery_window"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -142,6 +142,15 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_17_044006) do
     t.string "bill_to_address_line3"
     t.string "bill_to_address_district"
     t.string "ship_window"
+    t.integer "purchase_order_status"
+    t.datetime "last_updated_date"
+    t.datetime "acknowledgement_date"
+    t.integer "selling_tax_type"
+    t.string "selling_tax_number"
+    t.integer "ship_to_tax_type"
+    t.string "ship_to_tax_number"
+    t.integer "bill_to_tax_type"
+    t.string "bill_to_tax_number"
     t.index ["vendor_id"], name: "index_orders_on_vendor_id"
   end
 
