@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_21_200410) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_22_021905) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -142,7 +142,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_21_200410) do
     t.string "bill_to_address_line3"
     t.string "bill_to_address_district"
     t.string "ship_window"
-    t.integer "purchase_order_status"
+    t.integer "po_status"
     t.datetime "last_updated_date"
     t.datetime "acknowledgement_date"
     t.integer "selling_tax_type"

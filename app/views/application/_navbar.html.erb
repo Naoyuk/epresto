@@ -9,7 +9,7 @@
       <%= link_to root_path, class: "flex items-center" do %>
         <span class='self-center text-xl font-semibold whitespace-nowrap'>ePresto Connection1</span>
       <% end %>
-      <%= link_to 'Purchase Order', orders_path, class: 'block py-2 pr-4 pl-3 text-white rounded hover:bg-gray-100 hover:text-blue-700' %>
+      <%= link_to 'Purchase Order', orders_path(new: true), class: 'block py-2 pr-4 pl-3 text-white rounded hover:bg-gray-100 hover:text-blue-700' %>
       <%= link_to 'Item Master', items_path, class: 'block py-2 pr-4 pl-3 text-white rounded hover:bg-gray-100 hover:text-blue-700' %>
       <%= link_to 'Profile', profile_path, class: 'block py-2 pr-4 pl-3 text-white rounded hover:bg-gray-100 hover:text-blue-700' %>
       <%=

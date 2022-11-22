@@ -144,11 +144,10 @@ class Order < ApplicationRecord
         end
       end
       unless order['orderDetails']['taxInfo'].nil?
-        odr.tax_type = order['orderDetails']['taxInfo']['taxType']
-        odr.tax_registration_number = order['orderDetails']['taxInfo']['taxRegistrationNumber']
+        odr.buying_tax_type = order['orderDetails']['taxInfo']['taxType']
+        odr.buying_tax_number = order['orderDetails']['taxInfo']['taxRegistrationNumber']
       end
 
-      debugger
       if odr.valid?
         odr.save
       else
@@ -175,11 +174,10 @@ class Order < ApplicationRecord
         itm.listprice_amount = item['listPrice']['amount'] unless item['listPrice'].nil?
         itm.listprice_currency_code = item['listPrice']['currencyCode'] unless item['listPrice'].nil?
 
-        debugger
         if itm.valid?
-          @import_errors['Item Master'] = itm.errors.full_messages
-        else
           itm.save
+        else
+          @import_errors['Item Master'] = itm.errors.full_messages
         end
       end
     end
@@ -205,7 +203,7 @@ class Order < ApplicationRecord
     acknowledgements = []
 
     orders.each do |order|
-      acknowledgement_date = Time.now.strftime('%Y-%m-%dT%H:%M:%SZ')
+      acknowledgement_date = Time.now.to_fs(:iso8601)
       order_body = {}
       order_body["purchaseOrderNumber"] = order.po_number unless order.po_number.nil?
       selling_party = {}
@@ -230,8 +228,8 @@ class Order < ApplicationRecord
       order_body["sellingParty"] = selling_party unless selling_party.empty?
       order_body["acknowledgementDate"] = acknowledgement_date
       tax_info = {}
-      tax_info["taxRegistrationType"] = order.tax_type unless order.tax_type.nil?
-      tax_info["taxRegistrationNumber"] = order.tax_registration_number unless order.tax_registration_number.nil?
+      tax_info["taxRegistrationType"] = order.buying_tax_type unless order.buying_tax_type.nil?
+      tax_info["taxRegistrationNumber"] = order.buying_tax_number unless order.buying_tax_number.nil?
       order_body["taxInfo"] = tax_info unless tax_info.empty?
 
       items = []
@@ -248,31 +246,31 @@ class Order < ApplicationRecord
         item_body["orderedQuantity"] = ordered_quantity unless ordered_quantity.empty?
         net_cost = {}
         net_cost["currencyCode"] = item.netcost_currency_code unless item.netcost_currency_code.nil?
-        net_cost["amount"] = item.netcost_amount unless item.netcost_amount.nil?
+        net_cost["amount"] = item.netcost_amount.to_s unless item.netcost_amount.nil?
         item_body['netCost'] = net_cost unless net_cost.empty?
         list_price = {}
         list_price["currencyCode"] = item.listprice_currency_code unless item.listprice_currency_code.nil?
-        list_price["amount"] = item.listprice_amount unless item.listprice_amount.nil?
+        list_price["amount"] = item.listprice_amount.to_s unless item.listprice_amount.nil?
         item_body["listPrice"] = list_price unless list_price.empty?
 
         item_acknowledgements = []
         acknowledge_detail = {}
         if item.acks.exists?
           acknowledge_detail['acknowledgementCode'] =
-            item.acks.acknowledgement_code unless item.acks.acknowledgement_code.nil?
+            item.acks[0].acknowledgement_code unless item.acks[0].acknowledgement_code.nil?
           acknowledge_detail['scheduledShipDate'] =
-            item.acks.scheduled_ship_date unless item.acks.scheduled_ship_date.nil?
+            item.acks[0].scheduled_ship_date.to_fs(:iso8601) unless item.acks[0].scheduled_ship_date.nil?
           acknowledge_detail['scheduledDeliveryDate'] =
-            item.acks.scheduled_delivery_date unless item.acks.scheduled_delivery_date.nil?
-          acknowledge_detail['rejectionReason'] = item.acks.rejection_reason unless item.acks.rejection_reason.nil?
+            item.acks[0].scheduled_delivery_date.to_fs(:iso8601) unless item.acks[0].scheduled_delivery_date.nil?
+          acknowledge_detail['rejectionReason'] = item.acks[0].rejection_reason unless item.acks[0].rejection_reason.nil?
 
           acknowledged_quantity = {}
           acknowledged_quantity['amount'] =
-            item.acks.acknowledged_quantity_amount unless item.acks.acknowledged_quantity_amount.nil?
+            item.acks[0].acknowledged_quantity_amount unless item.acks[0].acknowledged_quantity_amount.nil?
           acknowledged_quantity['unitOfMeasure'] =
-            item.acks.acknowledged_quantity_unit_of_measure unless item.acks.acknowledged_quantity_unit_of_measure.nil?
+            item.acks[0].acknowledged_quantity_unit_of_measure unless item.acks[0].acknowledged_quantity_unit_of_measure.nil?
           acknowledged_quantity['unitSize'] =
-            item.acks.acknowledged_quantity_unit_size unless item.acks.acknowledged_quantity_unit_size.nil?
+            item.acks[0].acknowledged_quantity_unit_size unless item.acks[0].acknowledged_quantity_unit_size.nil?
           acknowledge_detail['acknowledgedQuantity'] = acknowledged_quantity unless acknowledged_quantity.empty?
           item_acknowledgements << acknowledge_detail unless acknowledge_detail.empty?
         else
@@ -281,18 +279,18 @@ class Order < ApplicationRecord
           ack.acknowledged_quantity_unit_of_measure
           ack.acknowledged_quantity_unit_size
           window = item.order.ship_window
-          window_from = window.slice(0, window.index('--'))
-          window_to = window.slice(window.index('--') + 2..window.size)
+          # window_from = window.slice(0, window.index('--'))
+          window_to = window&.slice(window.index('--') + 2..window.size).to_fs(:iso8601)
           ack.scheduled_ship_date = window
           if item.order.ship_to_address_state_or_region == 'BC'
             # Shipping within B.C. = 3 days
-            ack.scheduled_delivery_date = (Time.now + 24 * 60 * 60 * 3).strftime('%Y-%m-%dT%H:%M:%SZ')
+            ack.scheduled_delivery_date = (Time.now + 24 * 60 * 60 * 3).to_fs(:iso8601)
           elsif item.order.ship_to_address_state_or_region == 'AB'
             # Calgary = 1 week
-            ack.scheduled_delivery_date = (Time.now + 24 * 60 * 60 * 7).strftime('%Y-%m-%dT%H:%M:%SZ')
+            ack.scheduled_delivery_date = (Time.now + 24 * 60 * 60 * 7).to_fs(:iso8601)
           elsif item.order.ship_to_address_state_or_region == 'ON'
             # Ontario = 3 weeks
-            ack.scheduled_delivery_date = (Time.now + 24 * 60 * 60 * 21).strftime('%Y-%m-%dT%H:%M:%SZ')
+            ack.scheduled_delivery_date = (Time.now + 24 * 60 * 60 * 21).to_fs(:iso8601)
           else
             # Not given any directions
           end
@@ -317,7 +315,6 @@ class Order < ApplicationRecord
             ack.rejection_reason = 'TemporarilyUnavailable'
             acknowledge_detail['rejectionReason'] = 'TemporarilyUnavailable'
           end
-          debugger
           ack.save
           item_acknowledgements << acknowledge_detail unless acknowledge_detail.empty?
 
@@ -354,7 +351,8 @@ class Order < ApplicationRecord
     end
 
     if Rails.env.development? || Rails.env.test?
-      params = { api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements' }
+      # params = { api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements' }
+      params = { api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements', req_body: }
     else
       params = { api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements', req_body: }
     end
@@ -400,8 +398,8 @@ class Order < ApplicationRecord
         end_date = '2019-09-21T00:00:00'.gsub(':', '%3A')
         limit = 1
       else
-        start_date = (created_after.to_date - 24 * 60 * 60 * 7).strftime('%Y-%m-%dT%H:%M:%S').gsub(':', '%3A')
-        end_date = created_before.to_date.strftime('%Y-%m-%dT%H:%M:%S').gsub(':', '%3A')
+        start_date = (created_after.to_date - 24 * 60 * 60 * 7).to_fs(:iso8601).gsub(':', '%3A')
+        end_date = created_before.to_date.to_fs(:iso8601).gsub.(':', '%3A')
         limit = 54
       end
       method = 'GET'
@@ -414,45 +412,46 @@ class Order < ApplicationRecord
       query = Order.formatted_query
       url = URI("#{endpoint}#{path}?#{query}")
     elsif params[:api] == 'acknowledgement'
-      if (Rails.env.development? || Rails.env.test?)
-        # acknowledgement_date = '2021-03-12T17:35:26.308Z'.gsub(':', '%3A')
-        body_values = {
-          "acknowledgements": [
-            {
-              "purchaseOrderNumber": "TestOrder202",
-              "sellingParty": {
-                "partyId": "API01"
-              },
-              "acknowledgementDate": "2021-03-12T17:35:26.308Z",
-              "items": [
-                {
-                  "vendorProductIdentifier": "028877454078",
-                  "orderedQuantity": {
-                    "amount": 10
-                  },
-                  "netCost": {
-                    "amount": "10.2"
-                  },
-                  "itemAcknowledgements": [
-                    {
-                      "acknowledgementCode": "Accepted",
-                      "acknowledgedQuantity": {
-                        "amount": 10
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      else
+      # if (Rails.env.development? || Rails.env.test?)
+      #   # acknowledgement_date = '2021-03-12T17:35:26.308Z'.gsub(':', '%3A')
+      #   body_values = {
+      #     "acknowledgements": [
+      #       {
+      #         "purchaseOrderNumber": "TestOrder202",
+      #         "sellingParty": {
+      #           "partyId": "API01"
+      #         },
+      #         "acknowledgementDate": "2021-03-12T17:35:26.308Z",
+      #         "items": [
+      #           {
+      #             "vendorProductIdentifier": "028877454078",
+      #             "orderedQuantity": {
+      #               "amount": 10
+      #             },
+      #             "netCost": {
+      #               "amount": "10.2"
+      #             },
+      #             "itemAcknowledgements": [
+      #               {
+      #                 "acknowledgementCode": "Accepted",
+      #                 "acknowledgedQuantity": {
+      #                   "amount": 10
+      #                 }
+      #               }
+      #             ]
+      #           }
+      #         ]
+      #       }
+      #     ]
+      #   }
+      # else
 
-        body_values = params[:req_body]
-        # po_number = params[:po_number]
-        # selling_party = params[:selling_party]
-        # items = params[:items]
-      end
+      #   body_values = params[:req_body]
+      #   # po_number = params[:po_number]
+      #   # selling_party = params[:selling_party]
+      #   # items = params[:items]
+      # end
+      body_values = params[:req_body]
       path = '/vendor/orders/v1/acknowledgements'
       method = 'POST'
       url = URI("#{endpoint}#{path}")

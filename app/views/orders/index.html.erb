@@ -55,21 +55,23 @@
       <%= f.submit 'Acknowledge', class: "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm w-full sm:w-auto px-4 py-2 text-center" %>
     <% end %>
 
-    <%= link_to 'Download POs', orders_path(@orders_acknowledged, format: :xlsx), class: 'mx-4 py-2 px-4 bg-red-400' %>
+    <div class='flex mt-1'>
+      <%= link_to 'Download POs', orders_path(@orders_acknowledged, format: :xlsx), class: 'mx-4 py-2 px-4 bg-sky-400 text-white rounded' %>
+    </div>
   </div>
 
   <ul class="list-reset flex mt-2 border-b-2 border-blue-600">
     <li class="mr-1">
-      <a class="bg-gray-200 inline-block py-2 px-4 text-grey-light font-semibold rounded-t-lg" href="#">New</a>
+      <%= tab_link_to orders_path(new: true), 'New' %>
     </li>
     <li class="-mb-px mr-1">
-      <a class="bg-blue-600 text-white inline-block border-l border-t border-r border-blue-600 rounded-t-lg py-2 px-4 text-blue-dark font-semibold" href="#">Acknowledged</a>
+      <%= tab_link_to orders_path(acknowledged: true), 'Acknowledged' %>
     </li>
     <li class="mr-1">
-      <a class="bg-gray-200 inline-block py-2 px-4 text-grey-light font-semibold rounded-t-lg" href="#">Rejected</a>
+      <%= tab_link_to orders_path(rejected: true), 'Rejected' %>
     </li>
     <li class="mr-1">
-      <a class="bg-gray-200 inline-block py-2 px-4 text-grey-light font-semibold rounded-t-lg" href="#">Closed</a>
+      <%= tab_link_to orders_path(closed: true), 'Closed' %>
     </li>
   </ul>
 
