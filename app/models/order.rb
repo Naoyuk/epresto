@@ -201,6 +201,7 @@ class Order < ApplicationRecord
 
     req_body = {}
     acknowledgements = []
+    price_diff_items = []
 
     orders.each do |order|
       acknowledgement_date = Time.now.to_fs(:iso8601)
@@ -262,7 +263,8 @@ class Order < ApplicationRecord
             item.acks[0].scheduled_ship_date.to_fs(:iso8601) unless item.acks[0].scheduled_ship_date.nil?
           acknowledge_detail['scheduledDeliveryDate'] =
             item.acks[0].scheduled_delivery_date.to_fs(:iso8601) unless item.acks[0].scheduled_delivery_date.nil?
-          acknowledge_detail['rejectionReason'] = item.acks[0].rejection_reason unless item.acks[0].rejection_reason.nil?
+          acknowledge_detail['rejectionReason'] =
+            item.acks[0].rejection_reason unless item.acks[0].rejection_reason.nil?
 
           acknowledged_quantity = {}
           acknowledged_quantity['amount'] =
@@ -280,7 +282,7 @@ class Order < ApplicationRecord
           ack.acknowledged_quantity_unit_size
           window = item.order.ship_window
           # window_from = window.slice(0, window.index('--'))
-          window_to = window&.slice(window.index('--') + 2..window.size).to_fs(:iso8601)
+          window_to = window&.slice(window.index('--') + 2..window.size)
           ack.scheduled_ship_date = window
           if item.order.ship_to_address_state_or_region == 'BC'
             # Shipping within B.C. = 3 days
@@ -294,15 +296,19 @@ class Order < ApplicationRecord
           else
             # Not given any directions
           end
-          if item.item.Current? && (item.netcost_amount == item.item.cost)
+          if item.item.Current?
             ack.acknowledgement_code = 'Accepted'
             acknowledge_detail['acknowledgementCode'] = 'Accepted'
+            unless item.netcost_amount == item.item.cost
+              @notice_title ||= 'Prices for the following items differ from Item Master prices.'
+              price_diff_items << "\nASIN: #{item.amazon_product_identifier}, PO Price: #{item.netcost_amount}, Item Master Price: #{item.item.cost}"
+            end
           else
             ack.acknowledgement_code = 'Rejected'
             acknowledge_detail['acknowledgementCode'] = 'Rejected'
           end
           unless window.nil?
-            acknowledge_detail['scheduledShipDate'] = window_to
+            acknowledge_detail['scheduledShipDate'] = window_to.to_fs(:iso8601)
             acknowledge_detail['scheduledDeliveryDate'] = ack.scheduled_delivery_date
           end
           if item.item.nil?
@@ -345,13 +351,15 @@ class Order < ApplicationRecord
 
         items << item_body
       end
+      unless @notice_title.nil?
+        @cost_difference_notice = @notice_title + "\n" + price_diff_items.join(',')
+      end
       order_body['items'] = items
       acknowledgements << order_body
       req_body["acknowledgements"] = acknowledgements
     end
 
     if Rails.env.development? || Rails.env.test?
-      # params = { api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements' }
       params = { api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements', req_body: }
     else
       params = { api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements', req_body: }
@@ -367,6 +375,7 @@ class Order < ApplicationRecord
     Order.http_header
 
     Order.send_http_request
+    @cost_difference_notice
   end
 
   require 'uri'
@@ -412,45 +421,6 @@ class Order < ApplicationRecord
       query = Order.formatted_query
       url = URI("#{endpoint}#{path}?#{query}")
     elsif params[:api] == 'acknowledgement'
-      # if (Rails.env.development? || Rails.env.test?)
-      #   # acknowledgement_date = '2021-03-12T17:35:26.308Z'.gsub(':', '%3A')
-      #   body_values = {
-      #     "acknowledgements": [
-      #       {
-      #         "purchaseOrderNumber": "TestOrder202",
-      #         "sellingParty": {
-      #           "partyId": "API01"
-      #         },
-      #         "acknowledgementDate": "2021-03-12T17:35:26.308Z",
-      #         "items": [
-      #           {
-      #             "vendorProductIdentifier": "028877454078",
-      #             "orderedQuantity": {
-      #               "amount": 10
-      #             },
-      #             "netCost": {
-      #               "amount": "10.2"
-      #             },
-      #             "itemAcknowledgements": [
-      #               {
-      #                 "acknowledgementCode": "Accepted",
-      #                 "acknowledgedQuantity": {
-      #                   "amount": 10
-      #                 }
-      #               }
-      #             ]
-      #           }
-      #         ]
-      #       }
-      #     ]
-      #   }
-      # else
-
-      #   body_values = params[:req_body]
-      #   # po_number = params[:po_number]
-      #   # selling_party = params[:selling_party]
-      #   # items = params[:items]
-      # end
       body_values = params[:req_body]
       path = '/vendor/orders/v1/acknowledgements'
       method = 'POST'

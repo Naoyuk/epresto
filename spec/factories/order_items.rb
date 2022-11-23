@@ -6,7 +6,7 @@ FactoryBot.define do
     amazon_product_identifier { 'MyString' }
     vendor_product_identifier { 'MyString' }
     ordered_quantity_amount { 1 }
-    ordered_quantity_unit_of_measure { 'MyString' }
+    ordered_quantity_unit_of_measure { 1 }
     ordered_quantity_unit_size { 1 }
     back_order_allowed { false }
     netcost_amount { 1.5 }

@@ -64,10 +64,31 @@ order_header = [
   'BillToTaxRegistrationType',
   'BillToTaxRegistrationNumber',
 ]
-  
+
+order_item_header = [
+  'ItemSequentialNumber',
+  'ASIN',
+  'VendorProductIdentifier',
+  'OrderedQuantityAmount',
+  'OrderedQuantityUnitOfMeasure',
+  'OrderedQuantityUnitSize',
+  'BackOrderAllowed',
+  'NetcostAmount',
+  'NetcostCurrencyCode',
+  'ListpriceAmount',
+  'ListpriceCurrencyCode',
+  'AcknowledgementCode',
+  'AcknowledgedQuantityAmount',
+  'AcknowledgedQuantityUnitOfMeasure',
+  'AcknowledgedQuantityUnitSize',
+  'ScheduledShipDate',
+  'ScheduledDeliveryDate',
+  'RejectionReason'
+]
+
 wb.add_worksheet(name: 'Purchase Orders') do |sheet|
   sheet.add_row(order_header)
-  @orders_acknowledged.each do |order|
+  @orders.each do |order|
     sheet.add_row [
       order.po_number,
       order.po_state,
@@ -137,30 +158,9 @@ wb.add_worksheet(name: 'Purchase Orders') do |sheet|
   end
 end
 
-order_item_header = [
-  'ItemSequentialNumber',
-  'ASIN',
-  'VendorProductIdentifier',
-  'OrderedQuantityAmount',
-  'OrderedQuantityUnitOfMeasure',
-  'OrderedQuantityUnitSize',
-  'BackOrderAllowed',
-  'NetcostAmount',
-  'NetcostCurrencyCode',
-  'ListpriceAmount',
-  'ListpriceCurrencyCode',
-  'AcknowledgementCode',
-  'AcknowledgedQuantityAmount',
-  'AcknowledgedQuantityUnitOfMeasure',
-  'AcknowledgedQuantityUnitSize',
-  'ScheduledShipDate',
-  'ScheduledDeliveryDate',
-  'RejectionReason'
-  ]
-
 wb.add_worksheet(name: 'Order Items') do |sheet|
   sheet.add_row(order_item_header)
-  @orders_acknowledged.each do |order|
+  @orders.each do |order|
     order.order_items.each do |item|
       sheet.add_row [
         item.item_seq_number,

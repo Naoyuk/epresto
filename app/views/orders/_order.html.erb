@@ -59,13 +59,13 @@
           <td class='px-2 border-b border-l text-center'><%= item.back_order_allowed %></td>
           <td class='px-2 border-b border-l text-center'><%= item.netcost_amount %> <%= item.netcost_currency_code %></td>
           <td class='px-2 border-b border-l text-center'><%= item.listprice_amount %> <%= item.listprice_currency_code %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.acks[0].acknowledgement_code %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.acks[0].acknowledged_quantity_amount %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.acks[0].acknowledged_quantity_unit_of_measure %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.acks[0].acknowledged_quantity_unit_size %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.acks[0].scheduled_ship_date&.to_fs(:dat) %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.acks[0].scheduled_delivery_date&.to_fs(:dat) %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.acks[0].rejection_reason %></td>
+          <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledgement_code %></td>
+          <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledged_quantity_amount %></td>
+          <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledged_quantity_unit_of_measure %></td>
+          <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledged_quantity_unit_size %></td>
+          <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.scheduled_ship_date&.to_fs(:dat) %></td>
+          <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.scheduled_delivery_date&.to_fs(:dat) %></td>
+          <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.rejection_reason %></td>
         </tr>
       <% end %>
     </table>

@@ -36,7 +36,6 @@ RSpec.describe 'Users', type: :request do
     #         password: 'password',
     #         password_confirmation: 'password'
     #       }
-    #       debugger
     #     }.to change(User, :count).by(1)
     #   end
     # end

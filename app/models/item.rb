@@ -34,12 +34,10 @@ class Item < ApplicationRecord
         item_attributes = item.attributes.reject do |key|
           ['id', 'created_at', 'updated_at'].include?(key)
         end
-        # debugger
         if item_to_update_attributes != item_attributes
           item_to_update.update(item_params)
         end
       else
-        # debugger
         item.save
       end
     end
