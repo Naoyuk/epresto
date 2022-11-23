@@ -34,8 +34,10 @@
         <th class='px-4 border-b border-l'>Unit</th>
         <th class='px-4 border-b border-l'>Unit Size</th>
         <th class='px-4 border-b border-l'>Back order</th>
-        <th class='px-4 border-b border-l'>NetCost</th>
-        <th class='px-4 border-b border-l'>ListPrice</th>
+        <th class='px-4 border-b border-l'>Net Cost</th>
+        <th class='px-4 border-b border-l'>List Price</th>
+        <th class='px-4 border-b border-l'>Item Price</th>
+        <th class='px-4 border-b border-l'>Item Availability</th>
         <th class='px-4 border-b border-l'>Code</th>
         <th class='px-4 border-b border-l'>Amount</th>
         <th class='px-4 border-b border-l'>Unit</th>
@@ -59,6 +61,8 @@
           <td class='px-2 border-b border-l text-center'><%= item.back_order_allowed %></td>
           <td class='px-2 border-b border-l text-center'><%= item.netcost_amount %> <%= item.netcost_currency_code %></td>
           <td class='px-2 border-b border-l text-center'><%= item.listprice_amount %> <%= item.listprice_currency_code %></td>
+          <td class='px-2 border-b border-l text-center'><%= item.item.cost %></td>
+          <td class='px-2 border-b border-l text-center'><%= item.item.availability_status %></td>
           <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledgement_code %></td>
           <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledged_quantity_amount %></td>
           <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledged_quantity_unit_of_measure %></td>

@@ -277,9 +277,9 @@ class Order < ApplicationRecord
           item_acknowledgements << acknowledge_detail unless acknowledge_detail.empty?
         else
           ack = item.acks.build
-          ack.acknowledged_quantity_amount
-          ack.acknowledged_quantity_unit_of_measure
-          ack.acknowledged_quantity_unit_size
+          ack.acknowledged_quantity_amount = item.ordered_quantity_amount
+          ack.acknowledged_quantity_unit_of_measure = item.ordered_quantity_unit_of_measure
+          ack.acknowledged_quantity_unit_size = item.ordered_quantity_unit_size
           window = item.order.ship_window
           # window_from = window.slice(0, window.index('--'))
           window_to = window&.slice(window.index('--') + 2..window.size)
@@ -299,9 +299,9 @@ class Order < ApplicationRecord
           if item.item.Current?
             ack.acknowledgement_code = 'Accepted'
             acknowledge_detail['acknowledgementCode'] = 'Accepted'
-            unless item.netcost_amount == item.item.cost
+            unless item.listprice_amount == item.item.cost
               @notice_title ||= 'Prices for the following items differ from Item Master prices.'
-              price_diff_items << "\nASIN: #{item.amazon_product_identifier}, PO Price: #{item.netcost_amount}, Item Master Price: #{item.item.cost}"
+              price_diff_items << "\nASIN: #{item.amazon_product_identifier}, PO Price: #{item.listprice_amount}, Item Master Price: #{item.item.cost}"
             end
           else
             ack.acknowledgement_code = 'Rejected'
@@ -317,7 +317,7 @@ class Order < ApplicationRecord
           elsif item.item.Discontinued?
             ack.rejection_reason = 'ObsoleteProduct'
             acknowledge_detail['rejectionReason'] = 'ObsoleteProduct'
-          elsif item.item.cost != item.netcost_amount
+          elsif item.item.cost != item.listprice_amount
             ack.rejection_reason = 'TemporarilyUnavailable'
             acknowledge_detail['rejectionReason'] = 'TemporarilyUnavailable'
           end
@@ -329,7 +329,7 @@ class Order < ApplicationRecord
           #   # 配列itemAcknowledgementを1個追加
           #   acknowledge_additional = acknowledge_detail
           #   acknowledged_additional_quantity = {}
-          #   if item.item.Current? && (item.netcost_amount == item.item.cost)
+          #   if item.item.Current? && (item.listprice_amount == item.item.cost)
           #     acknowledge_additional['acknowledgementCode'] = 'Accepted'
           #   elsif # バックオーダーの条件
           #     acknowledge_additional['acknowledgementCode'] = 'Backordered'
@@ -351,7 +351,7 @@ class Order < ApplicationRecord
 
         items << item_body
       end
-      unless @notice_title.nil?
+      unless price_diff_items.size == 0
         @cost_difference_notice = @notice_title + "\n" + price_diff_items.join(',')
       end
       order_body['items'] = items

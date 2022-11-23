@@ -39,7 +39,6 @@ class OrdersController < ApplicationController
     # end
 
     respond_to do |format|
-      flash.now[:alert] = @cost_difference_notice
       format.html
       format.xlsx do
         response.headers['Content-Disposition'] =
@@ -71,7 +70,7 @@ class OrdersController < ApplicationController
   def acknowledge
     @cost_difference_notice = Order.acknowledge(params[:po_numbers])
     unless @cost_difference_notice.nil?
-      redirect_to orders_path, :notice => @cost_difference_notice.gsub("\n", '<br>')
+      redirect_to orders_path, :alert => @cost_difference_notice.gsub("\n", '<br>')
     else
       redirect_to orders_path
     end
