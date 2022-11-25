@@ -62,7 +62,7 @@ class OrdersController < ApplicationController
         error_message = nil
       else
         errors_formatted = []
-        errors.each{ |error| errors_formatted << "Error Code: #{error[:code]}, #{error[:desc]}" }
+        errors.each { |error| errors_formatted << "Error Code: #{error[:code]}, #{error[:desc]}" }
         error_message = "#{errors_formatted.join('<br>')}<br>Contact to an administrator."
       end
       redirect_to orders_path, alert: error_message
