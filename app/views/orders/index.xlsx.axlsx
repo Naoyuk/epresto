@@ -174,13 +174,13 @@ wb.add_worksheet(name: 'Order Items') do |sheet|
         item.netcost_currency_code,
         item.listprice_amount,
         item.listprice_currency_code,
-        item.acks[0].acknowledgement_code,
-        item.acks[0].acknowledged_quantity_amount,
-        item.acks[0].acknowledged_quantity_unit_of_measure,
-        item.acks[0].acknowledged_quantity_unit_size,
-        item.acks[0].scheduled_ship_date,
-        item.acks[0].scheduled_delivery_date,
-        item.acks[0].rejection_reason
+        item.acks[0]&.acknowledgement_code,
+        item.acks[0]&.acknowledged_quantity_amount,
+        item.acks[0]&.acknowledged_quantity_unit_of_measure,
+        item.acks[0]&.acknowledged_quantity_unit_size,
+        item.acks[0]&.scheduled_ship_date,
+        item.acks[0]&.scheduled_delivery_date,
+        item.acks[0]&.rejection_reason
       ]
     end
   end
