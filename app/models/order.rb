@@ -227,9 +227,132 @@ class Order < ApplicationRecord
   end
 
   def self.acknowledge(po_numbers)
+    # Acknowledgeする対象のPOを検索
     order_ids = Order.where(po_number: po_numbers.split(' ')).ids
     orders = Order.where(id: order_ids)
 
+    # HTTPリクエストのbodyのJSONを作る
+    req_body = Order.create_request_body(orders)
+
+    params = { api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements', req_body: }
+    url_and_signature = Order.generate_url_and_sign(params)
+
+    request_params = {
+      method: 'post',
+      content_type: 'application/json',
+      url: url_and_signature[:url],
+      signature: url_and_signature[:signature],
+      body: JSON.dump(url_and_signature[:body_values])
+    }
+
+    debugger
+    begin
+      response = Order.send_http_request(request_params)
+    rescue => e
+      puts e
+    end
+    JSON.parse(response.body)
+    # @cost_difference_notice
+  end
+
+  require 'uri'
+  require 'net/http'
+
+  module Net::HTTPHeader
+    def capitalize(name)
+      name
+    end
+    private :capitalize
+  end
+
+  def self.generate_url_and_sign(params)
+    # POs: params include :api, :path
+    # Acknowledgement: params include :api, :po_number, :req_body
+
+    if (Rails.env.development? || Rails.env.test?)
+      host = 'sandbox.sellingpartnerapi-na.amazon.com'
+    else
+      host = 'sellingpartnerapi-na.amazon.com'
+    end
+    service = 'execute-api'
+    region = 'us-east-1'
+    endpoint = "https://#{host}"
+    path = params[:path]
+    if params[:api] == 'pos'
+      if (Rails.env.development? || Rails.env.test?)
+        start_date = '2019-08-20T14:00:00'.gsub(':', '%3A')
+        end_date = '2019-09-21T00:00:00'.gsub(':', '%3A')
+        limit = 1
+      else
+        start_date = (created_after.to_date - 24 * 60 * 60 * 7).to_fs(:iso8601).gsub(':', '%3A')
+        end_date = created_before.to_date.to_fs(:iso8601).gsub.(':', '%3A')
+        limit = 54
+      end
+      method = 'GET'
+      @query_hash = {
+        'limit' => limit,
+        'createdAfter' => start_date,
+        'createdBefor' => end_date,
+        'sortOrder' => 'DESC'
+      }
+      query = Order.formatted_query
+      url = URI("#{endpoint}#{path}?#{query}")
+    elsif params[:api] == 'acknowledgement'
+      body_values = params[:req_body]
+      path = '/vendor/orders/v1/acknowledgements'
+      method = 'POST'
+      url = URI("#{endpoint}#{path}")
+    end
+    Order.api_credentials
+
+    signer = Aws::Sigv4::Signer.new(
+      service: service,
+      region: region,
+      access_key_id: @iam_access_key_id,
+      secret_access_key: @iam_secret_access_key
+    )
+
+    if params[:api] == 'pos'
+      signature = signer.sign_request(
+        http_method: method,
+        url: url
+      )
+    elsif params[:api] == 'acknowledgement'
+      signature = signer.sign_request(
+        http_method: method,
+        url: url,
+        body: JSON.dump(body_values)
+      )
+    end
+
+    { url:, signature:, body_values: }
+  end
+
+  def self.send_http_request(params)
+    # params[:method]
+    # params[:signature]
+    # params[:url]
+    # params[:content_type]
+    # params[:body]
+    # return SP-API response(JSON)
+
+    req = Object.const_get("Net::HTTP::#{params[:method].capitalize}").new(params[:url])
+    req['host'] = params[:signature].headers['host']
+    req['x-amz-access-token'] = @access_token
+    req['user-agent'] = 'ePresto Connection1/1.0 (Language=Ruby/3.1.2)'
+    req['x-amz-date'] = params[:signature].headers['x-amz-date']
+    req['x-amz-content-sha256'] = params[:signature].headers['x-amz-content-sha256']
+    req['Authorization'] = params[:signature].headers['authorization']
+    req['Content-Type'] = params[:content_type]
+    req.body = params[:body] unless params[:body].nil?
+
+    https = Net::HTTP.new(params[:url].host, params[:url].port)
+    https.use_ssl = true
+    https.request(req)
+  end
+
+  def self.create_request_body(orders)
+    # return 
     req_body = {}
     acknowledgements = []
     price_diff_items = []
@@ -330,10 +453,11 @@ class Order < ApplicationRecord
           if item.item.Current?
             ack.acknowledgement_code = 'Accepted'
             acknowledge_detail['acknowledgementCode'] = 'Accepted'
-            unless item.listprice_amount == item.item.cost
-              @notice_title ||= 'Prices for the following items differ from Item Master prices.'
-              price_diff_items << "\nASIN: #{item.amazon_product_identifier}, PO Price: #{item.listprice_amount}, Item Master Price: #{item.item.cost}"
-            end
+            # TODO: Phase2以降の実装内容。Price違いの警告
+            # unless item.listprice_amount == item.item.cost
+            #   @notice_title ||= 'Prices for the following items differ from Item Master prices.'
+            #   price_diff_items << "\nASIN: #{item.amazon_product_identifier}, PO Price: #{item.listprice_amount}, Item Master Price: #{item.item.cost}"
+            # end
           else
             ack.acknowledgement_code = 'Rejected'
             acknowledge_detail['acknowledgementCode'] = 'Rejected'
@@ -348,14 +472,15 @@ class Order < ApplicationRecord
           elsif item.item.Discontinued?
             ack.rejection_reason = 'ObsoleteProduct'
             acknowledge_detail['rejectionReason'] = 'ObsoleteProduct'
-          elsif item.item.cost != item.listprice_amount
-            ack.rejection_reason = 'TemporarilyUnavailable'
-            acknowledge_detail['rejectionReason'] = 'TemporarilyUnavailable'
+          # elsif item.item.cost != item.listprice_amount
+          #   # TODO: Phase2以降でこの条件は実装予定
+          #   ack.rejection_reason = 'TemporarilyUnavailable'
+          #   acknowledge_detail['rejectionReason'] = 'TemporarilyUnavailable'
           end
           ack.save
           item_acknowledgements << acknowledge_detail unless acknowledge_detail.empty?
 
-          # 以下はPhase2以降で実装予定
+          # TODO: 以下はPhase2以降で実装予定
           # if # 在庫がオーダー数よりも少なかった場合
           #   # 配列itemAcknowledgementを1個追加
           #   acknowledge_additional = acknowledge_detail
@@ -382,128 +507,15 @@ class Order < ApplicationRecord
 
         items << item_body
       end
-      unless price_diff_items.size == 0
-        @cost_difference_notice = @notice_title + "\n" + price_diff_items.join(',')
-      end
+      # TODO: これもPahse2以降で実装予定のPrice違いの警告
+      # unless price_diff_items.size == 0
+      #   @cost_difference_notice = @notice_title + "\n" + price_diff_items.join(',')
+      # end
       order_body['items'] = items
       acknowledgements << order_body
       req_body["acknowledgements"] = acknowledgements
     end
-
-    if Rails.env.development? || Rails.env.test?
-      params = { api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements', req_body: }
-    else
-      params = { api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements', req_body: }
-    end
-    url_and_signature = Order.generate_url_and_sign(params)
-
-    request_params = {
-      method: 'post',
-      content_type: 'application/json',
-      url: url_and_signature[:url],
-      signature: url_and_signature[:signature],
-      body: JSON.dump(url_and_signature[:body_values])
-    }
-
-    response = Order.send_http_request(request_params)
-    JSON.parse(response.body)
-    @cost_difference_notice
-  end
-
-  require 'uri'
-  require 'net/http'
-
-  module Net::HTTPHeader
-    def capitalize(name)
-      name
-    end
-    private :capitalize
-  end
-
-  def self.generate_url_and_sign(params)
-    # POs: params include :api, :path
-    # Acknowledgement: params include :api, :po_number, :req_body
-
-    if (Rails.env.development? || Rails.env.test?)
-      host = 'sandbox.sellingpartnerapi-na.amazon.com'
-    else
-      host = 'sellingpartnerapi-na.amazon.com'
-    end
-    service = 'execute-api'
-    region = 'us-east-1'
-    endpoint = "https://#{host}"
-    path = params[:path]
-    if params[:api] == 'pos'
-      if (Rails.env.development? || Rails.env.test?)
-        start_date = '2019-08-20T14:00:00'.gsub(':', '%3A')
-        end_date = '2019-09-21T00:00:00'.gsub(':', '%3A')
-        limit = 1
-      else
-        start_date = (created_after.to_date - 24 * 60 * 60 * 7).to_fs(:iso8601).gsub(':', '%3A')
-        end_date = created_before.to_date.to_fs(:iso8601).gsub.(':', '%3A')
-        limit = 54
-      end
-      method = 'GET'
-      @query_hash = {
-        'limit' => limit,
-        'createdAfter' => start_date,
-        'createdBefor' => end_date,
-        'sortOrder' => 'DESC'
-      }
-      query = Order.formatted_query
-      url = URI("#{endpoint}#{path}?#{query}")
-    elsif params[:api] == 'acknowledgement'
-      body_values = params[:req_body]
-      path = '/vendor/orders/v1/acknowledgements'
-      method = 'POST'
-      url = URI("#{endpoint}#{path}")
-    end
-    Order.api_credentials
-
-    signer = Aws::Sigv4::Signer.new(
-      service: service,
-      region: region,
-      access_key_id: @iam_access_key_id,
-      secret_access_key: @iam_secret_access_key
-    )
-
-    if params[:api] == 'pos'
-      signature = signer.sign_request(
-        http_method: method,
-        url: url
-      )
-    elsif params[:api] == 'acknowledgement'
-      signature = signer.sign_request(
-        http_method: method,
-        url: url,
-        body: JSON.dump(body_values)
-      )
-    end
-
-    { url:, signature:, body_values: }
-  end
-
-  def self.send_http_request(params)
-    # params[:method]
-    # params[:signature]
-    # params[:url]
-    # params[:content_type]
-    # params[:body]
-    # return SP-API response(JSON)
-
-    req = Object.const_get("Net::HTTP::#{params[:method].capitalize}").new(params[:url])
-    req['host'] = params[:signature].headers['host']
-    req['x-amz-access-token'] = @access_token
-    req['user-agent'] = 'ePresto Connection1/1.0 (Language=Ruby/3.1.2)'
-    req['x-amz-date'] = params[:signature].headers['x-amz-date']
-    req['x-amz-content-sha256'] = params[:signature].headers['x-amz-content-sha256']
-    req['Authorization'] = params[:signature].headers['authorization']
-    req['Content-Type'] = params[:content_type]
-    req.body = params[:body] unless params[:body].nil?
-
-    https = Net::HTTP.new(params[:url].host, params[:url].port)
-    https.use_ssl = true
-    https.request(req)
+    req_body["acknowledgements"]
   end
 
   def self.formatted_query
