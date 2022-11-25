@@ -53,19 +53,48 @@ class Order < ApplicationRecord
   end
 
   def self.import_po(vendor_id, created_after, created_before)
-    # エラーメッセージ
-    @import_errors = {}
     # AmazonからPOを取得
-    get_pos_params = { api: 'pos', path: '/vendor/orders/v1/purchaseOrders', created_after:, created_before: }
-    pos = Order.fetch_original_po(get_pos_params)
+    params = {
+      api: 'pos',
+      vendor_id:,
+      path: '/vendor/orders/v1/purchaseOrders',
+      created_after:,
+      created_before:
+    }
+    pos = Order.get_purchase_orders(params)
     # なんらかのエラーでPOを取得できなかったらエラーコードをviewに渡して終了
     return pos if pos.has_key?('errors')
 
     # posからOrdersとOrderItemsにレコードを作成していく
-    pos['payload']['orders'].each do |order|
+    params = { pos:, vendor_id: }
+    response = Order.create_order_and_order_items(params)
+
+    # GETしたPOを元に作成したOrderのオブジェクト、またはエラーを返す
+    po_numbers = response[:po_numbers]
+    errors = response[:errors]
+    { orders: Order.where(po_number: response[:po_numbers].split(' ')).ids, errors: }
+  end
+
+  def self.get_purchase_orders(params)
+    url_and_signature = Order.generate_url_and_sign(params)
+
+    request_params = {
+      method: 'get',
+      url: url_and_signature[:url],
+      signature: url_and_signature[:signature]
+    }
+
+    response = Order.send_http_request(request_params)
+    JSON.parse(response.body)
+  end
+
+  def self.create_order_and_order_items(params)
+    po_numbers = []
+    errors = []
+    params[:pos]['payload']['orders'].each do |order|
       # Ordersの作成
       odr = Order.find_or_initialize_by(po_number: order['purchaseOrderNumber'])
-      odr.vendor_id = vendor_id
+      odr.vendor_id = params[:vendor_id]
       odr.po_number = order['purchaseOrderNumber']
       odr.po_state = order['purchaseOrderState']
       odr.po_date = order['orderDetails']['purchaseOrderDate']
@@ -150,8 +179,14 @@ class Order < ApplicationRecord
 
       if odr.valid?
         odr.save
+        po_numbers << odr.po_number
       else
-        @import_errors['Import Purchase Order Error'] = odr.errors.full_messages
+        error = {
+          code: '100',
+          desc: 'Import Purchase Order Error',
+          messages: odr.errors.full_messages
+        }
+        errors << error
       end
 
       # OrderItemsの作成
@@ -177,22 +212,18 @@ class Order < ApplicationRecord
         if itm.valid?
           itm.save
         else
-          @import_errors['Item Master'] = itm.errors.full_messages
+          error = {
+            code: '200',
+            desc: 'Import Order Item Error',
+            messages: itm.errors.full_messages
+          }
+          errors << error
         end
       end
     end
-    Order.all
-  end
 
-  def self.fetch_original_po(params)
-    url_and_signature = Order.generate_url_and_sign(params)
-    @url = url_and_signature[:url]
-    @signature = url_and_signature[:signature]
-
-    @req = Net::HTTP::Get.new(@url)
-    Order.http_header
-
-    Order.send_http_request
+    # 取得したPOのPurchaseOrderNumberの配列を返す
+    { po_numbers:, errors: }
   end
 
   def self.acknowledge(po_numbers)
@@ -365,16 +396,17 @@ class Order < ApplicationRecord
       params = { api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements', req_body: }
     end
     url_and_signature = Order.generate_url_and_sign(params)
-    @url = url_and_signature[:url]
-    @signature = url_and_signature[:signature]
-    body_values = url_and_signature[:body_values]
 
-    @req = Net::HTTP::Post.new(@url)
-    @req["Content-Type"] = "application/json"
-    @req.body = JSON.dump(body_values)
-    Order.http_header
+    request_params = {
+      method: 'post',
+      content_type: 'application/json',
+      url: url_and_signature[:url],
+      signature: url_and_signature[:signature],
+      body: JSON.dump(url_and_signature[:body_values])
+    }
 
-    Order.send_http_request
+    response = Order.send_http_request(request_params)
+    JSON.parse(response.body)
     @cost_difference_notice
   end
 
@@ -390,7 +422,7 @@ class Order < ApplicationRecord
 
   def self.generate_url_and_sign(params)
     # POs: params include :api, :path
-    # Acknowledgement: params include :api, :po_number, :selling_party, :items
+    # Acknowledgement: params include :api, :po_number, :req_body
 
     if (Rails.env.development? || Rails.env.test?)
       host = 'sandbox.sellingpartnerapi-na.amazon.com'
@@ -451,21 +483,27 @@ class Order < ApplicationRecord
     { url:, signature:, body_values: }
   end
 
-  def self.http_header
-    @req['host'] = @signature.headers['host']
-    @req['x-amz-access-token'] = @access_token
-    @req['user-agent'] = 'ePresto Connection1/1.0 (Language=Ruby/3.1.2)'
-    @req['x-amz-date'] = @signature.headers['x-amz-date']
-    @req['x-amz-content-sha256'] = @signature.headers['x-amz-content-sha256']
-    @req['Authorization'] = @signature.headers['authorization']
-  end
+  def self.send_http_request(params)
+    # params[:method]
+    # params[:signature]
+    # params[:url]
+    # params[:content_type]
+    # params[:body]
+    # return SP-API response(JSON)
 
-  def self.send_http_request
-    https = Net::HTTP.new(@url.host, @url.port)
+    req = Object.const_get("Net::HTTP::#{params[:method].capitalize}").new(params[:url])
+    req['host'] = params[:signature].headers['host']
+    req['x-amz-access-token'] = @access_token
+    req['user-agent'] = 'ePresto Connection1/1.0 (Language=Ruby/3.1.2)'
+    req['x-amz-date'] = params[:signature].headers['x-amz-date']
+    req['x-amz-content-sha256'] = params[:signature].headers['x-amz-content-sha256']
+    req['Authorization'] = params[:signature].headers['authorization']
+    req['Content-Type'] = params[:content_type]
+    req.body = params[:body] unless params[:body].nil?
+
+    https = Net::HTTP.new(params[:url].host, params[:url].port)
     https.use_ssl = true
-
-    res = https.request(@req)
-    JSON.parse(res.body)
+    https.request(req)
   end
 
   def self.formatted_query

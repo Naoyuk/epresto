@@ -26,11 +26,6 @@ class OrdersController < ApplicationController
       @orders = @orders_all
       @state = 'all'
     end
-    # TODO: 以下のオブジェクトをちゃんと条件ごとにセットする
-    # @orders_new = Order.where('po_state = ?', 0)
-    # @orders_acknowledged = Order.includes(order_items: :acks).references(:acks).where(:acks => {acknowledgement_code: 0})
-    # @orders_rejected = Order.includes(order_items: :acks).references(:acks).where(:acks => {acknowledgement_code: 2})
-    # @orders_closed = Order.where('po_state = ?', 2)
     # TODO: POのインポート時のエラーをflashで表示したい
     # @import_errors.each do |k, v|
     #   v.each do |msg|
@@ -53,13 +48,25 @@ class OrdersController < ApplicationController
     if params[:created_after].blank? || params[:created_before].blank?
       redirect_to ({ action: :index }), alert: 'Error: "From" and "To" are required.'
     else
-      @orders = Order.import_po(current_user.vendor_id, params[:created_after], params[:created_before])
-      if @orders.kind_of?(ActiveRecord::Relation)
-        redirect_to({ action: :index })
+      response = Order.import_po(current_user.vendor_id, params[:created_after], params[:created_before])
+
+      # 取得したPOから作成したOrderのidとエラーのどちらか又は両方が返ってくる
+      order_ids = response[:orders]
+      @orders = Order.where(id: order_ids)
+      errors = response[:errors]
+
+      # if @orders.count > 0
+      #   redirect_to orders_path
+      # else
+      if errors.size == 0
+        error_message = nil
       else
-        redirect_to ({ action: :index }),
-                    alert: "Error: \"#{@orders['errors'][0]['code']}\", Contact ePresto administrator."
+        errors_formatted = []
+        errors.each{ |error| errors_formatted << "Error Code: #{error[:code]}, #{error[:desc]}" }
+        error_message = "#{errors_formatted.join('<br>')}<br>Contact to an administrator."
       end
+      redirect_to orders_path, alert: error_message
+      # end
     end
   end
 
@@ -70,7 +77,9 @@ class OrdersController < ApplicationController
   def acknowledge
     @cost_difference_notice = Order.acknowledge(params[:po_numbers])
     unless @cost_difference_notice.nil?
-      redirect_to orders_path, :alert => @cost_difference_notice.gsub("\n", '<br>')
+      redirect_to orders_path
+      # TODO: Phase2でPriceの違うオーダーがある場合に警告を出力するバージョン
+      # redirect_to orders_path, :alert => @cost_difference_notice.gsub("\n", '<br>')
     else
       redirect_to orders_path
     end

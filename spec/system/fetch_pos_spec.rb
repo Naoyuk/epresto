@@ -23,7 +23,6 @@ RSpec.describe "FetchAndAcknowledgePos", type: :system do
     expect(page).not_to have_content 'B01LNRIIAB'
     expect(page).not_to have_content 'B07DFVDRAB'
     click_button 'Update'
-    click_link 'All'
     expect(page).to have_content 'mock-purchaseOrderNumber1'
     expect(page).to have_content 'mock-purchaseOrderNumber2'
     expect(page).to have_content 'B01LNRIIAB'
