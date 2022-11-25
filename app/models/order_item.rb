@@ -2,7 +2,7 @@
 
 class OrderItem < ApplicationRecord
   belongs_to :order
-  belongs_to :item
+  belongs_to :item, optional: true
   has_many :acks, class_name: 'OrderItemAcknowledgement'
 
   # definitions of enum

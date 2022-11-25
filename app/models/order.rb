@@ -197,7 +197,7 @@ class Order < ApplicationRecord
             amazon_product_identifier: item['amazonProductIdentifier']
           )
           # itm.order_id = order_id
-          itm.item_id = Item.find_by(asin: item['amazonProductIdentifier'])&.id
+          # itm.item_id = Item.find_by(asin: item['amazonProductIdentifier'])&.id
           itm.item_seq_number = item['itemSequenceNumber']
           itm.amazon_product_identifier = item['amazonProductIdentifier']
           itm.vendor_product_identifier = item['vendorProductIdentifier']
@@ -524,7 +524,7 @@ class Order < ApplicationRecord
 
     def hostname
       if (Rails.env.development? || Rails.env.test?)
-        'sandbox.sellingpartnerapi-na.amazon.com'
+        'sellingpartnerapi-na.amazon.com'
       else
         'sellingpartnerapi-na.amazon.com'
       end
