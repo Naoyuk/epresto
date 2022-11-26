@@ -368,6 +368,7 @@ DEPENDENCIES
   rspec-rails
   rubocop
   rubocop-rspec
+  rubyzip
   selenium-webdriver
   simplecov
   stimulus-rails

@@ -40,9 +40,7 @@ class OrdersController < ApplicationController
           "attachment; filename=#{@state.capitalize}_PO_#{@orders[0].po_date.strftime('%Y%m%d_%H%M%S')}.xlsx"
       end
       format.csv do |csv|
-        # TODO: 複数ファイルをzipで固めて出力できるように、現在の対象レコードに変更
-        order = Order.find_by(po_number: '48L2YKTK')
-        output_csv(order)
+        output_csv(@orders)
       end
     end
   end
@@ -92,18 +90,29 @@ class OrdersController < ApplicationController
     end
   end
 
-  def output_csv(order)
-    # TODO: 複数ファイルをzipで固めて出力できるように、現在の対象レコードに変更
-    csv_data = CSV.generate do |csv|
-      csv << [order.po_type]
-      csv << [order.po_number]
-      csv << [order.ship_window_from.to_fs(:dat)]
-      csv << [order.ship_to_party_id]
-      csv << ['0' * 12 + '988']
-      order.order_items.each do |item|
-        csv << [0, item.vendor_product_identifier, item.ordered_quantity_amount, 0, 0, 0]
+  def output_csv(orders)
+    ts = Time.now.to_fs(:file)
+    filename = "PO-#{ts}.zip"
+    temppath = "#{Rails.root}/tmp/#{filename}"
+    Zip::File.open(temppath, Zip::File::CREATE) do |zipfile|
+      orders.each do |order|
+        zipfile.get_output_stream("PO-#{order.po_number}-#{ts}.csv") do |f|
+          f.puts(
+            CSV.generate do |csv|
+              csv << [order.po_type]
+              csv << [order.po_number]
+              csv << [order.ship_window_from.to_fs(:dat)]
+              csv << [order.ship_to_party_id]
+              csv << ['0' * 12 + '988']
+              order.order_items.each do |item|
+                csv << [0, item.vendor_product_identifier, item.ordered_quantity_amount, 0, 0, 0]
+              end
+            end
+          )
+        end
       end
     end
-    send_data(csv_data, filename: "PO-#{order.po_number}-#{Time.now.to_fs(:file)}.csv")
+    send_data File.read(temppath), filename: filename, type: 'application/zip'
+    File.delete(temppath)
   end
 end
