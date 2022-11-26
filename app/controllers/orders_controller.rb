@@ -39,6 +39,11 @@ class OrdersController < ApplicationController
         response.headers['Content-Disposition'] =
           "attachment; filename=#{@state.capitalize}_PO_#{@orders[0].po_date.strftime('%Y%m%d_%H%M%S')}.xlsx"
       end
+      format.csv do |csv|
+        # TODO: 複数ファイルをzipで固めて出力できるように、現在の対象レコードに変更
+        order = Order.find_by(po_number: '48L2YKTK')
+        output_csv(order)
+      end
     end
   end
 
@@ -85,5 +90,20 @@ class OrdersController < ApplicationController
     else
       redirect_to orders_path
     end
+  end
+
+  def output_csv(order)
+    # TODO: 複数ファイルをzipで固めて出力できるように、現在の対象レコードに変更
+    csv_data = CSV.generate do |csv|
+      csv << [order.po_type]
+      csv << [order.po_number]
+      csv << [order.ship_window_from.to_fs(:dat)]
+      csv << [order.ship_to_party_id]
+      csv << ['0' * 12 + '988']
+      order.order_items.each do |item|
+        csv << [0, item.vendor_product_identifier, item.ordered_quantity_amount, 0, 0, 0]
+      end
+    end
+    send_data(csv_data, filename: "PO-#{order.po_number}-#{Time.now.to_fs(:file)}.csv")
   end
 end

@@ -28,4 +28,21 @@ module OrdersHelper
       tag.span 'Download PO'
     end
   end
+
+  def download_js_link_to
+    if params[:new]
+      state = { new: true }
+    elsif params[:acknowledged]
+      state = { acknowledged: true }
+    elsif params[:rejected]
+      state = { rejected: true }
+    elsif params[:closed]
+      state = { closed: true }
+    else
+      state = { all: true }
+    end
+    link_to(orders_path(**state, format: :csv), class: 'mx-4 py-2 px-4 bg-sky-400 text-white rounded') do
+      tag.span 'Download JS Import file'
+    end
+  end
 end

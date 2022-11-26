@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_25_181534) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_26_010409) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -151,7 +151,16 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_25_181534) do
     t.string "ship_to_tax_number"
     t.integer "bill_to_tax_type"
     t.string "bill_to_tax_number"
+    t.datetime "ship_window_from"
+    t.datetime "ship_window_to"
     t.index ["vendor_id"], name: "index_orders_on_vendor_id"
+  end
+
+  create_table "shiptos", force: :cascade do |t|
+    t.string "airport_code"
+    t.string "province"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|

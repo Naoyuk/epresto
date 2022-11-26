@@ -107,7 +107,21 @@ class Order < ApplicationRecord
         odr.selling_party_id = order['orderDetails']['sellingParty']['partyId']
         odr.ship_to_party_id = order['orderDetails']['shipToParty']['partyId']
         odr.bill_to_party_id = order['orderDetails']['billToParty']['partyId']
-        odr.delivery_window = order['shipWindow']
+        odr.ship_window = order['orderDetails']['shipWindow']
+
+        pos_of_div = odr.ship_window.index('--')
+        from = odr.ship_window.slice(0, pos_of_div)
+        to = odr.ship_window.slice(pos_of_div + 2, 20)
+        odr.ship_window_from = DateTime.new(
+          from.slice(0, 4).to_i, from.slice(5, 2).to_i, from.slice(8, 2).to_i,
+          from.slice(11, 2).to_i, from.slice(14, 2).to_i, from.slice(17, 2).to_i
+        )
+        odr.ship_window_to = DateTime.new(
+          to.slice(0, 4).to_i, to.slice(5, 2).to_i, to.slice(8, 2).to_i,
+          to.slice(11, 2).to_i, to.slice(14, 2).to_i, to.slice(17, 2).to_i
+        )
+
+        odr.delivery_window = calc_delivery_window(odr.ship_to_party_id, odr.po_date)
         odr.deal_code = order['orderDetails']['dealCode'] unless order['orderDetails'].nil?
         unless order['orderDetails']['importDetails'].nil?
           odr.import_method_of_payment = order['orderDetails']['importDetails']['methodOfPayment']
@@ -522,9 +536,22 @@ class Order < ApplicationRecord
       end.join('&')
     end
 
+    def calc_delivery_window(ship_to_id, ordered_date)
+      province = Shipto.find_by(airport_code: ship_to_id.slice(0, 3)).province
+      if province == 'BC'
+        window_date = (Time.now + 24 * 60 * 60 * 3).to_fs(:dat)
+      elsif province == 'AB'
+        window_date = (Time.now + 24 * 60 * 60 * 7).to_fs(:dat)
+      elsif province == 'ON'
+        window_date = (Time.now + 24 * 60 * 60 * 21).to_fs(:dat)
+      else
+        # Not given any information
+      end
+    end
+
     def hostname
       if (Rails.env.development? || Rails.env.test?)
-        'sandbox.sellingpartnerapi-na.amazon.com'
+        'sellingpartnerapi-na.amazon.com'
       else
         'sellingpartnerapi-na.amazon.com'
       end

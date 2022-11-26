@@ -123,6 +123,7 @@ GEM
     crass (1.0.6)
     cssbundling-rails (1.1.1)
       railties (>= 6.0.0)
+    csv (3.2.5)
     debug (1.6.2)
       irb (>= 1.3.6)
       reline (>= 0.3.1)
@@ -349,6 +350,7 @@ DEPENDENCIES
   caxlsx
   caxlsx_rails
   cssbundling-rails
+  csv
   debug
   devise
   factory_bot_rails
