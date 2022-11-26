@@ -15,5 +15,12 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :orders do
+    collection do
+      post :import
+      post :acknowledge
+    end
+  end
+
   root 'pages#home'
 end

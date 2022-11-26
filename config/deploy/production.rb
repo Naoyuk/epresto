@@ -1,12 +1,9 @@
-# set :stage, :production
-# set :rails_env, :production
-# set :branch, "main"
-# 
-# role :app, %w{ec2-user@52.11.210.21}
-# role :web, %w{ec2-user@52.11.210.21}
-# role :db, %w{ec2-user@10.0.2.101}
-# 
-# server "52.11.210.21", user: "ec2-user", roles: %w{web app db}
+# frozen_string_literal: true
+
+set :stage, :production
+set :rails_env, :production
+set :branch, 'main'
+server '52.11.210.21', user: 'ec2-user', roles: %w[web app db]
 
 # server-based syntax
 # ======================
@@ -16,8 +13,6 @@
 # server "example.com", user: "deploy", roles: %w{app db web}, my_property: :my_value
 # server "example.com", user: "deploy", roles: %w{app web}, other_property: :other_value
 # server "db.example.com", user: "deploy", roles: %w{db}
-
-
 
 # role-based syntax
 # ==================
@@ -31,8 +26,6 @@
 # role :web, %w{user1@primary.com user2@additional.com}, other_property: :other_value
 # role :db,  %w{deploy@example.com}
 
-
-
 # Configuration
 # =============
 # You can set any configuration variable like in config/deploy.rb
@@ -40,8 +33,6 @@
 # For available Capistrano configuration variables see the documentation page.
 # http://capistranorb.com/documentation/getting-started/configuration/
 # Feel free to add new variables to customise your setup.
-
-
 
 # Custom SSH Options
 # ==================

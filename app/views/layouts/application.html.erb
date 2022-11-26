@@ -11,13 +11,18 @@
   </head>
 
   <body>
-    <div class="grid grid-cols-5 gap-4 pr-3 bg-dark vh-100">
+    <div>
+      <!--
       <div class="col-span-1 ps-0 position-fixed">
-        <%= render "sidebar" %>
+        <%#= render "sidebar" %>
       </div>
+      -->
+      <%= render 'navbar' %>
 
-      <div class='col-span-4'>
-        <%= render 'flash' %>
+      <div class='pt-1 px-4 bg-gray-50 border-gray-200 shadow-sm md:bg-white border-y dark:bg-gray-800 dark:border-gray-600'>
+        <div id='flash'>
+          <%= render 'flash' %>
+        </div>
         <%= yield %>
       </div>
   </body>

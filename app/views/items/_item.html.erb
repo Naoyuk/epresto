@@ -1,69 +1,62 @@
-  <tr>
-    <td class='px-2 border-b'>
+<tr class='item border-b whitespace-nowrap' id= '<%= dom_id(item) %>'>
+    <td class='px-2 item-code'>
       <%= item.item_code %>
     </td>
-    <td class='px-2 border-b'>
+    <td class='px-2 upc'>
       <%= item.upc %>
     </td>
-    <td class='px-2 border-b'>
+    <td class='px-2 item-title'>
       <%= item.title %>
     </td>
-    <td class='px-2 border-b'>
+    <td class='px-2 brand'>
       <%= item.brand %>
     </td>
-    <td class='px-2 border-b'>
+    <td class='px-2 size'>
       <%= item.size %>
     </td>
-    <td class='px-2 border-b'>
+    <td class='px-2i pack'>
       <%= item.pack %>
     </td>
-    <td class='px-2 border-b'>
+    <td class='px-2 price'>
       <%= item.price %>
     </td>
-    <td class='px-2 border-b'>
+    <td class='px-2 z-price'>
       <%= item.z_price %>
     </td>
-    <td class='px-2 border-b'>
+    <td class='px-2 stock'>
       <%= item.stock %>
     </td>
-    <td class='px-2 border-b'>
+    <td class='px-2 depertment'>
       <%= item.depertment %>
     </td>
-    <td class='px-2 border-b'>
+    <td class='px-2 availability-status'>
       <%= item.availability_status %>
     </td>
-    <td class='px-2 border-b'>
+    <td class='px-2 case-upc'>
       <%= item.case_upc %>
     </td>
-    <td class='px-2 border-b'>
+    <td class='px-2 asin'>
       <%= item.asin %>
     </td>
-    <td class='px-2 border-b'>
+    <td class='px-2 ean-upc'>
       <%= item.ean_upc %>
     </td>
-    <td class='px-2 border-b'>
+    <td class='px-2 model-number'>
       <%= item.model_number %>
     </td>
-    <td class='px-2 border-b'>
+    <td class='px-2 description'>
       <%= item.description %>
     </td>
-    <td class='px-2 border-b'>
+    <td class='px-2 replenishment-status'>
       <%= item.replenishment_status %>
     </td>
-    <td class='px-2 border-b'>
+    <td class='px-2 effective-date'>
       <%= item.effective_date %>
     </td>
-    <td class='px-2 border-b'>
-      <%= item.current_cost %>
+    <td class='px-2 current-cost'>
+      <%= item.current_cost %><%= item.current_cost_currency %>
     </td>
-    <td class='px-2 border-b'>
-      <%= item.cost %>
-    </td>
-    <td class='px-2 border-b'>
-      <%= item.current_cost_currency %>
-    </td>
-    <td class='px-2 border-b'>
-      <%= item.cost_currency %>
+    <td class='px-2 current-cost-currency'>
+      <%= item.cost %><%= item.cost_currency %>
     </td>
   </tr>
-

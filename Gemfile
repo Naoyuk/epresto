@@ -20,12 +20,17 @@ gem 'turbo-rails'
 gem 'bootsnap', require: false
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 # gem "image_processing", "~> 1.2"
+gem 'aws-sigv4'
 gem 'cancancan'
+gem 'caxlsx'
+gem 'caxlsx_rails'
+gem 'csv'
 gem 'devise'
 gem 'kaminari'
 gem 'ransack'
 gem 'rolify'
 gem 'roo'
+gem 'rubyzip'
 
 group :development, :test do
   gem 'debug', platforms: %i[mri mingw x64_mingw]
@@ -39,11 +44,11 @@ group :development do
   gem 'web-console'
   # gem "rack-mini-profiler"
   # gem "spring"
-  gem 'capistrano' , '~> 3.7'
+  gem 'capistrano', '~> 3.7'
+  gem 'capistrano3-puma'
   gem 'capistrano-rails', '~> 1.2'
   gem 'capistrano-rbenv'
   gem 'capistrano-yarn'
-  gem 'capistrano3-puma'
 end
 
 group :test do
@@ -51,4 +56,6 @@ group :test do
   gem 'capybara-screenshot'
   gem 'selenium-webdriver'
   gem 'simplecov'
+  gem 'vcr'
+  gem 'webmock'
 end

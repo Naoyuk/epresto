@@ -14,7 +14,7 @@ RSpec.describe 'Items', type: :request do
     end
 
     context 'when user is not logged in' do
-      it 'returns http success' do
+      it 'returns http redirect' do
         get items_path
         expect(response).to redirect_to(new_user_session_path)
       end

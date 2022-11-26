@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.order, .order-items, .item-master {
+    display: block;
+    overflow-x: auto;
+}
