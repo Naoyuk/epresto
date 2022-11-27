@@ -39,7 +39,7 @@ class OrdersController < ApplicationController
         response.headers['Content-Disposition'] =
           "attachment; filename=#{@state.capitalize}_PO_#{@orders[0].po_date.strftime('%Y%m%d_%H%M%S')}.xlsx"
       end
-      format.csv do |csv|
+      format.csv do |_csv|
         output_csv(@orders)
       end
     end

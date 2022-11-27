@@ -13,7 +13,7 @@ install_plugin Capistrano::Puma
 install_plugin Capistrano::Puma::Nginx
 
 # Include tasks from other gems included in your Gemfile
-#require "capistrano/rbenv"
+# require "capistrano/rbenv"
 require "capistrano/rails"
 require "capistrano/rails/assets"
 require "capistrano/rails/migrations"

@@ -71,7 +71,6 @@ class Order < ApplicationRecord
       response = create_order_and_order_items(params)
 
       # GETしたPOを元に作成したOrderのオブジェクト、またはエラーを返す
-      po_numbers = response[:po_numbers]
       errors = response[:errors]
       { orders: Order.where(po_number: response[:po_numbers].split(' ')).ids, errors: }
     end
@@ -358,10 +357,10 @@ class Order < ApplicationRecord
     end
 
     def create_request_body(orders)
-      # return 
+      # return
       req_body = {}
       acknowledgements = []
-      price_diff_items = []
+      # price_diff_items = []
 
       orders.each do |order|
         acknowledgement_date = Time.now.to_fs(:iso8601)
@@ -397,8 +396,10 @@ class Order < ApplicationRecord
         order.order_items.each do |item|
           item_body = {}
           item_body["itemSequenceNumber"] = item.item_seq_number unless item.item_seq_number.nil?
-          item_body["amazonProductIdentifier"] = item.amazon_product_identifier unless item.amazon_product_identifier.nil?
-          item_body["vendorProductIdentifier"] = item.vendor_product_identifier unless item.vendor_product_identifier.nil?
+          item_body["amazonProductIdentifier"] =
+            item.amazon_product_identifier unless item.amazon_product_identifier.nil?
+          item_body["vendorProductIdentifier"] =
+            item.vendor_product_identifier unless item.vendor_product_identifier.nil?
           ordered_quantity = {}
           ordered_quantity["amount"] = item.ordered_quantity_amount unless item.ordered_quantity_amount.nil?
           ordered_quantity["unitOfMeasure"] =
@@ -478,10 +479,10 @@ class Order < ApplicationRecord
             elsif item.item.Discontinued?
               ack.rejection_reason = 'ObsoleteProduct'
               acknowledge_detail['rejectionReason'] = 'ObsoleteProduct'
-            # elsif item.item.cost != item.listprice_amount
-            #   # TODO: Phase2以降でこの条件は実装予定
-            #   ack.rejection_reason = 'TemporarilyUnavailable'
-            #   acknowledge_detail['rejectionReason'] = 'TemporarilyUnavailable'
+              # elsif item.item.cost != item.listprice_amount
+              #   # TODO: Phase2以降でこの条件は実装予定
+              #   ack.rejection_reason = 'TemporarilyUnavailable'
+              #   acknowledge_detail['rejectionReason'] = 'TemporarilyUnavailable'
             end
             ack.save
             item_acknowledgements << acknowledge_detail unless acknowledge_detail.empty?
@@ -536,14 +537,14 @@ class Order < ApplicationRecord
       end.join('&')
     end
 
-    def calc_delivery_window(ship_to_id, ordered_date)
+    def calc_delivery_window(ship_to_id, _ordered_date)
       province = Shipto.find_by(airport_code: ship_to_id.slice(0, 3)).province
       if province == 'BC'
-        window_date = (Time.now + 24 * 60 * 60 * 3).to_fs(:dat)
+        (Time.now + 24 * 60 * 60 * 3).to_fs(:dat)
       elsif province == 'AB'
-        window_date = (Time.now + 24 * 60 * 60 * 7).to_fs(:dat)
+        (Time.now + 24 * 60 * 60 * 7).to_fs(:dat)
       elsif province == 'ON'
-        window_date = (Time.now + 24 * 60 * 60 * 21).to_fs(:dat)
+        (Time.now + 24 * 60 * 60 * 21).to_fs(:dat)
       else
         # Not given any information
       end
@@ -551,7 +552,7 @@ class Order < ApplicationRecord
 
     def hostname
       if (Rails.env.development? || Rails.env.test?)
-        'sellingpartnerapi-na.amazon.com'
+        'sandbox.sellingpartnerapi-na.amazon.com'
       else
         'sellingpartnerapi-na.amazon.com'
       end
