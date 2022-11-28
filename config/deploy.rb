@@ -14,7 +14,6 @@ set :log_level, :debug
 set :assets_manifests, -> {
     [release_path.join("public", fetch(:assets_prefix), '.manifest.json')]
 }
-
 namespace :puma do
   desc 'Create Directories for Puma Pids and Socket'
   task :make_dirs do
@@ -25,6 +24,7 @@ namespace :puma do
   end
   before :start, :make_dirs
 end
+
 namespace :deploy do
   desc 'Make sure local git is in sync with remote.'
   task :check_revision do
@@ -55,6 +55,13 @@ namespace :deploy do
   after :finishing, :restart
 end
 
+namespace :config do
+  task :display do
+    Capistrano::Configuration.env.keys.each do |key|
+      p "#{key} => #{fetch(key)}"
+    end
+  end
+end
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
