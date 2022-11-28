@@ -11,6 +11,9 @@ set :linked_dirs, %w(log tmp/pids tmp/cache tmp/sockets vendor/bundle public/sys
 set :rbenv_ruby, '3.1.2'
 set :rails_env, 'production'
 set :log_level, :debug
+set :assets_manifests, -> {
+    [release_path.join("public", fetch(:assets_prefix), '.manifest.json')]
+}
 
 namespace :puma do
   desc 'Create Directories for Puma Pids and Socket'
