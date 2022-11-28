@@ -7,7 +7,7 @@ set :application, 'epresto'
 set :repo_url, 'git@github.com:Naoyuk/epresto.git'
 set :branch, 'main'
 set :linked_files, %w(config/master.key)
-set :linked_dirs, %w(log tmp/pids tmp/cache tmp/sockets)
+set :linked_dirs, %w(log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system)
 set :rbenv_ruby, '3.1.2'
 set :rails_env, 'production'
 set :log_level, :debug
