@@ -1,5 +1,17 @@
 # frozen_string_literal: true
 
+set :stage, :staging
+set :rails_env, :production
+set :branch, 'main'
+set :deploy_to, '/var/www/staging'
+server '52.11.210.21',
+  user: 'ec2-user',
+  roles: %w(web app db),
+  part: 3000,
+  ssh_options: {
+    keys: '~/.ssh/AWS_keys/epresto.pem'
+  }
+
 # server-based syntax
 # ======================
 # Defines a single server with a list of roles and multiple properties.

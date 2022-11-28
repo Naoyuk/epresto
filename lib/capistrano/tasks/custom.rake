@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 after 'deploy:publishing', 'deploy:restart'
 
 namespace :deploy do
@@ -8,3 +10,4 @@ namespace :deploy do
     end
   end
 end
+

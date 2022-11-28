@@ -3,7 +3,14 @@
 set :stage, :production
 set :rails_env, :production
 set :branch, 'main'
-server '52.11.210.21', user: 'ec2-user', roles: %w[web app db]
+set :deploy_to, '/var/www/epresto'
+server '52.11.210.21',
+  user: 'ec2-user',
+  roles: %w(web app db),
+  part: 3000,
+  ssh_options: {
+    keys: '~/.ssh/AWS_keys/epresto.pem'
+  }
 
 # server-based syntax
 # ======================
