@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_26_010409) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_29_055656) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -157,10 +157,23 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_26_010409) do
   end
 
   create_table "shiptos", force: :cascade do |t|
-    t.string "airport_code"
+    t.string "location_code"
     t.string "province"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "customer_name"
+    t.string "address_line1"
+    t.string "address_line2"
+    t.string "city"
+    t.string "postal_code"
+    t.string "contact_name1"
+    t.string "email1"
+    t.string "phone1"
+    t.string "contact_name2"
+    t.string "email2"
+    t.string "phone2"
+    t.boolean "send_report"
+    t.boolean "visu_email"
   end
 
   create_table "users", force: :cascade do |t|

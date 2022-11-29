@@ -538,7 +538,7 @@ class Order < ApplicationRecord
     end
 
     def calc_delivery_window(ship_to_id, _ordered_date)
-      province = Shipto.find_by(airport_code: ship_to_id.slice(0, 3)).province
+      province = Shipto.find_by(location_code: ship_to_id.slice(0, 3)).province
       if province == 'BC'
         (Time.now + 24 * 60 * 60 * 3).to_fs(:dat)
       elsif province == 'AB'
