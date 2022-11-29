@@ -13,32 +13,49 @@ class Item < ApplicationRecord
     Future: 2
   }
 
+  enum case: {
+    Case: true,
+    Each: false
+  }
+
   belongs_to :vendor
 
-  def self.import(file, vendor_id)
-    data = Roo::Spreadsheet.open(file)
-    headers = data.row(1)
-    data.each_with_index do |row, idx|
-      next if idx.zero?
+  def case_or_each
+    pattern = /.*kg.*/
+    if self.title.match(pattern)
+      self.case = true
+    else
+      self.case = false
+    end
+    self.save
+  end
 
-      item_params = Hash[[headers, row].transpose]
-      item_params[:price] = row[6].delete('$').to_f
-      item_params[:vendor_id] = vendor_id
-      item = Item.new(item_params)
+  class << self
+    def self.import(file, vendor_id)
+      data = Roo::Spreadsheet.open(file)
+      headers = data.row(1)
+      data.each_with_index do |row, idx|
+        next if idx.zero?
 
-      if Item.exists?(asin: item.asin)
-        item_to_update = Item.find_by(asin: item.asin)
-        item_to_update_attributes = item_to_update.attributes.reject do |key|
-          ['id', 'created_at', 'updated_at'].include?(key)
+        item_params = Hash[[headers, row].transpose]
+        item_params[:price] = row[6].delete('$').to_f
+        item_params[:vendor_id] = vendor_id
+        item = Item.new(item_params)
+
+        if Item.exists?(asin: item.asin)
+          item_to_update = Item.find_by(asin: item.asin)
+          item_to_update_attributes = item_to_update.attributes.reject do |key|
+            ['id', 'created_at', 'updated_at'].include?(key)
+          end
+          item_attributes = item.attributes.reject do |key|
+            ['id', 'created_at', 'updated_at'].include?(key)
+          end
+          if item_to_update_attributes != item_attributes
+            item_to_update.update(item_params)
+          end
+        else
+          item.save
         end
-        item_attributes = item.attributes.reject do |key|
-          ['id', 'created_at', 'updated_at'].include?(key)
-        end
-        if item_to_update_attributes != item_attributes
-          item_to_update.update(item_params)
-        end
-      else
-        item.save
       end
     end
   end
