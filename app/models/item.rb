@@ -5,6 +5,7 @@ class Item < ApplicationRecord
   validates :upc, presence: true
   validates :asin, presence: true
 
+  belongs_to :vendor
   has_many :order_items
 
   enum availability_status: {

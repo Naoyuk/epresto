@@ -32,9 +32,8 @@
         <th class='px-4 border-b border-l'>#</th>
         <th class='px-4 border-b border-l'>ASIN</th>
         <th class='px-4 border-b border-l'>Item Code</th>
-        <th class='px-4 border-b border-l'>Amount</th>
-        <th class='px-4 border-b border-l'>Unit</th>
-        <th class='px-4 border-b border-l'>Unit Size</th>
+        <th class='px-4 border-b border-l'>Customer Number</th>
+        <th class='px-4 border-b border-l'>Case Quantity</th>
         <th class='px-4 border-b border-l'>Back order</th>
         <th class='px-4 border-b border-l'>Net Cost</th>
         <th class='px-4 border-b border-l'>List Price</th>
@@ -57,9 +56,8 @@
           <% end %>
           <td class='px-2 border-b border-l text-center'><%= item.amazon_product_identifier %></td>
           <td class='px-2 border-b border-l text-center'><%= item.vendor_product_identifier %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.ordered_quantity_amount %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.ordered_quantity_unit_of_measure %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.ordered_quantity_unit_size %></td>
+          <td class='px-2 border-b border-l text-center'><%= item.item&.vendor&.customer_code %></td>
+          <td class='px-2 border-b border-l text-center'><%= item.case_quantity %></td>
           <td class='px-2 border-b border-l text-center'><%= item.back_order_allowed %></td>
           <td class='px-2 border-b border-l text-center'><%= item.netcost_amount %> <%= item.netcost_currency_code %></td>
           <td class='px-2 border-b border-l text-center'><%= item.listprice_amount %> <%= item.listprice_currency_code %></td>
