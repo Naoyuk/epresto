@@ -6,6 +6,9 @@ require 'capistrano/setup'
 # Include default deployment tasks
 require 'capistrano/deploy'
 
+# Include console task
+require 'capistrano/console'
+
 # Load the SCM plugin appropriate to your project:
 require "capistrano/scm/git"
 install_plugin Capistrano::SCM::Git
