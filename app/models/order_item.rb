@@ -10,4 +10,13 @@ class OrderItem < ApplicationRecord
     Cases: 0,
     Eaches: 1
   }
+
+  def convert_case_quantity
+    if self.item.Case?
+      self.case_quantity = self.ordered_quantity_amount
+    else
+      self.case_quantity = self.ordered_quantity_amount / self.item.pack
+    end
+    self.save
+  end
 end

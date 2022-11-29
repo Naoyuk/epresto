@@ -101,7 +101,7 @@ class OrdersController < ApplicationController
             CSV.generate do |csv|
               csv << [order.po_type]
               csv << [order.po_number]
-              csv << [order.ship_window_from.to_fs(:dat)]
+              csv << [order.ship_window_from.to_fs(:js_file)]
               csv << [order.ship_to_party_id]
               csv << ['0' * 12 + '988']
               order.order_items.each do |item|
