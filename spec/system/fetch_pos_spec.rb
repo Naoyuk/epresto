@@ -5,7 +5,7 @@ RSpec.describe "FetchAndAcknowledgePos", type: :system do
     driven_by(:rack_test)
   end
 
-  scenario 'a user get po data from Amazon and update orders and order items', vcr: true do
+  xscenario 'a user get po data from Amazon and update orders and order items', vcr: true do
     create(:vendor)
     user = create(:user)
     create(:item, asin: 'B01LNRIIAB')

@@ -556,7 +556,7 @@ class Order < ApplicationRecord
 
     def hostname
       if (Rails.env.development? || Rails.env.test?)
-        'sellingpartnerapi-na.amazon.com'
+        'sandbox.sellingpartnerapi-na.amazon.com'
       else
         'sellingpartnerapi-na.amazon.com'
       end

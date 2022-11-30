@@ -22,5 +22,7 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :shiptos
+
   root 'pages#home'
 end

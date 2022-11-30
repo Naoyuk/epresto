@@ -7,9 +7,9 @@ RSpec.describe 'ImportItems', type: :system do
     driven_by(:rack_test)
   end
 
-  scenario 'A user log in and import and update item master' do
+  scenario 'An admin-user log in and import and update item master' do
     create(:vendor)
-    user = create(:user)
+    user = create(:user, sysadmin: true)
 
     visit root_path
     click_link 'Sign in'

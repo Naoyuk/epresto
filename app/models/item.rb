@@ -32,7 +32,7 @@ class Item < ApplicationRecord
   end
 
   class << self
-    def self.import(file, vendor_id)
+    def import(file, vendor_id)
       data = Roo::Spreadsheet.open(file)
       headers = data.row(1)
       data.each_with_index do |row, idx|
