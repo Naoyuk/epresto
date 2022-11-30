@@ -34,6 +34,7 @@
         <th class='px-4 border-b border-l'>Item Code</th>
         <th class='px-4 border-b border-l'>Customer Number</th>
         <th class='px-4 border-b border-l'>Case Quantity</th>
+        <th class='px-4 border-b border-l'>Unit</th>
         <th class='px-4 border-b border-l'>Back order</th>
         <th class='px-4 border-b border-l'>Net Cost</th>
         <th class='px-4 border-b border-l'>List Price</th>
@@ -47,7 +48,7 @@
         <th class='px-4 border-b border-l'>Delivery Date</th>
         <th class='px-4 border-b border-l'>Rejection Reason</th>
       </tr>
-      <% order.order_items.each_with_index do |item, index| %>
+      <% order.order_items.order('id ASC').each_with_index do |item, index| %>
         <tr class='whitespace-nowrap' id= '<%= dom_id(item) %>'>
           <% if index == order.order_items.size - 1 %>
             <td class='px-2 text-center border-b border-l'>┗ <%= item.item_seq_number %></td>
@@ -58,10 +59,11 @@
           <td class='px-2 border-b border-l text-center'><%= item.vendor_product_identifier %></td>
           <td class='px-2 border-b border-l text-center'><%= item.item&.vendor&.customer_code %></td>
           <td class='px-2 border-b border-l text-center'><%= item.case_quantity %></td>
+          <td class='px-2 border-b border-l text-center'><%= item.item&.case %></td>
           <td class='px-2 border-b border-l text-center'><%= item.back_order_allowed %></td>
           <td class='px-2 border-b border-l text-center'><%= item.netcost_amount %> <%= item.netcost_currency_code %></td>
           <td class='px-2 border-b border-l text-center'><%= item.listprice_amount %> <%= item.listprice_currency_code %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.item&.cost %></td>
+          <td class='px-2 border-b border-l text-center'><%= item.item&.price %></td>
           <td class='px-2 border-b border-l text-center'><%= item.item&.availability_status %></td>
           <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledgement_code %></td>
           <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledged_quantity_amount %></td>

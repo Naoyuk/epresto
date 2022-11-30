@@ -28,7 +28,6 @@ RSpec.describe 'ImportItems', type: :system do
     expect(page.all('.pack')[1]).to have_content '12'
     expect(page.all('.item-code')[2]).to have_content 'ANI40000'
     expect(page.all('.pack')[2]).to have_content '1'
-    expect(page.all('.stock')[2]).to have_content '0'
     expect(page.all('.item-code')[7]).to have_content 'ANI12020'
     expect(page.all('.z-price')[7]).to have_content '21.28'
 
@@ -50,7 +49,6 @@ RSpec.describe 'ImportItems', type: :system do
     expect(page.all('.pack')[1]).to have_content '12'
     expect(page.all('.item-code')[2]).to have_content 'ANI40000'
     expect(page.all('.pack')[2]).to have_content '100'
-    expect(page.all('.stock')[2]).to have_content '1'
     expect(page.all('.item-code')[7]).to have_content 'ANI12020'
     expect(page.all('.z-price')[7]).to have_content '100.12'
     after_updated_at10001 = Item.find_by(item_code: 'ANI10001').updated_at

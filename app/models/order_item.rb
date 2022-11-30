@@ -12,11 +12,11 @@ class OrderItem < ApplicationRecord
   }
 
   def convert_case_quantity
-    if self.item.Case?
+    # リレーションが成立しない、またはItem.caseがnilの場合はcase_quantityはnil
+    if self.item&.Case?
       self.case_quantity = self.ordered_quantity_amount
-    else
+    elsif self.item&.Each?
       self.case_quantity = self.ordered_quantity_amount / self.item.pack
     end
-    self.save
   end
 end
