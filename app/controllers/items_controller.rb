@@ -59,7 +59,7 @@ class ItemsController < ApplicationController
 
   def admin_scan
     unless current_user.sysadmin?
-      redirect_to new_user_session_path
+      redirect_to root_path
     end
   end
 end

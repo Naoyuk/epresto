@@ -18,7 +18,7 @@ RSpec.describe "Shiptos", type: :request do
       it 'returns http redirect' do
         sign_in non_admin_user
         get shiptos_path
-        expect(response).to redirect_to(new_user_session_path)
+        expect(response).to redirect_to(root_path)
       end
     end
 
@@ -47,7 +47,7 @@ RSpec.describe "Shiptos", type: :request do
       it 'returns http redirect' do
         sign_in non_admin_user
         get shipto_path(shipto)
-        expect(response).to redirect_to(new_user_session_path)
+        expect(response).to redirect_to(root_path)
       end
     end
 
@@ -76,7 +76,7 @@ RSpec.describe "Shiptos", type: :request do
       it 'returns http redirect' do
         sign_in non_admin_user
         get new_shipto_path
-        expect(response).to redirect_to(new_user_session_path)
+        expect(response).to redirect_to(root_path)
       end
     end
 
@@ -105,7 +105,7 @@ RSpec.describe "Shiptos", type: :request do
       it 'returns http redirect' do
         sign_in non_admin_user
         get edit_shipto_path(shipto)
-        expect(response).to redirect_to(new_user_session_path)
+        expect(response).to redirect_to(root_path)
       end
     end
 
@@ -134,7 +134,7 @@ RSpec.describe "Shiptos", type: :request do
       it 'returns http redirect' do
         sign_in non_admin_user
         get edit_shipto_path(shipto)
-        expect(response).to redirect_to(new_user_session_path)
+        expect(response).to redirect_to(root_path)
       end
     end
 
@@ -176,7 +176,7 @@ RSpec.describe "Shiptos", type: :request do
         sign_in non_admin_user
         patch shipto_url(shipto), params: { shipto: @new_attributes }
         shipto.reload
-        expect(response).to redirect_to(new_user_session_path)
+        expect(response).to redirect_to(root_path)
       end
     end
 

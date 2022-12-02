@@ -1,64 +1,64 @@
 <%= turbo_frame_tag item do %>
   <div class='flex border-top'>
     <div class='px-2 w-24 border-r border-b'>
-      <span class='inline-block'><%= item.item_code %></span>
+      <span class='inline-block item-code'><%= item.item_code %></span>
     </div>
     <div class='px-2 w-36 border-r border-b'>
-      <span class='inline-block'><%= item.upc %></span>
+      <span class='inline-block upc'><%= item.upc %></span>
     </div>
     <div class='px-2 w-96 border-r border-b'>
-      <span class='inline-block'><%= item.title %></span>
+      <span class='inline-block title'><%= item.title %></span>
     </div>
     <div class='px-2 w-48 border-r border-b'>
-      <span class='inline-block'><%= item.brand %></span>
+      <span class='inline-block brand'><%= item.brand %></span>
     </div>
     <div class='px-2 w-16 border-r border-b'>
-      <span class='inline-block'><%= item.size %></span>
+      <span class='inline-block size'><%= item.size %></span>
     </div>
     <div class='px-2 w-16 border-r border-b'>
-      <span class='inline-block'><%= item.pack %></span>
+      <span class='inline-block pack'><%= item.pack %></span>
     </div>
     <div class='px-2 w-20 border-r border-b'>
-      <span class='inline-block'><%= item.price %></span>
+      <span class='inline-block price'><%= item.price %></span>
     </div>
     <div class='px-2 w-20 border-r border-b'>
-      <span class='inline-block'><%= item.z_price %></span>
+      <span class='inline-block z-price'><%= item.z_price %></span>
     </div>
     <div class='px-2 w-16 border-r border-b'>
-      <span class='inline-block'><%= item.stock %></span>
+      <span class='inline-block stock'><%= item.stock %></span>
     </div>
     <div class='px-2 w-24 border-r border-b'>
-      <span class='inline-block'><%= item.depertment %></span>
+      <span class='inline-block depertment'><%= item.depertment %></span>
     </div>
     <div class='px-2 w-36 border-r border-b'>
-      <span class='inline-block'><%= item.availability_status %></span>
+      <span class='inline-block availability-status'><%= item.availability_status %></span>
     </div>
     <div class='px-2 w-36 border-r border-b'>
-      <span class='inline-block'><%= item.case_upc %></span>
+      <span class='inline-block case-upc'><%= item.case_upc %></span>
     </div>
     <div class='px-2 w-36 border-r border-b'>
-      <span class='inline-block'><%= item.asin %></span>
+      <span class='inline-block asin'><%= item.asin %></span>
     </div>
     <div class='px-2 w-36 border-r border-b'>
-      <span class='inline-block'><%= item.ean_upc %></span>
+      <span class='inline-block ean-upc'><%= item.ean_upc %></span>
     </div>
     <div class='px-2 w-36 border-r border-b'>
-      <span class='inline-block'><%= item.model_number %></span>
+      <span class='inline-block model-number'><%= item.model_number %></span>
     </div>
     <div class='px-2 w-96 border-r border-b'>
-      <span class='inline-block'><%= item.description %></span>
+      <span class='inline-block description'><%= item.description %></span>
     </div>
     <div class='px-2 w-36 border-r border-b'>
-      <span class='inline-block'><%= item.effective_date %></span>
+      <span class='inline-block effective-date'><%= item.effective_date %></span>
     </div>
     <div class='px-2 w-36 border-r border-b'>
-      <span class='inline-block'><%= item.current_cost %><%= item.current_cost_currency %></span>
+      <span class='inline-block corrent-cost'><%= item.current_cost %><%= item.current_cost_currency %></span>
     </div>
     <div class='px-2 w-36 border-r border-b'>
-      <span class='inline-block'><%= item.cost %><%= item.cost_currency %></span>
+      <span class='inline-block cost'><%= item.cost %><%= item.cost_currency %></span>
     </div>
     <div class='px-2 w-24 border-r border-b'>
-      <span class='inline-block'><%= item.case %></span>
+      <span class='inline-block case'><%= item.case %></span>
     </div>
     <div class='px-2 w-20 border-r border-b'>
       <span class='inline-block py-3'><%= link_to "Edit", edit_item_path(item), class: "bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-4 border border-blue-500 hover:border-transparent rounded" %></span>
