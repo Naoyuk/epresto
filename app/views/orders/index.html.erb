@@ -82,7 +82,9 @@
     </li>
   </ul>
 
+  <%= turbo_frame_tag 'orders-list' do %>
     <%= render @orders %>
+  <% end %>
 
   <div class="d-flex justify-content-end mt-3">
     <%= paginate @orders %>

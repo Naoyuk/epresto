@@ -48,7 +48,23 @@ class ShiptosController < ApplicationController
   private
 
   def shipto_params
-    params.require(:shipto).permit(:location_code, :province, :customer_name, :address_line1, :address_line2, :city, :postal_code, :contact_name1, :contact_name2, :email1, :email2, :phone1, :phone2, :send_report, :visu_email)
+    params.require(:shipto).permit(
+      :location_code,
+      :province,
+      :customer_name,
+      :address_line1,
+      :address_line2,
+      :city,
+      :postal_code,
+      :contact_name1,
+      :contact_name2,
+      :email1,
+      :email2,
+      :phone1,
+      :phone2,
+      :send_report,
+      :visu_email
+    )
   end
 
   def admin_scan

@@ -1,65 +1,67 @@
-<tr class='item border-b whitespace-nowrap' id= '<%= dom_id(item) %>'>
-    <td class='px-2 item-code'>
-      <%= item.item_code %>
-    </td>
-    <td class='px-2 upc'>
-      <%= item.upc %>
-    </td>
-    <td class='px-2 item-title'>
-      <%= item.title %>
-    </td>
-    <td class='px-2 brand'>
-      <%= item.brand %>
-    </td>
-    <td class='px-2 size'>
-      <%= item.size %>
-    </td>
-    <td class='px-2i pack'>
-      <%= item.pack %>
-    </td>
-    <td class='px-2 price'>
-      <%= item.price %>
-    </td>
-    <td class='px-2 z-price'>
-      <%= item.z_price %>
-    </td>
-    <td class='px-2 stock'>
-      <%= item.stock %>
-    </td>
-    <td class='px-2 depertment'>
-      <%= item.depertment %>
-    </td>
-    <td class='px-2 availability-status'>
-      <%= item.availability_status %>
-    </td>
-    <td class='px-2 case-upc'>
-      <%= item.case_upc %>
-    </td>
-    <td class='px-2 asin'>
-      <%= item.asin %>
-    </td>
-    <td class='px-2 ean-upc'>
-      <%= item.ean_upc %>
-    </td>
-    <td class='px-2 model-number'>
-      <%= item.model_number %>
-    </td>
-    <td class='px-2 description'>
-      <%= item.description %>
-    </td>
-    <td class='px-2 replenishment-status'>
-      <%= item.replenishment_status %>
-    </td>
-    <td class='px-2 effective-date'>
-      <%= item.effective_date %>
-    </td>
-    <td class='px-2 current-cost'>
-      <%= item.current_cost %><%= item.current_cost_currency %>
-    </td>
-    <td class='px-2 current-cost-currency'>
-      <%= item.cost %><%= item.cost_currency %>
-    </td>
-    <td class='px-2 case'>
-      <%= item.case %>
-    </td>
-  </tr>
+<%= turbo_frame_tag item do %>
+  <div class='flex border-top'>
+    <div class='px-2 w-24 border-r border-b'>
+      <span class='inline-block'><%= item.item_code %></span>
+    </div>
+    <div class='px-2 w-36 border-r border-b'>
+      <span class='inline-block'><%= item.upc %></span>
+    </div>
+    <div class='px-2 w-96 border-r border-b'>
+      <span class='inline-block'><%= item.title %></span>
+    </div>
+    <div class='px-2 w-48 border-r border-b'>
+      <span class='inline-block'><%= item.brand %></span>
+    </div>
+    <div class='px-2 w-16 border-r border-b'>
+      <span class='inline-block'><%= item.size %></span>
+    </div>
+    <div class='px-2 w-16 border-r border-b'>
+      <span class='inline-block'><%= item.pack %></span>
+    </div>
+    <div class='px-2 w-20 border-r border-b'>
+      <span class='inline-block'><%= item.price %></span>
+    </div>
+    <div class='px-2 w-20 border-r border-b'>
+      <span class='inline-block'><%= item.z_price %></span>
+    </div>
+    <div class='px-2 w-16 border-r border-b'>
+      <span class='inline-block'><%= item.stock %></span>
+    </div>
+    <div class='px-2 w-24 border-r border-b'>
+      <span class='inline-block'><%= item.depertment %></span>
+    </div>
+    <div class='px-2 w-36 border-r border-b'>
+      <span class='inline-block'><%= item.availability_status %></span>
+    </div>
+    <div class='px-2 w-36 border-r border-b'>
+      <span class='inline-block'><%= item.case_upc %></span>
+    </div>
+    <div class='px-2 w-36 border-r border-b'>
+      <span class='inline-block'><%= item.asin %></span>
+    </div>
+    <div class='px-2 w-36 border-r border-b'>
+      <span class='inline-block'><%= item.ean_upc %></span>
+    </div>
+    <div class='px-2 w-36 border-r border-b'>
+      <span class='inline-block'><%= item.model_number %></span>
+    </div>
+    <div class='px-2 w-96 border-r border-b'>
+      <span class='inline-block'><%= item.description %></span>
+    </div>
+    <div class='px-2 w-36 border-r border-b'>
+      <span class='inline-block'><%= item.effective_date %></span>
+    </div>
+    <div class='px-2 w-36 border-r border-b'>
+      <span class='inline-block'><%= item.current_cost %><%= item.current_cost_currency %></span>
+    </div>
+    <div class='px-2 w-36 border-r border-b'>
+      <span class='inline-block'><%= item.cost %><%= item.cost_currency %></span>
+    </div>
+    <div class='px-2 w-24 border-r border-b'>
+      <span class='inline-block'><%= item.case %></span>
+    </div>
+    <div class='px-2 w-20 border-r border-b'>
+      <span class='inline-block py-3'><%= link_to "Edit", edit_item_path(item), class: "bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-1 px-4 border border-blue-500 hover:border-transparent rounded" %></span>
+    </div>
+  </div>
+<% end %>

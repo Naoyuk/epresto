@@ -5,7 +5,7 @@
   </div>
 
   <div class="mb-3 text-gray-500">
-    <%= search_form_for @search, html: { data: { turbo_frame: "shiptos-list" } } do |f| %>
+    <%= search_form_for @search, html: { data: { turbo_frame: "_top" } } do |f| %>
       <div class="grid md:grid-cols-8 md:gap-2 p-2">
         <div>
           <%= f.label :location_code_cont, "Location Code", class: "block mb-2 text-sm font-medium text-gray-900" %>
@@ -67,7 +67,9 @@
         <th class='px-4'>Visu Email</th>
       </tr>
 
-      <%= render @shiptos %>
+      <%= turbo_frame_tag 'shiptos-list' do %>
+        <%= render @shiptos %>
+      <% end %>
 
       <div class="d-flex justify-content-end mt-3">
         <%= paginate @shiptos %>
