@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ShiptosController < ApplicationController
   before_action :admin_scan
   
@@ -33,7 +35,7 @@ class ShiptosController < ApplicationController
   def update
     @shipto = Shipto.find(params[:id])
     if @shipto.update(shipto_params)
-      flash.now.notice = 'The location was successfully updated.'
+      render @shipto
     else
       render :edit, status: :unprocessable_entity
     end
