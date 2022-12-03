@@ -24,5 +24,5 @@ Rails.application.routes.draw do
 
   resources :shiptos
 
-  root 'pages#home'
+  root 'orders#index'
 end
