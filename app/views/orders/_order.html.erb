@@ -9,6 +9,7 @@
       <th class='w-1/12 px-4 py-2 border'>Last Updated Date</th>
       <th class='w-1/12 px-4 py-2 border'>Payment Method</th>
       <th class='w-2/12 px-4 py-2 border'>Selling Party</th>
+      <th class='w-1/12 px-4 py-2 border'>Shipping Address</th>
       <th class='w-1/12 px-4 py-2 border'>Ship Window</th>
       <th class='w-1/12 px-4 py-2 border'>Delivery Window</th>
     </tr>
@@ -22,6 +23,8 @@
       <td class='px-4 text-center border'><%= order.last_updated_date&.to_fs(:stamp) %></td>
       <td class='px-4 text-center border'><%= order.payment_method %></td>
       <td class='px-4 text-center border'><%= order.selling_party_id %><%= order.selling_address_city %><%= order.selling_address_state_or_region %></td>
+      <td class='px-4 text-center border'><%= "#{order.shipto.location_code}, #{order.shipto.address_line1}, #{order.shipto.province}, #{order.shipto.postal_code}" unless order.shipto.nil? %></td>
+      </td>
       <td class='px-4 text-center border'><%= "#{order.ship_window_from&.to_fs(:dat)} - #{order.ship_window_to&.to_fs(:dat)}" %></td>
       <td class='px-4 text-center border'><%= order.delivery_window %></td>
     </tr>
@@ -33,7 +36,6 @@
           <th class='px-4 border-b border-l'>#</th>
           <th class='px-4 border-b border-l'>ASIN</th>
           <th class='px-4 border-b border-l'>Item Code</th>
-          <th class='px-4 border-b border-l'>Customer Number</th>
           <th class='px-4 border-b border-l'>Case Quantity</th>
           <th class='px-4 border-b border-l'>Unit</th>
           <th class='px-4 border-b border-l'>Back order</th>
@@ -58,7 +60,6 @@
             <% end %>
             <td class='px-2 border-b border-l text-center'><%= item.amazon_product_identifier %></td>
             <td class='px-2 border-b border-l text-center'><%= item.vendor_product_identifier %></td>
-            <td class='px-2 border-b border-l text-center'><%= item.item&.vendor&.customer_code %></td>
             <td class='px-2 border-b border-l text-center'><%= item.case_quantity %></td>
             <td class='px-2 border-b border-l text-center'><%= item.item&.case %></td>
             <td class='px-2 border-b border-l text-center'><%= item.back_order_allowed %></td>

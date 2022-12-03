@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_29_193033) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_02_194254) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -155,6 +155,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_29_193033) do
     t.string "bill_to_tax_number"
     t.datetime "ship_window_from"
     t.datetime "ship_window_to"
+    t.bigint "shipto_id"
+    t.index ["shipto_id"], name: "index_orders_on_shipto_id"
     t.index ["vendor_id"], name: "index_orders_on_vendor_id"
   end
 
@@ -205,6 +207,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_29_193033) do
   add_foreign_key "order_item_acknowledgements", "order_items"
   add_foreign_key "order_items", "items"
   add_foreign_key "order_items", "orders"
+  add_foreign_key "orders", "shiptos"
   add_foreign_key "orders", "vendors"
   add_foreign_key "users", "vendors"
 end

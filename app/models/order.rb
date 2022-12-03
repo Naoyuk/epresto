@@ -2,6 +2,7 @@
 
 class Order < ApplicationRecord
   belongs_to :vendor
+  belongs_to :shipto
   has_many :order_items
 
   # definitions of enum
@@ -107,6 +108,10 @@ class Order < ApplicationRecord
         odr.ship_to_party_id = order['orderDetails']['shipToParty']['partyId']
         odr.bill_to_party_id = order['orderDetails']['billToParty']['partyId']
         odr.ship_window = order['orderDetails']['shipWindow']
+
+        unless odr.ship_to_party_id.nil?
+          odr.shipto_id = Shipto.find_by(location_code: odr.ship_to_party_id).id
+        end
 
         unless odr.ship_window.nil?
           pos_of_div = odr.ship_window.index('--')
@@ -557,6 +562,7 @@ class Order < ApplicationRecord
     def hostname
       if (Rails.env.development? || Rails.env.test?)
         'sandbox.sellingpartnerapi-na.amazon.com'
+        # 'sellingpartnerapi-na.amazon.com'
       else
         'sellingpartnerapi-na.amazon.com'
       end
