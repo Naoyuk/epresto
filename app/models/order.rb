@@ -15,7 +15,8 @@ class Order < ApplicationRecord
   enum po_type: {
     RegularOrder: 0,
     ConsignedOrder: 1,
-    NewProductionIntroduction: 2
+    NewProductionIntroduction: 2,
+    Bulk: 3
   }
 
   enum payment_method: {
@@ -297,8 +298,8 @@ class Order < ApplicationRecord
       endpoint = "https://#{host}"
       path = params[:path]
       if params[:api] == 'pos'
-        start_date = (params[:created_after].to_date - 24 * 60 * 60 * 7).to_fs(:iso8601).gsub(':', '%3A')
-        end_date = params[:created_before].to_fs(:iso8601).gsub(':', '%3A')
+        start_date = params[:created_after].to_date.to_fs(:iso8601).gsub(':', '%3A')
+        end_date = params[:created_before].to_date.to_fs(:iso8601).gsub(':', '%3A')
         limit = 54
         method = 'GET'
         query_hash = {
@@ -455,13 +456,13 @@ class Order < ApplicationRecord
             ack.scheduled_ship_date = window
             if item.order.ship_to_address_state_or_region == 'BC'
               # Shipping within B.C. = 3 days
-              ack.scheduled_delivery_date = (Time.now + 24 * 60 * 60 * 3).to_fs(:iso8601)
+              ack.scheduled_delivery_date = (Time.now + 3).to_fs(:iso8601)
             elsif item.order.ship_to_address_state_or_region == 'AB'
               # Calgary = 1 week
-              ack.scheduled_delivery_date = (Time.now + 24 * 60 * 60 * 7).to_fs(:iso8601)
+              ack.scheduled_delivery_date = (Time.now + 7).to_fs(:iso8601)
             elsif item.order.ship_to_address_state_or_region == 'ON'
               # Ontario = 3 weeks
-              ack.scheduled_delivery_date = (Time.now + 24 * 60 * 60 * 21).to_fs(:iso8601)
+              ack.scheduled_delivery_date = (Time.now + 21).to_fs(:iso8601)
             else
               # Not given any directions
             end
@@ -536,7 +537,7 @@ class Order < ApplicationRecord
     def formatted_query(query_hash)
       list = []
       query_hash.each_pair do |k, v|
-        k = k.downcase
+        # k = k.downcase
         list << [k, v]
       end
 
@@ -546,14 +547,14 @@ class Order < ApplicationRecord
     end
 
     def calc_delivery_window(ship_to_id, _ordered_date)
-      shipto = Shipto.find_by(location_code: ship_to_id.slice(0, 3))
+      shipto = Shipto.find_by(location_code: ship_to_id)
       province = shipto&.province
       if province == 'BC'
-        (Time.now + 24 * 60 * 60 * 3).to_fs(:dat)
+        (Time.now + 3).to_fs(:dat)
       elsif province == 'AB'
-        (Time.now + 24 * 60 * 60 * 7).to_fs(:dat)
+        (Time.now + 7).to_fs(:dat)
       elsif province == 'ON'
-        (Time.now + 24 * 60 * 60 * 21).to_fs(:dat)
+        (Time.now + 21).to_fs(:dat)
       else
         # Not given any information
       end
@@ -561,8 +562,8 @@ class Order < ApplicationRecord
 
     def hostname
       if (Rails.env.development? || Rails.env.test?)
-        'sandbox.sellingpartnerapi-na.amazon.com'
-        # 'sellingpartnerapi-na.amazon.com'
+        # 'sandbox.sellingpartnerapi-na.amazon.com'
+        'sellingpartnerapi-na.amazon.com'
       else
         'sellingpartnerapi-na.amazon.com'
       end

@@ -22,6 +22,9 @@ class OrdersController < ApplicationController
     elsif params[:closed]
       @orders = @orders_closed
       @state = 'closed'
+    elsif params[:bulk]
+      @orders = @orders_all
+      @state = 'bulk'
     else
       @orders = @orders_all
       @state = 'all'
@@ -52,7 +55,7 @@ class OrdersController < ApplicationController
       redirect_to ({ action: :index }), alert: 'Error: "From" and "To" are required.'
     else
       created_after = params[:created_after].to_datetime
-      created_before = params[:created_before].to_datetime + 24 * 60 * 60
+      created_before = params[:created_before].to_datetime
       response = Order.import_po(current_user.vendor_id, created_after, created_before)
 
       # 取得したPOから作成したOrderのidとエラーのどちらか又は両方が返ってくる
@@ -114,5 +117,38 @@ class OrdersController < ApplicationController
     end
     send_data File.read(temppath), filename: filename, type: 'application/zip'
     File.delete(temppath)
+  end
+
+  def convert_to_regular
+    @ids = params[:ids]
+    if @ids.empty?
+      return redirect_to orders_path(bulk: true), alert: 'No purchase orders are selected.'
+    end
+
+    toggle_po_type(:regular)
+
+    redirect_to orders_path(bulk: true), notice: 'Selected purchase orders are set to Regular Order.'
+  end
+
+  def convert_to_bulk
+    @ids = params[:ids]
+    if @ids.empty?
+      return redirect_to orders_path(bulk: true), alert: 'No purchase orders are selected.'
+    end
+
+    toggle_po_type(:bulk)
+
+    redirect_to orders_path(bulk: true), notice: 'Selected purchase orders are set to Bulk Order.'
+  end
+
+  private
+
+  def toggle_po_type(type)
+    type_int = type == :regular ? 0 : 3
+    ids_array = @ids.split(',')
+    ids_array.each do |id|
+      o = Order.find(id)
+      o.update(po_type: type_int)
+    end
   end
 end

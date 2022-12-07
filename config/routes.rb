@@ -19,6 +19,8 @@ Rails.application.routes.draw do
     collection do
       post :import
       post :acknowledge
+      post :convert_to_bulk
+      post :convert_to_regular
     end
   end
 

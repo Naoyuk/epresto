@@ -1,0 +1,20 @@
+<% @orders.each do |order| %>
+  <%= content_tag :tr, id: dom_id(order), class: 'whitespace-nowrap' do %>
+    <td class='px-4 text-center border'>
+      <%= check_box_tag "ids[]", order.id, false, class: 'check', data: { target: "hello.checkbox" } %>
+    </td>
+    <td class='px-4 text-center border'><%= order.po_type %></td>
+    <td class='px-4 text-center border'><%= order.po_number %></td>
+    <td class='px-4 text-center border'><%= order.po_state %></td>
+    <td class='px-4 text-center border'><%= order.po_date&.to_fs(:stamp) %></td>
+    <td class='px-4 text-center border'><%= order.po_changed_date&.to_fs(:stamp) %></td>
+    <td class='px-4 text-center border'><%= order.po_state_changed_date&.to_fs(:stamp) %></td>
+    <td class='px-4 text-center border'><%= order.last_updated_date&.to_fs(:stamp) %></td>
+    <td class='px-4 text-center border'><%= order.payment_method %></td>
+    <td class='px-4 text-center border'><%= order.selling_party_id %><%= order.selling_address_city %><%= order.selling_address_state_or_region %></td>
+    <td class='px-4 text-center border'><%= "#{order.shipto.location_code}, #{order.shipto.address_line1}, #{order.shipto.province}, #{order.shipto.postal_code}" unless order.shipto.nil? %></td>
+    </td>
+    <td class='px-4 text-center border'><%= "#{order.ship_window_from&.to_fs(:dat)} - #{order.ship_window_to&.to_fs(:dat)}" %></td>
+    <td class='px-4 text-center border'><%= order.delivery_window %></td>
+  <% end %>
+<% end %>

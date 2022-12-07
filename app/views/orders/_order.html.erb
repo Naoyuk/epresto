@@ -1,5 +1,5 @@
 <%= turbo_frame_tag order do %>
-  <table class="order table-fixed text-gray-500">
+  <table class="order table-fixed mt-2 text-gray-500">
     <tr class='bg-blue-500 whitespace-nowrap text-white'>
       <th class='w-2/12 px-4 py-2 border'>PO Number</th>
       <th class='w-2/12 px-4 py-2 border'>State</th>
@@ -36,6 +36,7 @@
           <th class='px-4 border-b border-l'>#</th>
           <th class='px-4 border-b border-l'>ASIN</th>
           <th class='px-4 border-b border-l'>Item Code</th>
+          <th class='px-4 border-b border-l'>Title</th>
           <th class='px-4 border-b border-l'>Case Quantity</th>
           <th class='px-4 border-b border-l'>Unit</th>
           <th class='px-4 border-b border-l'>Back order</th>
@@ -60,6 +61,7 @@
             <% end %>
             <td class='px-2 border-b border-l text-center'><%= item.amazon_product_identifier %></td>
             <td class='px-2 border-b border-l text-center'><%= item.vendor_product_identifier %></td>
+            <td class='px-2 border-b border-l text-center'><%= item.item&.title %></td>
             <td class='px-2 border-b border-l text-center'><%= item.case_quantity %></td>
             <td class='px-2 border-b border-l text-center'><%= item.item&.case %></td>
             <td class='px-2 border-b border-l text-center'><%= item.back_order_allowed %></td>

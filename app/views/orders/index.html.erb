@@ -80,10 +80,46 @@
     <li class="mr-1">
       <%= tab_link_to orders_path(closed: true), 'Closed' %>
     </li>
+    <li class="mr-1">
+      <%= tab_link_to orders_path(bulk: true), 'Bulk' %>
+    </li>
+    <% if @state == 'bulk' %>
+      <li class="mr-1">
+        <%= button_to 'Convert to Bulk Order', {controller: 'orders', action: 'convert_to_bulk'}, {method: :post, params: {ids: ''}, class: 'text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm w-full sm:w-auto px-4 py-2 text-center'} %>
+      </li>
+      <li class="mr-1">
+        <%= button_to 'Convert to Regular Order', {controller: 'orders', action: 'convert_to_regular'}, {method: :post, params: {ids: ''}, class: 'text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm w-full sm:w-auto px-4 py-2 text-center'} %>
+      </li>
+    <% end %>
   </ul>
 
   <%= turbo_frame_tag 'orders-list' do %>
-    <%= render @orders %>
+    <% if @state == 'bulk' %>
+      <table class="order table-fixed mt-2 text-gray-500">
+        <tr class='bg-blue-500 whitespace-nowrap text-white'>
+          <th class='w-2/12 px-4 py-2 border'>
+            <input type='checkbox' class='check-all' id='check-all' />
+          </th>
+          <th class='w-2/12 px-4 py-2 border'>PO Type</th>
+          <th class='w-2/12 px-4 py-2 border'>PO Number</th>
+          <th class='w-2/12 px-4 py-2 border'>State</th>
+          <th class='w-1/12 px-4 py-2 border'>PO Date</th>
+          <th class='w-1/12 px-4 py-2 border'>PO Change Date</th>
+          <th class='w-1/12 px-4 py-2 border'>PO State Change Date</th>
+          <th class='w-1/12 px-4 py-2 border'>Last Updated Date</th>
+          <th class='w-1/12 px-4 py-2 border'>Payment Method</th>
+          <th class='w-2/12 px-4 py-2 border'>Selling Party</th>
+          <th class='w-1/12 px-4 py-2 border'>Shipping Address</th>
+          <th class='w-1/12 px-4 py-2 border'>Ship Window</th>
+          <th class='w-1/12 px-4 py-2 border'>Delivery Window</th>
+        </tr>
+
+        <%= render :partial => 'bulk_order' %>
+
+      </table>
+    <% else %>
+      <%= render @orders %>
+    <% end %>
   <% end %>
 
   <div class="d-flex justify-content-end mt-3">
