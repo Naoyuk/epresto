@@ -162,5 +162,5 @@ Vendor.create!(name: 'ePresto')
 Vendor.create!(name: 'CCW')
 
 user = User.new(name: 'admin', email: 'admin@example.com', sysadmin: true, vendor_id: 1)
-user.password='password'
+user.password = 'password'
 user.save

@@ -12,7 +12,7 @@ RSpec.describe "PostAcknowledgements", type: :system do
       @user = create(:user)
       create(:item, asin: 'B01LNRIIAB')
       create(:item, asin: 'B07DFVDRAB')
-#
+      #
       # ログイン
       visit root_path
       click_link 'Sign in'

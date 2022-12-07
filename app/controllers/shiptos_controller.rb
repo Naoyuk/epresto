@@ -2,13 +2,13 @@
 
 class ShiptosController < ApplicationController
   before_action :admin_scan
-  
+
   def index
     @search = Shipto.ransack(params[:q])
     @search.sorts = 'id asc' if @search.sorts.empty?
     @shiptos = @search.result.page(params[:page])
   end
-  
+
   def show
     @shipto = Shipto.find(params[:id])
   end

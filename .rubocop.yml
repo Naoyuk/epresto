@@ -18,6 +18,4 @@ Style:
   Enabled: false
 
 Layout/LineLength:
-  Exclude:
-    - '**/config/deploy.rb'
-
+  Enabled: false

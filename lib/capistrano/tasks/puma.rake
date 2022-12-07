@@ -13,7 +13,8 @@ namespace :puma do
 
   def start_puma
     within current_path do
-      exucute :bundle, :exec, :puma, "-b 'unix://#{shared_path}/sockets/puma.sock' -e #{fetch(:stage)} -t 1:32 -w 2 --control 'unix://#{shared_path}/sockets/pumactl.sock' -S #{fetch(:puma_state)} >> #{fetch(:puma_log)} 2>&1 &"
+      exucute :bundle, :exec, :puma,
+              "-b 'unix://#{shared_path}/sockets/puma.sock' -e #{fetch(:stage)} -t 1:32 -w 2 --control 'unix://#{shared_path}/sockets/pumactl.sock' -S #{fetch(:puma_state)} >> #{fetch(:puma_log)} 2>&1 &"
     end
   end
 

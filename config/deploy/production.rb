@@ -5,12 +5,12 @@ set :rails_env, :production
 set :branch, 'main'
 set :deploy_to, '/var/www/epresto'
 server '52.11.210.21',
-  user: 'ec2-user',
-  roles: %w(web app db),
-  ssh_options: {
-    keys: '~/.ssh/AWS_keys/epresto.pem',
-    forward_agent: true
-  }
+       user: 'ec2-user',
+       roles: %w(web app db),
+       ssh_options: {
+         keys: '~/.ssh/AWS_keys/epresto.pem',
+         forward_agent: true
+       }
 
 # server-based syntax
 # ======================
