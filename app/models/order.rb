@@ -16,7 +16,7 @@ class Order < ApplicationRecord
     RegularOrder: 0,
     ConsignedOrder: 1,
     NewProductionIntroduction: 2,
-    Bulk: 3
+    BulkOrder: 3
   }
 
   enum payment_method: {

@@ -7,7 +7,7 @@ FactoryBot.define do
     po_date { '2022-11-02 12:19:18' }
     po_changed_date { '2022-11-02 12:19:18' }
     po_state_changed_date { '2022-11-02 12:19:18' }
-    po_type { 1 }
+    po_type { 0 }
     import_method_of_payment { 'MyString' }
     import_international_commercial_terms { 'MyString' }
     import_port_of_delivery { 'MyString' }
@@ -56,5 +56,6 @@ FactoryBot.define do
     bill_to_tax_type { 1 }
     delivery_window { 'MyString' }
     association :vendor
+    association :shipto
   end
 end
