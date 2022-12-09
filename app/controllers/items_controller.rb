@@ -44,16 +44,19 @@ class ItemsController < ApplicationController
       :availability_status,
       :case_upc,
       :asin,
-      :ean_upc,
       :model_number,
       :description,
-      :replenishment_status,
-      :effective_date,
-      :current_cost,
-      :cost,
-      :current_cost_currency,
-      :cost_currency,
-      :case
+      :case,
+      :vendor_code,
+      :vendor_sku,
+      :product_type,
+      :item_name,
+      :brand_name,
+      :external_product_id,
+      :external_product_id_type,
+      :merchant_suggested_asin,
+      :ean,
+      :gtin
     )
   end
 

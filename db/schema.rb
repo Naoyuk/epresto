@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_12_02_194254) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_09_024240) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -28,19 +28,22 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_02_194254) do
     t.integer "availability_status"
     t.string "case_upc"
     t.string "asin"
-    t.string "ean_upc"
     t.string "model_number"
     t.text "description"
-    t.string "replenishment_status"
-    t.date "effective_date"
-    t.float "current_cost"
-    t.float "cost"
-    t.string "current_cost_currency"
-    t.string "cost_currency"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "vendor_id", null: false
     t.boolean "case"
+    t.string "vendor_code"
+    t.string "vendor_sku"
+    t.string "product_type"
+    t.string "item_name"
+    t.string "brand_name"
+    t.string "external_product_id"
+    t.string "external_product_id_type"
+    t.string "merchant_suggested_asin"
+    t.string "ean"
+    t.string "gtin"
     t.index ["vendor_id"], name: "index_items_on_vendor_id"
   end
 
