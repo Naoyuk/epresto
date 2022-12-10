@@ -1,16 +1,31 @@
 <%= turbo_frame_tag item do %>
-  <div class='flex border-top'>
+  <div class='flex border-top hover:bg-gray-100'>
     <div class='px-2 w-36 border-r border-b'>
       <span class='inline-block asin'><%= item.asin %></span>
     </div>
     <div class='px-2 w-36 border-r border-b'>
       <span class='inline-block model-number'><%= item.model_number %></span>
     </div>
+    <div class='px-2 w-36 border-r border-b'>
+      <span class='inline-block vendor-sku'><%= item.vendor_sku %></span>
+    </div>
     <div class='px-2 w-24 border-r border-b'>
       <span class='inline-block item-code'><%= item.item_code %></span>
     </div>
     <div class='px-2 w-36 border-r border-b'>
       <span class='inline-block upc'><%= item.upc %></span>
+    </div>
+    <div class='px-2 w-36 border-r border-b'>
+      <span class='inline-block ean'><%= item.ean %></span>
+    </div>
+    <div class='px-2 w-36 border-r border-b'>
+      <span class='inline-block gtin'><%= item.gtin %></span>
+    </div>
+    <div class='px-2 w-36 border-r border-b'>
+      <span class='inline-block external_product_id'><%= item.external_product_id %></span>
+    </div>
+    <div class='px-2 w-36 border-r border-b'>
+      <span class='inline-block external_product_type'><%= item.external_product_id_type %></span>
     </div>
     <div class='px-2 w-96 border-r border-b'>
       <span class='inline-block title'><%= item.title %></span>
@@ -25,19 +40,10 @@
       <span class='inline-block price'><%= item.price %></span>
     </div>
     <div class='px-2 w-20 border-r border-b'>
-      <span class='inline-block z-price'><%= item.z_price %></span>
+      <span class='inline-block z-price'><%= item.z_pricing %></span>
     </div>
     <div class='px-2 w-36 border-r border-b'>
-      <span class='inline-block availability-status'><%= item.availability_status %></span>
-    </div>
-    <div class='px-2 w-36 border-r border-b'>
-      <span class='inline-block case-upc'><%= item.case_upc %></span>
-    </div>
-    <div class='px-2 w-36 border-r border-b'>
-      <span class='inline-block external_product_id'><%= item.external_product_id %></span>
-    </div>
-    <div class='px-2 w-36 border-r border-b'>
-      <span class='inline-block external_product_type'><%= item.external_product_id_type %></span>
+      <span class='inline-block availability-status'><%= item.status %></span>
     </div>
     <div class='px-2 w-96 border-r border-b'>
       <span class='inline-block description'><%= item.description %></span>

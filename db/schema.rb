@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_12_09_024240) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_10_015005) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -22,11 +22,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_09_024240) do
     t.integer "size"
     t.integer "pack"
     t.float "price"
-    t.float "z_price"
+    t.float "z_pricing"
     t.integer "stock"
-    t.string "depertment"
-    t.integer "availability_status"
-    t.string "case_upc"
+    t.string "dept"
+    t.integer "status"
+    t.string "mixed_code"
     t.string "asin"
     t.string "model_number"
     t.text "description"
@@ -44,6 +44,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_09_024240) do
     t.string "merchant_suggested_asin"
     t.string "ean"
     t.string "gtin"
+    t.string "vendor"
     t.index ["vendor_id"], name: "index_items_on_vendor_id"
   end
 

@@ -470,9 +470,9 @@ class Order < ApplicationRecord
               ack.acknowledgement_code = 'Accepted'
               acknowledge_detail['acknowledgementCode'] = 'Accepted'
               # TODO: Phase2以降の実装内容。Price違いの警告
-              # unless item.listprice_amount == item.item.cost
+              # unless item.listprice_amount == item.item.price
               #   @notice_title ||= 'Prices for the following items differ from Item Master prices.'
-              #   price_diff_items << "\nASIN: #{item.amazon_product_identifier}, PO Price: #{item.listprice_amount}, Item Master Price: #{item.item.cost}"
+              #   price_diff_items << "\nASIN: #{item.amazon_product_identifier}, PO Price: #{item.listprice_amount}, Item Master Price: #{item.item.price}"
               # end
             else
               ack.acknowledgement_code = 'Rejected'
@@ -488,7 +488,7 @@ class Order < ApplicationRecord
             elsif item.item.Discontinued?
               ack.rejection_reason = 'ObsoleteProduct'
               acknowledge_detail['rejectionReason'] = 'ObsoleteProduct'
-              # elsif item.item.cost != item.listprice_amount
+              # elsif item.item.price != item.listprice_amount
               #   # TODO: Phase2以降でこの条件は実装予定
               #   ack.rejection_reason = 'TemporarilyUnavailable'
               #   acknowledge_detail['rejectionReason'] = 'TemporarilyUnavailable'
@@ -501,7 +501,7 @@ class Order < ApplicationRecord
             #   # 配列itemAcknowledgementを1個追加
             #   acknowledge_additional = acknowledge_detail
             #   acknowledged_additional_quantity = {}
-            #   if item.item.Current? && (item.listprice_amount == item.item.cost)
+            #   if item.item.Current? && (item.listprice_amount == item.item.price)
             #     acknowledge_additional['acknowledgementCode'] = 'Accepted'
             #   elsif # バックオーダーの条件
             #     acknowledge_additional['acknowledgementCode'] = 'Backordered'

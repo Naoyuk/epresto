@@ -13,6 +13,11 @@
         </div>
 
         <div>
+          <%= f.label :model_number_cont, "Model Number", class: "block mb-2 text-sm font-medium text-gray-900" %>
+          <%= f.search_field :model_number_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+        </div>
+
+        <div>
           <%= f.label :upc_cont, "UPC", class: "block mb-2 text-sm font-medium text-gray-900" %>
           <%= f.search_field :upc_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
         </div>
@@ -47,9 +52,9 @@
 </div>
 
 <!-- 一覧 -->
-<div class="p-2 text-sm font-medium text-center text-gray-500">
+<div class="mt-4 font-medium text-gray-500">
   <%= form_with url: import_items_path, local: true do |f| %>
-    <%= f.file_field :file, class: 'text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none' %>
+    <%= f.file_field :file, class: 'text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none' %>
     <%= f.submit 'Upload', class: 'mx-4 py-2 px-4 bg-sky-400 text-white rounded' %>
   <% end %>
 </div>
@@ -60,17 +65,19 @@
       <div class='flex border-t border-b bg-blue-500 rounded-t-lg text-white'>
         <%= sort_link(@search, :asin, 'Asin', class: 'inline-block px-2 py-2 w-36 border-r') %>
         <%= sort_link(@search, :model_number, 'Model Number', class: 'inline-block px-2 py-2 w-36 border-r') %>
+        <%= sort_link(@search, :vendor_sku, 'SKU', class: 'inline-block px-2 py-2 w-36 border-r') %>
         <%= sort_link(@search, :item_code, 'Item Code', class: 'inline-block px-2 py-2 w-24 border-r') %>
-        <%= sort_link(@search, :upc, 'Upc', class: 'inline-block px-2 py-2 w-36 border-r') %>
+        <%= sort_link(@search, :upc, 'UPC', class: 'inline-block px-2 py-2 w-36 border-r') %>
+        <%= sort_link(@search, :ean, 'EAN', class: 'inline-block px-2 py-2 w-36 border-r') %>
+        <%= sort_link(@search, :gtin, 'GTIN', class: 'inline-block px-2 py-2 w-36 border-r') %>
+        <%= sort_link(@search, :external_product_id, 'External ID', class: 'inline-block px-2 py-2 w-36 border-r') %>
+        <%= sort_link(@search, :external_product_id_type, 'ID Type', class: 'inline-block px-2 py-2 w-36 border-r') %>
         <%= sort_link(@search, :title, 'Title', class: 'inline-block px-2 py-2 w-96 border-r') %>
         <%= sort_link(@search, :brand, 'Brand', class: 'inline-block px-2 py-2 w-48 border-r') %>
         <%= sort_link(@search, :pack, 'Pack', class: 'inline-block px-2 py-2 w-16 border-r') %>
         <%= sort_link(@search, :price, 'Price', class: 'inline-block px-2 py-2 w-20 border-r') %>
         <%= sort_link(@search, :z_prcie, 'Z-Prcie', class: 'inline-block px-2 py-2 w-20 border-r') %>
-        <%= sort_link(@search, :availability_status, 'Availability Status', class: 'inline-block px-2 py-2 w-36 border-r') %>
-        <%= sort_link(@search, :case_upc, 'IM Case Upc', class: 'inline-block px-2 py-2 w-36 border-r') %>
-        <%= sort_link(@search, :external_product_id, 'UPC/EAN/GTIN', class: 'inline-block px-2 py-2 w-36 border-r') %>
-        <%= sort_link(@search, :external_product_id_type, 'ExtID Type', class: 'inline-block px-2 py-2 w-36 border-r') %>
+        <%= sort_link(@search, :status, 'Availability Status', class: 'inline-block px-1 py-2 w-36 border-r') %>
         <%= sort_link(@search, :description, 'Description', class: 'inline-block px-2 py-2 w-96 border-r') %>
         <%= sort_link(@search, :case, 'Case/Each', class: 'inline-block px-2 py-2 w-24 border-r') %>
         <div class='inline-block w-20'></div>

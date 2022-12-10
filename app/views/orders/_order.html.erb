@@ -53,7 +53,7 @@
           <th class='px-4 border-b border-l'>Rejection Reason</th>
         </tr>
         <% order.order_items.order('id ASC').each_with_index do |item, index| %>
-          <tr class='whitespace-nowrap' id= '<%= dom_id(item) %>'>
+          <tr class='whitespace-nowrap hover:bg-gray-100' id= '<%= dom_id(item) %>'>
             <% if index == order.order_items.size - 1 %>
               <td class='px-2 text-center border-b border-l'>┗ <%= item.item_seq_number %></td>
             <% else %>
@@ -68,7 +68,7 @@
             <td class='px-2 border-b border-l text-center'><%= item.netcost_amount %> <%= item.netcost_currency_code %></td>
             <td class='px-2 border-b border-l text-center'><%= item.listprice_amount %> <%= item.listprice_currency_code %></td>
             <td class='px-2 border-b border-l text-center'><%= item.item&.price %></td>
-            <td class='px-2 border-b border-l text-center'><%= item.item&.availability_status %></td>
+            <td class='px-2 border-b border-l text-center'><%= item.item&.status %></td>
             <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledgement_code %></td>
             <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledged_quantity_amount %></td>
             <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledged_quantity_unit_of_measure %></td>
