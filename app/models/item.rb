@@ -73,6 +73,7 @@ class Item < ApplicationRecord
           cols_hash[col] = col_db
         end
       end
+      # cols_hash.delete('I_UPC')
       cols_hash
     end
 
@@ -105,7 +106,7 @@ class Item < ApplicationRecord
       headers = sheet.row(3)
       key = { asin: headers.index('Merchant Suggested Asin') }
 
-      (6..sheet.last_row).each do |row_num|
+      (7..sheet.last_row).each do |row_num|
         prop = key.keys[0]
         if Item.find_by_asin(sheet.row(row_num)[key.values[0]]).nil?
           item = Item.new
@@ -140,6 +141,7 @@ class Item < ApplicationRecord
       # 処理対象のsheetとそのsheetにあるカラムの対照表Hashとvendor_idを受け取る
       # GregAmazon_ItemInfoの場合はItemCodeで検索
       headers = sheet.row(1)
+      # headers.delete('I_UPC')
 
       (2..sheet.last_row).each do |row_num|
         index_of_im_case_upc = headers.index('IM_CASE_UPC')
@@ -206,9 +208,11 @@ class Item < ApplicationRecord
 
     def update_item_access(item, sheet, cols, headers, row_num, vendor_id)
       cols.each do |col|
-        col_index = headers.index(col[0])
-        val = sheet.row(row_num)[col_index]
-        item[col[1]] = val
+        unless col[0] == 'I_UPC'
+          col_index = headers.index(col[0])
+          val = sheet.row(row_num)[col_index]
+          item[col[1]] = val
+        end
       end
       item.vendor_id = vendor_id
       item.save
