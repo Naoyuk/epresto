@@ -36,7 +36,7 @@ class Item < ApplicationRecord
         # GregAmazon_ItemInfo.xlsxは1シートのみ
         sheet_obj = xls.sheet(xls.sheets[0])
         cols_xls = sheet_obj.row(1)
-#
+
         # 既存レコードの更新、または新規レコードを作成
         update_items_access(sheet_obj, cols_access(cols_xls), vendor_id)
       else
@@ -47,7 +47,7 @@ class Item < ApplicationRecord
         sheets_arr.each do |s|
           sheet_obj = xls.sheet(s)
           cols_xls = sheet_obj.row(3)
-  #
+
           # 既存レコードの更新、または新規レコードを作成
           update_or_create_items(sheet_obj, cols_catalog(cols_xls), vendor_id)
         end
@@ -95,7 +95,7 @@ class Item < ApplicationRecord
       arr = code.split('').map { |n| n.to_i }
       idx = arr.count.odd? ? 0 : 1
       odds = arr.map.with_index(1) { |n, i| n if i % 2 == idx }.compact
-      evens = arr.map.with_index(1) { |n, i| n if i % 2 == (1- idx) }.compact
+      evens = arr.map.with_index(1) { |n, i| n if i % 2 == (1 - idx) }.compact
       sum = odds.sum + evens.sum * 3
       (10 - sum % 10) % 10
     end
@@ -108,10 +108,10 @@ class Item < ApplicationRecord
 
       (7..sheet.last_row).each do |row_num|
         prop = key.keys[0]
-        if Item.find_by_asin(sheet.row(row_num)[key.values[0]]).nil?
+        if Item.find_by_asin(sheet.row(row_num)[prop]).nil?
           item = Item.new
         else
-          item = Item.find_by_asin(sheet.row(row_num)[key.values[0]])
+          item = Item.find_by_asin(sheet.row(row_num)[prop])
         end
 
         cols.each do |col|
@@ -187,14 +187,14 @@ class Item < ApplicationRecord
                 update_item_access(item, sheet, cols, headers, row_num, vendor_id)
               end
             else
-               # 13桁のままでヒットしなかったのでCD付けて検索した
+              # 13桁のままでヒットしなかったのでCD付けて検索した
               item = Item.find_by_external_product_id(key + check_digit(key).to_s)
               unless item.nil?
                 item.gtin = key
                 update_item_access(item, sheet, cols, headers, row_num, vendor_id)
               end
             end
-  #
+
           when 14
             item = Item.find_by_external_product_id(key)
             unless item.nil?

@@ -53,7 +53,7 @@ RSpec.describe 'ImportItems', type: :system do
     expect(page.all('.upc')[index_last]).to have_content '815094021444'
     expect(page.all('.external-product-id')[index_last]).to have_content '815094021444'
     expect(page.all('.external-product-id-type')[index_last]).to have_content 'UPC'
-    
+
     records_amount = Item.all.count
 
     file_path = Rails.root.join('spec', 'fixtures', 'Access_item.xlsx')
