@@ -37,3 +37,14 @@
 
 # Ignore fixtures for system specs
 /spec/fixtures/*
+
+# Ignore logs of yarn
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity
+
+# Ignore gems
+/vendor
+
+# Ignore .env
+.env
