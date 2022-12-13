@@ -5,11 +5,9 @@ RSpec.describe "FetchAndAcknowledgePos", type: :system do
     driven_by(:rack_test)
   end
 
-  xscenario 'a user get po data from Amazon and update orders and order items', vcr: true do
+  xscenario 'a user get po data from Amazon and update orders and order items', :vcr do
     create(:vendor)
     user = create(:user)
-    create(:item, asin: 'B01LNRIIAB')
-    create(:item, asin: 'B07DFVDRAB')
 
     visit root_path
     click_link 'Sign in'
