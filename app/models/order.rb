@@ -29,11 +29,11 @@ class Order < ApplicationRecord
   class << self
     # Class methods
     def api_credentials
-      @aws_access_key = Rails.application.credentials[:AWS_ACCESS_KEY_ID]
-      @aws_secret_key = Rails.application.credentials[:AWS_SECRET_ACCESS_KEY]
-      @iam_access_key_id = Rails.application.credentials[:IAM_ACCESS_KEY]
-      @iam_secret_access_key = Rails.application.credentials[:IAM_SECRET_ACCESS_KEY]
-      @refresh_token = Rails.application.credentials[:DEV_CENTRAL_REFRESH_TOKEN]
+      @aws_access_key = ENV['AWS_ACCESS_KEY_ID']
+      @aws_secret_key = ENV['AWS_SECRET_ACCESS_KEY']
+      @iam_access_key_id = ENV['IAM_ACCESS_KEY']
+      @iam_secret_access_key = ENV['IAM_SECRET_ACCESS_KEY']
+      @refresh_token = ENV['DEV_CENTRAL_REFRESH_TOKEN']
       @access_token = generate_access_token
     end
 
