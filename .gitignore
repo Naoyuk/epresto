@@ -37,3 +37,6 @@
 
 # Ignore fixtures for system specs
 /spec/fixtures/*
+
+# Ignore Cassetes
+/spec/cassettes/

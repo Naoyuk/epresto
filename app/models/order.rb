@@ -34,7 +34,6 @@ class Order < ApplicationRecord
       @iam_access_key_id = Rails.application.credentials[:IAM_ACCESS_KEY]
       @iam_secret_access_key = Rails.application.credentials[:IAM_SECRET_ACCESS_KEY]
       @refresh_token = Rails.application.credentials[:DEV_CENTRAL_REFRESH_TOKEN]
-      @access_token = generate_access_token
     end
 
     def generate_access_token
@@ -51,8 +50,7 @@ class Order < ApplicationRecord
         "client_id=#{@aws_access_key}&"\
         "client_secret=#{@aws_secret_key}"
 
-      response = https.request(request)
-      JSON.parse(response.body)['access_token']
+      response = https.request(request).body
     end
 
     def import_po(vendor_id, created_after, created_before)
@@ -64,7 +62,8 @@ class Order < ApplicationRecord
         created_after:,
         created_before:
       }
-      pos = get_purchase_orders(params)
+      response = get_purchase_orders(params)
+      pos = JSON.parse(response.body)
       # なんらかのエラーでPOを取得できなかったらエラーコードをviewに渡して終了
       return pos if pos.has_key?('errors')
 
@@ -86,8 +85,7 @@ class Order < ApplicationRecord
         signature: url_and_signature[:signature]
       }
 
-      response = send_http_request(request_params)
-      JSON.parse(response.body)
+      send_http_request(request_params)
     end
 
     def create_order_and_order_items(params)
@@ -318,6 +316,7 @@ class Order < ApplicationRecord
       end
 
       api_credentials
+      @access_token = JSON.parse(generate_access_token)['access_token']
 
       signer = Aws::Sigv4::Signer.new(
         service: service,
@@ -562,8 +561,8 @@ class Order < ApplicationRecord
 
     def hostname
       if (Rails.env.development? || Rails.env.test?)
-        # 'sandbox.sellingpartnerapi-na.amazon.com'
-        'sellingpartnerapi-na.amazon.com'
+        'sandbox.sellingpartnerapi-na.amazon.com'
+        # 'sellingpartnerapi-na.amazon.com'
       else
         'sellingpartnerapi-na.amazon.com'
       end
