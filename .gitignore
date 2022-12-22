@@ -18,6 +18,9 @@
 !/tmp/pids/
 !/tmp/pids/.keep
 
+# Ignore sockets
+/tmp/sockets/*
+
 # Ignore uploaded files in development.
 /storage/*
 !/storage/.keep
@@ -48,3 +51,6 @@ yarn-debug.log*
 
 # Ignore .env
 .env
+
+# Ignore Cassetes
+/spec/cassettes/*
