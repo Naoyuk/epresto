@@ -148,6 +148,7 @@ class Item < ApplicationRecord
         unless key.nil?
           case key.size
           when 11
+            # 11桁で検索してヒットしたらCD無しのUPCに確定
             item = Item.find_by_external_product_id(key)
             unless item.nil?
               item.upc = key
@@ -157,16 +158,18 @@ class Item < ApplicationRecord
           when 12
             item = Item.find_by_external_product_id(key)
             unless item.nil?
-              # 12桁のままで検索してヒットした
+              # 12桁のままで検索してヒットした場合
               if item.external_product_id_type == 'UPC'
+                # typeがUPCならCD有りのUPCに確定
                 item.upc = key
                 update_item_access(item, sheet, cols, headers, row_num, vendor_id)
               elsif item.external_product_id_type == 'EAN'
+                # typeがEANならCD無しのEANに確定
                 item.ean = key
                 update_item_access(item, sheet, cols, headers, row_num, vendor_id)
               end
             else
-              # 12桁のままでヒットしなかったのでCD付けて検索した
+              # 12桁のままでヒットしなかったのでCD付けて検索してヒットした場合はCD有りのEANに確定
               item = Item.find_by_external_product_id(key + check_digit(key))
               unless item.nil?
                 item.ean = key
@@ -177,16 +180,18 @@ class Item < ApplicationRecord
           when 13
             item = Item.find_by_external_product_id(key)
             unless item.nil?
-              # 13桁のままで検索してヒットした
+              # 13桁のままで検索してヒットした場合
               if item.external_product_id_type == 'EAN'
+                # typeがEANならCD有りのEANに確定
                 item.ean = key
                 update_item_access(item, sheet, cols, headers, row_num, vendor_id)
               elsif item.external_product_id_type == 'GTIN'
+                # typeがGTINならCD無しのGTINに確定
                 item.gtin = key
                 update_item_access(item, sheet, cols, headers, row_num, vendor_id)
               end
             else
-              # 13桁のままでヒットしなかったのでCD付けて検索した
+              # 13桁のままでヒットしなかったのでCD付けて検索してヒットした場合はCD有りのGTINに確定
               item = Item.find_by_external_product_id(key + check_digit(key))
               unless item.nil?
                 item.gtin = key
@@ -197,6 +202,7 @@ class Item < ApplicationRecord
           when 14
             item = Item.find_by_external_product_id(key)
             unless item.nil?
+              # 14桁で検索してヒットしたらCD有りのGTINに確定
               item.gtin = key
               update_item_access(item, sheet, cols, headers, row_num, vendor_id)
             end

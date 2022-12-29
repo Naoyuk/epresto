@@ -38,9 +38,6 @@
 
 /node_modules
 
-# Ignore fixtures for system specs
-/spec/fixtures/*
-
 # Ignore logs of yarn
 /yarn-error.log
 yarn-debug.log*
