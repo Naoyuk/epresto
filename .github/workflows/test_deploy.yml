@@ -2,6 +2,9 @@ name: Test and Deploy
 
 on:
   pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
   test:
@@ -60,3 +63,29 @@ jobs:
           bundle exec rake db:setup RAILS_ENV=test
           bundle exec rake db:migrate RAILS_ENV=test
           bundle exec rspec
+
+  deploy:
+    name: Deploy app to AWS
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install SSH key
+        run: |
+          mkdir -p -m 700 ~/.ssh
+          echo "${{ secrets.EPRESTO_SSH_KEY }}" > ~/.ssh/ep-staging-app
+          chmod 600 ~/.ssh/ep-staging-app
+
+     - name: Deploy
+        run: |
+          eval $(ssh-agent)
+          ssh-add ~/.ssh/ep-staging-app
+          ssh -o StrictHostKeyChecking=no -A epresto@${{ secrets.TARGET_HOSTNAME }} "cd epresto &&
+          git pull origin main &&
+          ~/.rbenv/shims/bundle config --local deployment true &&
+          ~/.rbenv/shims/bundle config --local without development:test &&
+          ~/.rbenv/shims/bundle install &&
+          RAILS_ENV=production ~/.rbenv/shims/bundle exec rails assets:precompile &&
+          RAILS_ENV=production ~/.rbenv/shims/bundle exec rails db:migrate &&
+          ~/.rbenv/shims/bundle exec pumactl restart"
