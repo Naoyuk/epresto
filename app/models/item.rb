@@ -97,21 +97,20 @@ class Item < ApplicationRecord
       odds = arr.map.with_index(1) { |n, i| n if i % 2 == idx }.compact
       evens = arr.map.with_index(1) { |n, i| n if i % 2 == (1 - idx) }.compact
       sum = odds.sum + evens.sum * 3
-      (10 - sum % 10) % 10
+      ((10 - sum % 10) % 10).to_s
     end
 
     def update_or_create_items(sheet, cols, vendor_id)
       # 処理対象のsheetとそのsheetにあるカラムの対照表Hashとvendor_idを受け取る
       # Catalogue_Sourcingファイルの場合はASINで検索して既存または新規レコードオブジェクトを作成
       headers = sheet.row(3)
-      key = { asin: headers.index('Merchant Suggested Asin') }
 
       (7..sheet.last_row).each do |row_num|
-        prop = key.keys[0]
-        if Item.find_by_asin(sheet.row(row_num)[prop]).nil?
+        idx = headers.index('Merchant Suggested Asin')
+        if Item.find_by_asin(sheet.row(row_num)[idx]).nil?
           item = Item.new
         else
-          item = Item.find_by_asin(sheet.row(row_num)[prop])
+          item = Item.find_by_asin(sheet.row(row_num)[idx])
         end
 
         cols.each do |col|
@@ -168,7 +167,7 @@ class Item < ApplicationRecord
               end
             else
               # 12桁のままでヒットしなかったのでCD付けて検索した
-              item = Item.find_by_external_product_id(key + check_digit(key).to_s)
+              item = Item.find_by_external_product_id(key + check_digit(key))
               unless item.nil?
                 item.ean = key
                 update_item_access(item, sheet, cols, headers, row_num, vendor_id)
@@ -188,7 +187,7 @@ class Item < ApplicationRecord
               end
             else
               # 13桁のままでヒットしなかったのでCD付けて検索した
-              item = Item.find_by_external_product_id(key + check_digit(key).to_s)
+              item = Item.find_by_external_product_id(key + check_digit(key))
               unless item.nil?
                 item.gtin = key
                 update_item_access(item, sheet, cols, headers, row_num, vendor_id)
