@@ -83,7 +83,7 @@ jobs:
           ssh-add ~/.ssh/ep-staging-app
           ssh -o StrictHostKeyChecking=no -A epresto@${{ secrets.TARGET_HOSTNAME }} "cd epresto &&
           git pull origin main &&
-          mkdir tmp/pids tmp/sockets &&
+          mkdir -p tmp/pids tmp/sockets &&
           ~/.rbenv/shims/bundle config --local deployment true &&
           ~/.rbenv/shims/bundle config --local without development:test &&
           ~/.rbenv/shims/bundle install &&
