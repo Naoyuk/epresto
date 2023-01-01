@@ -50,7 +50,7 @@ class Order < ApplicationRecord
         "client_id=#{@aws_access_key}&"\
         "client_secret=#{@aws_secret_key}"
 
-      response = https.request(request).body
+      https.request(request).body
     end
 
     def import_po(vendor_id, created_after, created_before)

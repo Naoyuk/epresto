@@ -97,21 +97,20 @@ class Item < ApplicationRecord
       odds = arr.map.with_index(1) { |n, i| n if i % 2 == idx }.compact
       evens = arr.map.with_index(1) { |n, i| n if i % 2 == (1 - idx) }.compact
       sum = odds.sum + evens.sum * 3
-      (10 - sum % 10) % 10
+      ((10 - sum % 10) % 10).to_s
     end
 
     def update_or_create_items(sheet, cols, vendor_id)
       # 処理対象のsheetとそのsheetにあるカラムの対照表Hashとvendor_idを受け取る
       # Catalogue_Sourcingファイルの場合はASINで検索して既存または新規レコードオブジェクトを作成
       headers = sheet.row(3)
-      key = { asin: headers.index('Merchant Suggested Asin') }
 
       (7..sheet.last_row).each do |row_num|
-        prop = key.keys[0]
-        if Item.find_by_asin(sheet.row(row_num)[prop]).nil?
+        idx = headers.index('Merchant Suggested Asin')
+        if Item.find_by_asin(sheet.row(row_num)[idx]).nil?
           item = Item.new
         else
-          item = Item.find_by_asin(sheet.row(row_num)[prop])
+          item = Item.find_by_asin(sheet.row(row_num)[idx])
         end
 
         cols.each do |col|
@@ -149,6 +148,7 @@ class Item < ApplicationRecord
         unless key.nil?
           case key.size
           when 11
+            # 11桁で検索してヒットしたらCD無しのUPCに確定
             item = Item.find_by_external_product_id(key)
             unless item.nil?
               item.upc = key
@@ -158,17 +158,19 @@ class Item < ApplicationRecord
           when 12
             item = Item.find_by_external_product_id(key)
             unless item.nil?
-              # 12桁のままで検索してヒットした
+              # 12桁のままで検索してヒットした場合
               if item.external_product_id_type == 'UPC'
+                # typeがUPCならCD有りのUPCに確定
                 item.upc = key
                 update_item_access(item, sheet, cols, headers, row_num, vendor_id)
               elsif item.external_product_id_type == 'EAN'
+                # typeがEANならCD無しのEANに確定
                 item.ean = key
                 update_item_access(item, sheet, cols, headers, row_num, vendor_id)
               end
             else
-              # 12桁のままでヒットしなかったのでCD付けて検索した
-              item = Item.find_by_external_product_id(key + check_digit(key).to_s)
+              # 12桁のままでヒットしなかったのでCD付けて検索してヒットした場合はCD有りのEANに確定
+              item = Item.find_by_external_product_id(key + check_digit(key))
               unless item.nil?
                 item.ean = key
                 update_item_access(item, sheet, cols, headers, row_num, vendor_id)
@@ -178,17 +180,19 @@ class Item < ApplicationRecord
           when 13
             item = Item.find_by_external_product_id(key)
             unless item.nil?
-              # 13桁のままで検索してヒットした
+              # 13桁のままで検索してヒットした場合
               if item.external_product_id_type == 'EAN'
+                # typeがEANならCD有りのEANに確定
                 item.ean = key
                 update_item_access(item, sheet, cols, headers, row_num, vendor_id)
               elsif item.external_product_id_type == 'GTIN'
+                # typeがGTINならCD無しのGTINに確定
                 item.gtin = key
                 update_item_access(item, sheet, cols, headers, row_num, vendor_id)
               end
             else
-              # 13桁のままでヒットしなかったのでCD付けて検索した
-              item = Item.find_by_external_product_id(key + check_digit(key).to_s)
+              # 13桁のままでヒットしなかったのでCD付けて検索してヒットした場合はCD有りのGTINに確定
+              item = Item.find_by_external_product_id(key + check_digit(key))
               unless item.nil?
                 item.gtin = key
                 update_item_access(item, sheet, cols, headers, row_num, vendor_id)
@@ -198,6 +202,7 @@ class Item < ApplicationRecord
           when 14
             item = Item.find_by_external_product_id(key)
             unless item.nil?
+              # 14桁で検索してヒットしたらCD有りのGTINに確定
               item.gtin = key
               update_item_access(item, sheet, cols, headers, row_num, vendor_id)
             end
