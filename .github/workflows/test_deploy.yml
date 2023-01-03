@@ -74,19 +74,19 @@ jobs:
       - name: Install SSH key
         run: |
           mkdir -p -m 700 ~/.ssh
-          echo "${{ secrets.EPRESTO_SSH_KEY }}" > ~/.ssh/ep-staging-app
-          chmod 600 ~/.ssh/ep-staging-app
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/app_key
+          chmod 600 ~/.ssh/app_key
 
       - name: Deploy
         run: |
           eval $(ssh-agent)
-          ssh-add ~/.ssh/ep-staging-app
-          ssh -o StrictHostKeyChecking=no -A epresto@${{ secrets.TARGET_HOSTNAME }} "cd epresto &&
+          ssh-add ~/.ssh/app_key
+          ssh -o StrictHostKeyChecking=no -A @{{ secrets.HOST_USER }}@${{ secrets.TARGET_HOSTNAME }} "cd epresto &&
           git pull origin main &&
-          mkdir -p tmp/pids &&
-          mkdir -p tmp/sockets &&
+          mkdir -p tmp/pids tmp/sockets &&
           ~/.rbenv/shims/bundle config --local deployment true &&
           ~/.rbenv/shims/bundle config --local without development:test &&
           ~/.rbenv/shims/bundle install &&
           RAILS_ENV=production ~/.rbenv/shims/bundle exec rails assets:precompile &&
-          RAILS_ENV=production ~/.rbenv/shims/bundle exec rails db:migrate"
+          RAILS_ENV=production ~/.rbenv/shims/bundle exec rails db:migrate &&
+          ~/.rbenv/shims/bundle exec pumactl restart"
