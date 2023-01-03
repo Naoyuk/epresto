@@ -16,6 +16,11 @@ jobs:
         image: postgres
         env:
           POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
         ports:
           - 5432:5432
 
@@ -52,14 +57,9 @@ jobs:
 
       - name: Test with RSpec
         env:
-          PSQL_USER: ${{ secrets.PSQL_USER }}
-          PSQL_PASSWORD: ${{ secrets.PSQL_PASSWORD }}
-          PSQL_HOST: localhost
-          PSQL_PORT: 5432
+          POSTGRES_USER: postgres
+          POSTGRES_PORT: 5432
         run: |
-          echo "PSQL_USER = $PSQL_USER" >> .env
-          echo "PSQL_PASSWORD = $PSQL_PASSWORD" >> .env
-          echo "PSQL_HOST = $PSQL_HOST" >> .env
           bundle exec rake db:setup RAILS_ENV=test
           bundle exec rake db:migrate RAILS_ENV=test
           bundle exec rspec
