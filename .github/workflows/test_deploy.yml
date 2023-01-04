@@ -16,7 +16,6 @@ jobs:
         image: postgres:14
         env:
           POSTGRES_PASSWORD: postgres
-          POSTGRES_HOST_AUTH_METHOD: trust
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -58,14 +57,12 @@ jobs:
 
       - name: Create the database
         env:
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
+          POSTGRES_PASSWORD: postgres
         run: RAILS_ENV=test bundle exec rails db:create
 
       - name: Test with RSpec
         env:
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
+          POSTGRES_PASSWORD: postgres
         run: |
           RAILS_ENV=test bundle exec rails db:migrate
           bundle exec rspec
