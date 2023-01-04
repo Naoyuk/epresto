@@ -88,7 +88,8 @@ jobs:
         run: |
           eval $(ssh-agent)
           ssh-add ~/.ssh/app_key
-          ssh -o StrictHostKeyChecking=no -A ${{ secrets.HOST_USER }}@${{ secrets.TARGET_HOSTNAME }} "cd epresto &&
+          ssh -o StrictHostKeyChecking=no -A ${{ secrets.HOST_USER }}@${{ secrets.TARGET_HOSTNAME }} "mkdir -p epresto &&
+          cd epresto &&
           git pull origin main &&
           mkdir -p tmp/pids tmp/sockets &&
           ~/.rbenv/shims/bundle config --local deployment true &&
