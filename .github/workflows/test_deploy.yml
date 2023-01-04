@@ -64,8 +64,8 @@ jobs:
         env:
           POSTGRES_PASSWORD: postgres
         run: |
-          RAILS_ENV=test bundle exec rails db:migrate
-          bundle exec rspec
+          RAILS_ENV=test DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres bundle exec rails db:migrate
+          DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres bundle exec rspec
 
   deploy:
     name: Deploy app to AWS
