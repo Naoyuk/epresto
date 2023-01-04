@@ -57,13 +57,13 @@ jobs:
 
       - name: Create the database
         env:
-          POSTGRES_HOST: postgres
+          POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
         run: RAILS_ENV=test bundle exec rails db:create
 
       - name: Test with RSpec
         env:
-          POSTGRES_HOST: postgres
+          POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
         run: |
           RAILS_ENV=test bundle exec rails db:migrate
