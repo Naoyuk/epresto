@@ -14,8 +14,10 @@ development:
 
 test:
   <<: *default
-  database: postgres
-#
+  database: epresto_test
+  username: postgres
+  password: postgres
+
 production:
   <<: *default
   database: epresto_production
