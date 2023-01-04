@@ -15,7 +15,9 @@ jobs:
       postgres:
         image: postgres:14
         env:
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: epresto_test
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -57,15 +59,17 @@ jobs:
 
       - name: Create the database
         env:
-          POSTGRES_PASSWORD: postgres
-        run: RAILS_ENV=test bundle exec rails db:create
+          DATABASE_URL: postgres://postgres:@localhost:5432/epresto_test
+          RAILS_ENV: test
+        run: bundle exec rails db:setup
 
       - name: Test with RSpec
         env:
-          POSTGRES_PASSWORD: postgres
+          DATABASE_URL: postgres://postgres:@localhost:5432/epresto_test
+          RAILS_ENV: test
         run: |
-          RAILS_ENV=test DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres bundle exec rails db:migrate
-          DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres bundle exec rspec
+          bundle exec rails db:migrate
+          bundle exec rspec
 
   deploy:
     name: Deploy app to AWS
