@@ -39,17 +39,17 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'rubocop'
   gem 'rubocop-rspec'
+  gem 'capistrano', '~> 3.17.1'
+  gem 'capistrano3-puma'
+  gem 'capistrano-rails', '~> 1.2'
+  gem 'capistrano-rbenv'
+  gem 'capistrano-yarn'
 end
 
 group :development do
   gem 'web-console'
   # gem "rack-mini-profiler"
   # gem "spring"
-  gem 'capistrano', '~> 3.7'
-  gem 'capistrano3-puma'
-  gem 'capistrano-rails', '~> 1.2'
-  gem 'capistrano-rbenv'
-  gem 'capistrano-yarn'
 end
 
 group :test do
