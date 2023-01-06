@@ -30,6 +30,10 @@ set :rbenv_prefix, "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rben
 set :puma_threads, [0, 5]
 set :puma_workers, 2
 
+# Rails assets manifest file
+set :assets_manifests, -> {
+  [release_path.join("public", fetch(:assets_prefix), '.manifest.json')]
+}
 # namespace :puma do
 #   desc 'Create Directories for Puma Pids and Socket'
 #   task :make_dirs do
