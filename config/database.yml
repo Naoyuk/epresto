@@ -21,4 +21,3 @@ test:
 production:
   <<: *default
   database: epresto_production
-  host: <%= ENV['PRODUCTION_HOST'] %>
