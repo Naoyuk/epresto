@@ -357,7 +357,7 @@ DEPENDENCIES
   aws-sigv4
   bootsnap
   cancancan
-  capistrano (~> 3.7)
+  capistrano (~> 3.17.1)
   capistrano-rails (~> 1.2)
   capistrano-rbenv
   capistrano-yarn

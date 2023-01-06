@@ -13,19 +13,23 @@ require 'capistrano/console'
 require "capistrano/scm/git"
 install_plugin Capistrano::SCM::Git
 
-# Include tasks from other gems included in your Gemfile
+# capistrano-rbenv
 require "capistrano/rbenv"
+
+# capistrano-rails
 require "capistrano/bundler"
-require "capistrano/rails"
 require "capistrano/rails/assets"
 require "capistrano/rails/migrations"
+
+# capistrano-puma
 require "capistrano/puma"
+install_plugin Capistrano::Puma
+install_plugin Capistrano::Puma::Daemon
+install_plugin Capistrano::Puma::Nginx
+
+# capistrano-yarn
 require "capistrano/yarn"
 
-# Load the Puma plugin
-# Learn more about capistrano3-puma on https://github.com/seuros/capistrano-puma
-install_plugin Capistrano::Puma
-install_plugin Capistrano::Puma::Nginx
 
 # Load custom tasks from `lib/capistrano/tasks` if you have any defined
 Dir.glob('lib/capistrano/tasks/*.rake').each { |r| import r }
