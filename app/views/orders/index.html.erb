@@ -4,35 +4,6 @@
     Search
   </div>
 
-  <div class="mb-3 text-gray-500">
-    <%= search_form_for @search, html: { data: { turbo_frame: "orders-list" } } do |f| %>
-      <div class="grid md:grid-cols-8 md:gap-2 p-2">
-        <div class='col-span-1'>
-          <%= f.label :po_number_cont, "PO Number", class: "block mb-2 text-sm font-medium text-gray-900" %>
-          <%= f.search_field :po_number_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
-        </div>
-
-        <div class='col-span-1'>
-          <%= f.label :po_date, 'From: ', class: 'text-sm font-medium text-gray-900' %>
-          <%= f.date_field :po_date_gteq, class: 'bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5' %>
-        </div>
-
-        <div class='col-span-1'>
-          <%= f.label :po_date, 'To: ', class: 'text-sm font-medium text-gray-900' %>
-          <%= f.date_field :po_date_lteq, class: 'bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5' %>
-        </div>
-
-        <div class='col-span-1'>
-          <%= f.label :po_type, 'PO Type: ', class: 'text-sm font-medium text-gray-900' %>
-          <%= f.search_field :po_type_cont, class: 'bg-gray-50 border border-gray-300 text-sm text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5' %>
-        </div>
-
-        <div class='col-span-1'>
-          <%= f.submit 'Search', class: 'flex items-center border border-gray-800 rounded-lg text-sm px-3 py-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-center' %>
-        </div>
-      </div>
-    <% end %>
-  </div>
 </div>
 
 <!-- 一覧 -->
@@ -121,8 +92,5 @@
     <% end %>
   <% end %>
 
-  <div class="d-flex justify-content-end mt-3">
-    <%= paginate @orders %>
-  </div>
 </div>
 

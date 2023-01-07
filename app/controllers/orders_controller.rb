@@ -2,39 +2,41 @@
 
 class OrdersController < ApplicationController
   def index
-    @search = Order.ransack(params[:q])
-    @search.sorts = 'id desc' if @search.sorts.empty?
-    @orders_all = @search.result.page(params[:page])
-    @orders_new = @search.result.where('po_state = ?', 0).page(params[:page])
-    @orders_acknowledged = @search.result.where('po_state = ?', 1).page(params[:page])
-    @orders_rejected = @search.result.includes(order_items: :acks).references(:acks).where(:acks => { acknowledgement_code: 2 }).page(params[:page])
-    @orders_closed = @search.result.where('po_state = ?', 2).page(params[:page])
+    # @search = Order.ransack(params[:q])
+    # @search.sorts = 'id desc' if @search.sorts.empty?
+    # @orders_all = @search.result.page(params[:page])
+    # @orders_new = @search.result.where('po_state = ?', 0).page(params[:page])
+    # @orders_acknowledged = @search.result.where('po_state = ?', 1).page(params[:page])
+    # @orders_rejected = @search.result.includes(order_items: :acks).references(:acks).where(:acks => { acknowledgement_code: 2 }).page(params[:page])
+    # @orders_closed = @search.result.where('po_state = ?', 2).page(params[:page])
 
-    if params[:new]
-      @orders = @orders_new
-      @state = 'new'
-    elsif params[:acknowledged]
-      @orders = @orders_acknowledged
-      @state = 'acknowledged'
-    elsif params[:rejected]
-      @orders = @orders_rejected
-      @state = 'rejected'
-    elsif params[:closed]
-      @orders = @orders_closed
-      @state = 'closed'
-    elsif params[:bulk]
-      @orders = @orders_all
-      @state = 'bulk'
-    else
-      @orders = @orders_all
-      @state = 'all'
-    end
+    # if params[:new]
+    #   @orders = @orders_new
+    #   @state = 'new'
+    # elsif params[:acknowledged]
+    #   @orders = @orders_acknowledged
+    #   @state = 'acknowledged'
+    # elsif params[:rejected]
+    #   @orders = @orders_rejected
+    #   @state = 'rejected'
+    # elsif params[:closed]
+    #   @orders = @orders_closed
+    #   @state = 'closed'
+    # elsif params[:bulk]
+    #   @orders = @orders_all
+    #   @state = 'bulk'
+    # else
+    #   @orders = @orders_all
+    #   @state = 'all'
+    # end
     # TODO: POのインポート時のエラーをflashで表示したい
     # @import_errors.each do |k, v|
     #   v.each do |msg|
     #     flash.now[:k] = msg
     #   end
     # end
+
+    @orders = Order.all
 
     respond_to do |format|
       format.html
