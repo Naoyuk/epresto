@@ -37,6 +37,7 @@ class OrdersController < ApplicationController
     # end
 
     @orders = Order.all
+    logger.debug "Orderオブジェクト: #{@orders.inspect}"
 
     respond_to do |format|
       format.html
