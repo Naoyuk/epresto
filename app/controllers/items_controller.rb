@@ -23,7 +23,6 @@ class ItemsController < ApplicationController
   end
 
   def import
-    Rails.logger.level = 0
     logger.debug 'ファイルのインポート開始(Controller)'
 
     Item.import(params[:file], current_user.vendor_id)
