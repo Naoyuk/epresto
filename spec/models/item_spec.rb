@@ -60,7 +60,7 @@ RSpec.describe Item, type: :model do
 
   describe 'Item#cols_catalog' do
     it 'Access_item.xlsxの取り込みシートのカラムとItemマスタのカラムの対応をハッシュで返す' do
-      file_path = Rails.root.join('spec', 'fixtures', 'Catalog.xlsm')
+      file_path = Rails.root.join('spec', 'fixtures', 'Catalog.xlsx')
       xls = Roo::Excelx.new(file_path)
       sheet_obj = xls.sheet(1)
       cols_xls = sheet_obj.sheet(sheet_obj.sheets[5]).row(3)

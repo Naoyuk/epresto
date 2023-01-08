@@ -42,7 +42,7 @@ class Item < ApplicationRecord
         update_items_access(sheet_obj, cols_access(cols_xls), vendor_id)
       else
         logger.debug 'Catalogファイルの取り込みを開始'
-        # Catalogue_Sourcing.xlsmは複数シートでカラム名がその都度異なる
+        # Catalogue.xlsxは複数シートでカラム名がその都度異なる
         sheets_arr = xls.sheets.select { |sheet| sheet.include?("Template-") }
 
         # 各sheetを取り込み
