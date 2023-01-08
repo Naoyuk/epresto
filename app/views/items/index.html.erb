@@ -55,7 +55,7 @@
 <div class="mt-4 font-medium text-gray-500">
   <%= form_with url: import_items_path, local: true do |f| %>
     <%= f.file_field :file, class: 'text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none' %>
-    <%= f.submit 'Upload', class: 'mx-4 py-2 px-4 bg-sky-400 text-white rounded' %>
+    <button class='mx-4 py-2 px-4 bg-sky-400 text-white rounded'>Upload</button>
   <% end %>
 </div>
 

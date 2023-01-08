@@ -32,8 +32,8 @@ class Item < ApplicationRecord
       xls = Roo::Excelx.new(file)
 
       # インポート対象のシートを取得
-      type = file.original_filename.include?('.xlsx') ? 'xlsx' : 'xlsm'
-      if type == 'xlsx'
+      type = file.original_filename.include?('qryGREG_Amazon_ItemInfo') ? 'ccw' : 'amazon'
+      if type == 'ccw'
         # GregAmazon_ItemInfo.xlsxは1シートのみ
         sheet_obj = xls.sheet(xls.sheets[0])
         cols_xls = sheet_obj.row(1)
