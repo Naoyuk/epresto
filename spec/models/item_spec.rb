@@ -40,19 +40,19 @@ RSpec.describe Item, type: :model do
       cols_xls = sheet_obj.row(1)
       cols = Item.cols_access(cols_xls)
       result = {
-        "I_ITEM_CODE" => "item_code",
-        "I_UPC" => "upc",
-        "I_ITEM" => "title",
-        "I_BRAND" => "brand",
-        "I_SIZE" => "size",
-        "I_PACK" => "pack",
-        "I_WHOLESALE" => "price",
-        "I_Z_PRICING" => "z_pricing",
-        "I_STOCK" => "stock",
-        "I_DEPT" => "dept",
-        "I_STATUS" => "status",
-        "I_VENDOR" => "vendor",
-        "IM_CASE_UPC" => "external_product_id"
+        "I_ITEM_CODE"=>"item_code",
+        "I_UPC"=>"upc",
+        "I_ITEM"=>"title",
+        "I_BRAND"=>"brand",
+        "I_SIZE"=>"size",
+        "I_PACK"=>"pack",
+        "I_WHOLESALE"=>"price",
+        "I_Z_PRICING"=>"z_pricing",
+        "I_STOCK"=>"stock",
+        "I_DEPT"=>"dept",
+        "I_STATUS"=>"status",
+        "I_VENDOR"=>"vendor",
+        "IM_CASE_UPC"=>"external_product_id"
       }
       expect(cols).to eq result
     end
@@ -66,15 +66,15 @@ RSpec.describe Item, type: :model do
       cols_xls = sheet_obj.sheet(sheet_obj.sheets[5]).row(3)
       cols = Item.cols_catalog(cols_xls)
       result = {
-        "Vendor Code" => "vendor_code",
-        "Vendor SKU" => "vendor_sku",
-        "Product Type" => "product_type",
-        "Item Name" => "item_name",
-        "Brand Name" => "brand_name",
-        "External Product ID" => "external_product_id",
-        "External Product ID Type" => "external_product_id_type",
-        "Merchant Suggested Asin" => "merchant_suggested_asin",
-        "Size" => "size"
+        "Vendor Code"=>"vendor_code",
+        "Vendor SKU"=>"vendor_sku",
+        "Product Type"=>"product_type",
+        "Item Name"=>"item_name",
+        "Brand Name"=>"brand_name",
+        "External Product ID"=>"external_product_id",
+        "External Product ID Type"=>"external_product_id_type",
+        "Merchant Suggested Asin"=>"merchant_suggested_asin",
+        "Size"=>"size"
       }
       expect(cols).to eq result
     end
