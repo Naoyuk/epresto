@@ -18,7 +18,7 @@ RSpec.describe 'ImportItems', type: :system do
     click_button 'Log in'
 
     click_link 'Item Master'
-    file_path = Rails.root.join('spec', 'fixtures', 'Catalog.xlsm')
+    file_path = Rails.root.join('spec', 'fixtures', 'Catalog.xlsx')
     attach_file('file', file_path)
     click_on 'Upload'
 
