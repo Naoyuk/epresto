@@ -27,8 +27,7 @@ class Item < ApplicationRecord
 
   class << self
     def import(file, vendor_id)
-      Rails.logger.level = 0
-      logger.debug 'ファイルのインポート開始'
+      logger.debug "fileパス: #{file}"
       # インポートするファイルの読み込み
       xls = Roo::Excelx.new(file)
 
@@ -49,9 +48,7 @@ class Item < ApplicationRecord
         # 各sheetを取り込み
         sheets_arr.each do |s|
           sheet_obj = xls.sheet(s)
-          logger.debug "シート: #{sheet_obj} を対象"
           cols_xls = sheet_obj.row(3)
-          logger.debug "取り込み対象カラム: #{cols_xls}"
 
           # 既存レコードの更新、または新規レコードを作成
           update_or_create_items(sheet_obj, cols_catalog(cols_xls), vendor_id)
@@ -106,20 +103,15 @@ class Item < ApplicationRecord
     end
 
     def update_or_create_items(sheet, cols, vendor_id)
-      Rails.logger.level = 0
-      logger.debug '対象シートからレコードの作成を開始'
       # 処理対象のsheetとそのsheetにあるカラムの対照表Hashとvendor_idを受け取る
       # Catalogue_Sourcingファイルの場合はASINで検索して既存または新規レコードオブジェクトを作成
       headers = sheet.row(3)
 
       (7..sheet.last_row).each do |row_num|
         idx = headers.index('Merchant Suggested Asin')
-        logger.debug "Merchant Suggested Asinカラムのインデックス: #{idx}"
         if Item.find_by_asin(sheet.row(row_num)[idx]).nil?
-          logger.debug '既存レコードなし'
           item = Item.new
         else
-          logger.debug '既存レコードあり'
           item = Item.find_by_asin(sheet.row(row_num)[idx])
         end
 
@@ -143,7 +135,6 @@ class Item < ApplicationRecord
           item.gtin = item.external_product_id
         end
         unless item.valid?
-          logger.debug "itemがinvalidな理由: #{item.errors.full_messages}"
         end
         item.save
       end
