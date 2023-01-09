@@ -8,26 +8,25 @@ RSpec.describe Item, type: :model do
   end
 
   describe 'case or each' do
-    before do
-      @item_case = create(:item, case: true)
-      @item_each = create(:item, case: false)
-    end
-
     context 'case is true' do
       it 'Case? method returns true' do
-        expect(@item_case.Case?).to eq true
+        item_case = create(:item, case: true)
+        expect(item_case.Case?).to eq true
       end
       it 'Each? method returns false' do
-        expect(@item_case.Each?).to eq false
+        item_case = create(:item, case: true)
+        expect(item_case.Each?).to eq false
       end
     end
 
     context 'case is false' do
       it 'Case? method returns false' do
-        expect(@item_each.Case?).to eq false
+        item_each = create(:item, case: false)
+        expect(item_each.Case?).to eq false
       end
       it 'Each? method returns true' do
-        expect(@item_each.Each?).to eq true
+        item_each = create(:item, case: false)
+        expect(item_each.Each?).to eq true
       end
     end
   end
@@ -59,11 +58,11 @@ RSpec.describe Item, type: :model do
   end
 
   describe 'Item#cols_catalog' do
-    it 'Access_item.xlsxの取り込みシートのカラムとItemマスタのカラムの対応をハッシュで返す' do
+    it 'Catalog.xlsxの取り込みシートのカラムとItemマスタのカラムの対応をハッシュで返す' do
       file_path = Rails.root.join('spec', 'fixtures', 'Catalog.xlsx')
       xls = Roo::Excelx.new(file_path)
-      sheet_obj = xls.sheet(1)
-      cols_xls = sheet_obj.sheet(sheet_obj.sheets[5]).row(3)
+      sheet_obj = xls.sheet('Template-SALAD_DRESSING')
+      cols_xls = sheet_obj.row(3)
       cols = Item.cols_catalog(cols_xls)
       result = {
         "Vendor Code"=>"vendor_code",
