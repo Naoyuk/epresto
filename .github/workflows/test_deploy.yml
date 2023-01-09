@@ -15,8 +15,8 @@ jobs:
       postgres:
         image: postgres:14
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: ${{ secrets.PSQL_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.PSQL_PASSWORD }}
           POSTGRES_DB: epresto_test
         options: >-
           --health-cmd pg_isready
