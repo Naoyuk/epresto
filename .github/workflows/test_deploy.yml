@@ -15,6 +15,7 @@ jobs:
       postgres:
         image: postgres:14
         env:
+          POSTGRES_HOST: localhost
           POSTGRES_USER: ${{ secrets.PSQL_USER_TEST }}
           POSTGRES_PASSWORD: ${{ secrets.PSQL_PASSWORD_TEST }}
           POSTGRES_DB: epresto_test
@@ -59,6 +60,7 @@ jobs:
 
       - name: Test with RSpec
         env:
+          POSTGRES_HOST: localhost
           DATABASE_URL: postgres://postgres:@localhost:5432/epresto_test
           POSTGRES_USER: ${{ secrets.PSQL_USER_TEST }}
           POSTGRES_PASSWORD: ${{ secrets.PSQL_PASSWORD_TEST }}
