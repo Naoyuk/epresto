@@ -4,20 +4,20 @@ default: &default
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   port: <%= ENV['PSQL_PORT'] %>
-  username: <%= ENV['PSQL_USER_DEV'] %>
 
 development:
   <<: *default
   database: epresto_development
   host: <%= ENV['PSQL_HOST'] %>
-  password: <%= ENV['PSQL_PASSWORD_DEV'] %>
+  username: <%= ENV['PSQL_USER'] %>
+  password: <%= ENV['PSQL_PASSWORD'] %>
 
 test:
   <<: *default
   database: epresto_test
-  password: <%= ENV['PSQL_PASSWORD_DEV'] %>
+  username: postgres
+  password: postgres
 
 production:
   <<: *default
   database: epresto_production
-  username: <%= ENV['PSQL_USER_PRODUCTION'] %>
