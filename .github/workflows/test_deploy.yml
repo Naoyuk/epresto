@@ -57,17 +57,14 @@ jobs:
 
       - run: RAILS_ENV=test bundle exec rails assets:precompile
 
-      - name: Create the database
-        env:
-          DATABASE_URL: postgres://postgres:@localhost:5432/epresto_test
-          RAILS_ENV: test
-        run: bundle exec rails db:setup
-
       - name: Test with RSpec
         env:
           DATABASE_URL: postgres://postgres:@localhost:5432/epresto_test
+          POSTGRES_USER: ${{ secrets.PSQL_USER_TEST }}
+          POSTGRES_PASSWORD: ${{ secrets.PSQL_PASSWORD_TEST }}
           RAILS_ENV: test
         run: |
+          bundle exec rails db:setup
           bundle exec rails db:migrate
           bundle exec rspec
 
