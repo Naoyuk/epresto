@@ -10,11 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_12_10_015005) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_16_052757) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "items", force: :cascade do |t|
+  create_table "items", id: :serial, force: :cascade do |t|
     t.string "item_code"
     t.string "upc"
     t.string "title"
@@ -45,6 +45,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_10_015005) do
     t.string "ean"
     t.string "gtin"
     t.string "vendor"
+    t.bigint "item_id"
+    t.index ["asin"], name: "index_items_on_asin", unique: true
+    t.index ["item_id"], name: "index_items_on_item_id"
     t.index ["vendor_id"], name: "index_items_on_vendor_id"
   end
 
@@ -77,9 +80,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_10_015005) do
     t.bigint "order_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "item_id"
     t.integer "case_quantity"
-    t.index ["item_id"], name: "index_order_items_on_item_id"
     t.index ["order_id"], name: "index_order_items_on_order_id"
   end
 
@@ -207,9 +208,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_10_015005) do
     t.string "customer_code"
   end
 
+  add_foreign_key "items", "items"
   add_foreign_key "items", "vendors"
   add_foreign_key "order_item_acknowledgements", "order_items"
-  add_foreign_key "order_items", "items"
   add_foreign_key "order_items", "orders"
   add_foreign_key "orders", "shiptos"
   add_foreign_key "orders", "vendors"
