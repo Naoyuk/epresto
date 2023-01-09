@@ -7,23 +7,28 @@ RSpec.describe 'ImportItems', type: :system do
     driven_by(:rack_test)
   end
 
-  scenario 'An admin-user log in and import files and update item master' do
+  scenario 'adminユーザーはログインしてItemマスターを更新インポートすることができる' do
+    # adminユーザーの作成
     create(:vendor)
     user = create(:user, sysadmin: true)
 
+    # adminユーザーでログイン
     visit root_path
     click_link 'Sign in'
     fill_in 'Email', with: user.email
     fill_in 'Password', with: user.password
     click_button 'Log in'
 
+    # Catalog.xlsxをアップロード
     click_link 'Item Master'
     file_path = Rails.root.join('spec', 'fixtures', 'Catalog.xlsx')
     attach_file('file', file_path)
     click_on 'Upload'
 
+    # 最後のItemレコードのインデックスを取得
     index_last = Item.all.count - 1
 
+    # インポートしたデータが反映されているか、いくつかのレコードをサンプリングして確認
     expect(page.all('.asin')[0]).to have_content 'B0SSSSSSMD'
     expect(page.all('.model-number')[0]).to have_content 'ZZZ02017-CASE'
     expect(page.all('.upc')[0]).to have_content '832938035370'
@@ -54,14 +59,19 @@ RSpec.describe 'ImportItems', type: :system do
     expect(page.all('.external-product-id')[index_last]).to have_content '815094021444'
     expect(page.all('.external-product-id-type')[index_last]).to have_content 'UPC'
 
+    # Itemマスタのレコード総数をカウント
     records_amount = Item.all.count
 
-    file_path = Rails.root.join('spec', 'fixtures', 'Access_item.xlsx')
+    # CCWのマスタファイルをアップロード
+    file_path = Rails.root.join('spec', 'fixtures', 'qryGREG_Amazon_ItemInfo.xlsx')
     attach_file('file', file_path)
     click_on 'Upload'
 
+
+    # 最後のItemレコードのインデックスを取得
     index_last = Item.all.count - 1
 
+    # インポートしたデータの更新が反映されているか、いくつかのレコードをサンプリングして確認
     expect(page.all('.asin')[0]).to have_content 'B0SSSSSSMD'
     expect(page.all('.model-number')[0]).to have_content 'ZZZ02017-CASE'
     expect(page.all('.upc')[0]).to have_content '832938035370'
@@ -103,7 +113,7 @@ RSpec.describe 'ImportItems', type: :system do
     expect(page.all('.item-code')[index_last]).to have_content ''
     expect(page.all('.title')[index_last]).to have_content ''
 
-    # Catalogファイルに無いItemはインポートされていない
+    # Catalogファイルに無いItemはインポートされていないことを確認
     expect(page.all('.item-code')).not_to have_content 'XXXXXXXX'
     expect(page.all('.title')).not_to have_content 'Sample XXXXX'
     expect(Item.all.count).to eq records_amount

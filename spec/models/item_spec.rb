@@ -33,7 +33,7 @@ RSpec.describe Item, type: :model do
 
   describe 'Item#cols_access' do
     it 'Access_item.xlsxの取り込みシートのカラムとItemマスタのカラムの対応をハッシュで返す' do
-      file_path = Rails.root.join('spec', 'fixtures', 'Access_item.xlsx')
+      file_path = Rails.root.join('spec', 'fixtures', 'qryGREG_Amazon_ItemInfo.xlsx')
       xls = Roo::Excelx.new(file_path)
       sheet_obj = xls.sheet(xls.sheets[0])
       cols_xls = sheet_obj.row(1)

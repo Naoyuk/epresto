@@ -2,7 +2,10 @@
 
 class OrderItem < ApplicationRecord
   belongs_to :order
-  belongs_to :item, optional: true
+  belongs_to :item,
+    optional: true,
+    primary_key: :asin,
+    foreign_key: :amazon_product_identifier
   has_many :acks, class_name: 'OrderItemAcknowledgement'
 
   # definitions of enum

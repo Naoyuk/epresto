@@ -1,6 +1,7 @@
 class Item < ApplicationRecord
   belongs_to :vendor
   has_many :order_items
+  self.primary_key = 'asin'
 
   enum status: {
     Current: 0,
