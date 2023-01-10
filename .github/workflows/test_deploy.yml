@@ -60,10 +60,9 @@ jobs:
 
       - name: Test with RSpec
         env:
-          POSTGRES_HOST: localhost
-          DATABASE_URL: postgres://postgres:@localhost:5432/epresto_test
-          POSTGRES_USER: ${{ secrets.PSQL_USER_TEST }}
-          POSTGRES_PASSWORD: ${{ secrets.PSQL_PASSWORD_TEST }}
+          PSQL_HOST: localhost
+          PSQL_USER: ${{ secrets.PSQL_USER_TEST }}
+          PSQL_PASSWORD: ${{ secrets.PSQL_PASSWORD_TEST }}
           RAILS_ENV: test
         run: |
           bundle exec rails db:setup

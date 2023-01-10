@@ -3,12 +3,12 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV['PSQL_HOST'] %>
   port: <%= ENV['PSQL_PORT'] %>
 
 development:
   <<: *default
   database: epresto_development
-  host: <%= ENV['PSQL_HOST'] %>
   username: <%= ENV['PSQL_USER'] %>
   password: <%= ENV['PSQL_PASSWORD'] %>
 
