@@ -15,8 +15,8 @@ development:
 test:
   <<: *default
   database: epresto_test
-  username: <%= ENV['PSQL_USER'] %>
-  password: <%= ENV['PSQL_PASSWORD'] %>
+  username: postgres
+  password: postgres
 
 production:
   <<: *default
