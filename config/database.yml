@@ -21,3 +21,4 @@ test:
 production:
   <<: *default
   database: epresto_production
+  username: <%= ENV['PSQL_USER_PRODUCTION'] %>
