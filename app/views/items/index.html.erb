@@ -84,9 +84,11 @@
       </div>
     </div>
 
-    <div id='items' class='inline-block'>
-      <%= render @items %>
-    </div>
+    <% if @items.any? %>
+      <div id='items' class='inline-block'>
+        <%= render @items %>
+      </div>
+    <% end %>
 
     <div class="d-flex justify-content-end mt-3">
       <%= paginate @items %>
