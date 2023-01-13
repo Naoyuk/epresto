@@ -98,8 +98,15 @@ jobs:
       - name: Deploy
         env:
           DEPLOY_SSH_KEY_PATH: ~/.ssh/app_key
-          PRODUCTION_HOST: ${{secrets.TARGET_HOSTNAME}}
+          PRODUCTION_HOST: 10.0.0.247
+          INSTANCE_ID: i-037bc7fc1994ca809
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-west-2
         run: |
+          # NOTE:
+          #   Not need install aws-cli. Because already install aws-cli command.
+          #   Not need install plugin for start ssm seesion on github actions
           mkdir -p -m 700 ~/.ssh
           echo "${{ secrets.SSH_KEY }}" > ~/.ssh/app_key
           chmod 600 ~/.ssh/app_key
