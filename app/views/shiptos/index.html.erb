@@ -1,55 +1,107 @@
-<!-- Search -->
-<div class="bg-white rounded-lg border shadow-md">
-  <div class="py-2 px-2 flex flex-wrap text-sm font-medium text-center text-gray-500 bg-gray-50 rounded-t-lg border-b border-gray-200">
-    Search
-  </div>
+<!-- wrapper -->
+<div class='overflow-x-scroll'>
+  <div class='inline-block'>
 
-  <div class="mb-3 text-gray-500">
-    <%= search_form_for @search, html: { data: { turbo_frame: "_top" } } do |f| %>
-      <div class="grid md:grid-cols-8 md:gap-2 p-2">
-        <div>
-          <%= f.label :location_code_cont, "Code", class: "block mb-2 text-sm font-medium text-gray-900" %>
-          <%= f.search_field :location_code_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
-        </div>
-
-        <div>
-          <%= f.label :province_cont, "Province", class: "block mb-2 text-sm font-medium text-gray-900" %>
-          <%= f.search_field :province_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
-        </div>
-
-        <div>
-          <%= f.label :customer_name_cont, "Customer Name", class: "block mb-2 text-sm font-medium text-gray-900" %>
-          <%= f.search_field :customer_name_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
-        </div>
-
-        <div>
-          <%= f.label :address_line1_cont, "Address", class: "block mb-2 text-sm font-medium text-gray-900" %>
-          <%= f.search_field :address_line1_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
-        </div>
-
-        <div>
-          <%= f.label :city_cont, "City", class: "block mb-2 text-sm font-medium text-gray-900" %>
-          <%= f.search_field :city_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
-        </div>
-
-        <div>
-          <%= f.label :postal_code_cont, "Postal Code", class: "block mb-2 text-sm font-medium text-gray-900" %>
-          <%= f.search_field :postal_code_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
-        </div>
-
-        <div>
-          <%= button_tag(icon_with_text("search", "Search"), class: "inline-flex items-center mt-4 py-2 px-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300") %>
-          <%= link_to "Clear", shiptos_path, class: "text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-3 py-2 text-center" %>
-        </div>
+    <!-- Search -->
+    <div class="bg-white rounded-lg border shadow-md">
+      <div class="py-2 px-2 flex flex-wrap text-sm font-medium text-center text-gray-500 bg-gray-50 rounded-t-lg border-b border-gray-200">
+        Search
       </div>
-    <% end %>
-  </div>
-</div>
 
-<!-- 一覧 -->
-<div class="mt-4 w-full flex bg-white rounded-lg border shadow-md">
-  <div class='overflow-x-scroll'>
-    <div class='inline-block'>
+      <div class="mb-3 text-gray-500">
+        <%= search_form_for @search, html: { data: { turbo_frame: "_top" } } do |f| %>
+          <div class="flex">
+            <div class='pr-1 w-[97px]'>
+              <%= f.label :location_code_cont, "Code", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :location_code_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[290px]'>
+              <%= f.label :customer_name_cont, "Customer Name", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :customer_name_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[240px]'>
+              <%= f.label :address_line1_cont, "Address Line1", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :address_line1_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[240px]'>
+              <%= f.label :address_line2_cont, "Address Line2", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :address_line2_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[142px]'>
+              <%= f.label :city_cont, "City", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :city_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[96px]'>
+              <%= f.label :province_cont, "Province", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :province_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :postal_code_cont, "Postal Code", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :postal_code_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :contact_name1_cont, "Contact Name1", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :contact_name1_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :email1_cont, "Email1", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :email1_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :phone1_cont, "Phone1", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :phone1_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :contact_name2_cont, "Contact Name2", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :contact_name2_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :email2_cont, "Email2", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :email2_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :phone2_cont, "Phone2", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :phone2_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :send_report_cont, "Send Report", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :send_report_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :visu_email_cont, "Visu Email", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :visu_email_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div>
+              <div class='mb-2'>
+                <%= button_tag(icon_with_text("search", "Search"), class: "items-center py-2 px-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300") %>
+              </div>
+              <div class='mb-2'>
+                <%= link_to "Clear", shiptos_path, class: "text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm py-2 text-center" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- list -->
+    <div class="mt-4 w-full flex bg-white rounded-lg border shadow-md">
+      <!-- list-header -->
       <div class='flex border-t border-b bg-blue-500 rounded-t-lg text-white'>
         <%= sort_link(@search, :location_code, 'Code', class: 'inline-block px-2 py-2 w-24 border-r') %>
         <%= sort_link(@search, :customer_name, 'Customer Name', class: 'inline-block px-2 py-2 w-72 border-r') %>
@@ -70,12 +122,16 @@
       </div>
     </div>
 
-    <div id='shiptos' class='inline-block'>
-      <%= render @shiptos %>
-    </div>
+    <% if @shiptos.any? %>
+      <!-- list-body -->
+      <div id='shiptos' class='inline-block'>
+        <%= render @shiptos %>
+      </div>
 
-    <div class="d-flex justify-content-end mt-3">
-      <%= paginate @shiptos %>
-    </div>
+      <!-- pagenation -->
+      <div class="d-flex justify-content-end mt-3">
+        <%= paginate @shiptos %>
+      </div>
+    <% end %>
   </div>
 </div>
