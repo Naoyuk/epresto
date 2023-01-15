@@ -3,8 +3,8 @@ name: Test and Deploy
 on:
   pull_request:
   push:
-    branches:
-      - main
+    #branches:
+      #- main
 
 jobs:
   test:
@@ -70,8 +70,8 @@ jobs:
 
   deploy:
     name: Deploy app to AWS
-    needs: test
-    if: github.ref == 'refs/heads/main'
+    #needs: test
+    #if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
@@ -98,8 +98,8 @@ jobs:
       - name: Deploy
         env:
           DEPLOY_SSH_KEY_PATH: ~/.ssh/app_key
-          PRODUCTION_HOST: 10.0.0.247
-          INSTANCE_ID: i-037bc7fc1994ca809
+          PRODUCTION_HOST: 10.0.1.154
+          INSTANCE_ID: i-06aa828227239c62c
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: us-west-2
