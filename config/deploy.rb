@@ -47,7 +47,7 @@ set :assets_manifests, -> {
 #   end
 #   before :start, :make_dirs
 # end
-# 
+#
 # namespace :deploy do
 #   desc 'Make sure local git is in sync with remote.'
 #   task :check_revision do
@@ -77,7 +77,7 @@ set :assets_manifests, -> {
 #   after :finishing, :cleanup
 #   after :finishing, :restart
 # end
-# 
+#
 # namespace :config do
 #   task :display do
 #     Capistrano::Configuration.env.keys.each do |key|

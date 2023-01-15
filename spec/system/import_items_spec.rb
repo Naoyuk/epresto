@@ -67,7 +67,6 @@ RSpec.describe 'ImportItems', type: :system do
     attach_file('file', file_path)
     click_on 'Upload'
 
-
     # 最後のItemレコードのインデックスを取得
     index_last = Item.all.count - 1
 

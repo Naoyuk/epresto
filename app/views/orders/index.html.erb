@@ -1,96 +1,173 @@
-<!-- Search -->
-<div class="bg-white rounded-lg border shadow-md">
-  <div class="py-2 px-2 flex flex-wrap text-sm font-medium text-center text-gray-500 bg-gray-50 rounded-t-lg border-b border-gray-200">
-    Search
-  </div>
+<div class='overflow-x-scroll'>
+  <div class='inline-block'>
+    <!-- Search -->
+    <div class="bg-white rounded-lg border shadow-md">
+      <div class="py-2 px-2 flex flex-wrap text-sm font-medium text-center text-gray-500 bg-gray-50 rounded-t-lg border-b border-gray-200">
+        Search
+      </div>
 
-</div>
+      <div class="mb-3 text-gray-500">
+        <%= search_form_for @search, html: { data: { turbo_frame: "_top" } } do |f| %>
+          <div class="flex">
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :po_number_cont, "PO Number", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :po_number_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
 
-<!-- 一覧 -->
-<div class="mt-3 w-full bg-white rounded-lg border shadow-md">
-  <div class="p-2 flex flex-wrap text-sm font-medium text-center text-gray-500 bg-gray-50 rounded-t-lg border-b border-gray-200">
-    <%= icon_with_text("table", "Purchase Orders") %>
-  </div>
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :po_state_cont, "State", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.select :po_state_cont, [['New', 0], ['Acknowledged', 1], ['Closed', 2]], { include_blank: '' }, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
 
-  <div class='p-2 flex flex-wrap text-sm font-medium text-gray-500 border-b'>
-    <%= form_with url: import_orders_path, data: { turbo_confirm: 'Fetch PO from Amazon?' }, class: 'flex items-center px-4', local: true do |f| %>
-      <%= f.date_field :created_after, value: (Time.now - 24 * 60 * 60 * 7).strftime("%Y-%m-%d"), class: 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5' %>
-      <span class='px-2'>~</span>
-      <%= f.date_field :created_before, value: Time.now.strftime("%Y-%m-%d"), class: 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5' %>
-      <%= f.submit 'Update', class: "ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm w-full sm:w-auto px-4 py-2 text-center" %>
-    <% end %>
+            <div class='pr-1 w-48'>
+              <%= f.label :po_date_gteq, "PO Date", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.date_field :po_date_gteq, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+              <%= f.date_field :po_date_lteq, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
 
-    <%= form_with url: acknowledge_orders_path, data: { turbo_confirm: 'Acknowledge Purchase Orders?' }, class: 'items-center mt-1', local: true do |f| %>
-      <%= f.hidden_field :po_numbers, :value => @orders.pluck(:po_number) %>
-      <%= f.submit 'Acknowledge', class: "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm w-full sm:w-auto px-4 py-2 text-center" %>
-    <% end %>
+            <div class='pr-1 w-48'>
+              <%= f.label :po_changed_date_gteq, "Change Date", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.date_field :po_changed_date_gteq, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+              <%= f.date_field :po_changed_date_lteq, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
 
-    <div class='flex mt-1'>
-      <%= download_po_link_to %>
+            <div class='pr-1 w-48'>
+              <%= f.label :po_state_changed_date_gteq, "Statu Change Date", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.date_field :po_state_changed_date_gteq, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+              <%= f.date_field :po_state_changed_date_lteq, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-48'>
+              <%= f.label :last_updated_date_gteq, "Last Update Date", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.date_field :last_updated_date_gteq, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+              <%= f.date_field :last_updated_date_lteq, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :payment_method_cont, "Payment Method", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.select :payment_method_cont, [['Invoice', 0], ['Consignment', 1], ['Credit Card', 2], ['Prepaid', 3]], { include_blank: '' }, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :selling_party_id_cont, "Selling Party", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :selling_party_id_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[384px]'>
+              <%= f.label :selling_party_id_cont, "Selling Party", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :shipto_location_code_or_shipto_address_line1_or_shipto_province_or_shipto_postal_code_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div>
+              <div class='mb-2'>
+                <%= button_tag(icon_with_text("search", "Search"), class: "inline-flex items-center mt-4 py-2 px-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300") %>
+              </div>
+              <div>
+                <%= link_to "Clear", orders_path, class: "text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-3 py-2 text-center" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
     </div>
 
-    <div class='flex mt-1'>
-      <%= download_js_link_to %>
+    <!-- API -->
+    <div class="mt-3 w-full bg-white rounded-lg border shadow-md">
+      <div class="p-2 flex flex-wrap text-sm font-medium text-center text-gray-500 bg-gray-50 rounded-t-lg border-b border-gray-200">
+        <%= icon_with_text("table", "Purchase Orders") %>
+      </div>
+
+      <div class='p-2 flex flex-wrap text-sm font-medium text-gray-500 border-b'>
+        <%= form_with url: import_orders_path, data: { turbo_confirm: 'Fetch PO from Amazon?' }, class: 'flex items-center px-4', local: true do |f| %>
+          <%= f.date_field :created_after, value: (Time.now - 24 * 60 * 60 * 7).strftime("%Y-%m-%d"), class: 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5' %>
+          <span class='px-2'>~</span>
+          <%= f.date_field :created_before, value: Time.now.strftime("%Y-%m-%d"), class: 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5' %>
+          <%= f.submit 'Update', class: "ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm w-full sm:w-auto px-4 py-2 text-center" %>
+        <% end %>
+
+        <%= form_with url: acknowledge_orders_path, data: { turbo_confirm: 'Acknowledge Purchase Orders?' }, class: 'items-center mt-1', local: true do |f| %>
+          <%= f.hidden_field :po_numbers, :value => @orders.pluck(:po_number) %>
+          <%= f.submit 'Acknowledge', class: "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm w-full sm:w-auto px-4 py-2 text-center" %>
+        <% end %>
+
+        <div class='flex mt-1'>
+          <%= download_po_link_to %>
+        </div>
+
+        <div class='flex mt-1'>
+          <%= download_js_link_to %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab -->
+    <div>
+      <ul class="list-reset flex mt-2 border-b-2 border-blue-600">
+        <li class="mr-1">
+          <%= tab_link_to orders_path(all: true), 'All' %>
+        </li>
+        <li class="mr-1">
+          <%= tab_link_to orders_path(new: true), 'New' %>
+        </li>
+        <li class="-mb-px mr-1">
+          <%= tab_link_to orders_path(acknowledged: true), 'Acknowledged' %>
+        </li>
+        <li class="mr-1">
+          <%= tab_link_to orders_path(rejected: true), 'Rejected' %>
+        </li>
+        <li class="mr-1">
+          <%= tab_link_to orders_path(closed: true), 'Closed' %>
+        </li>
+        <li class="mr-1">
+          <%= tab_link_to orders_path(bulk: true), 'Bulk' %>
+        </li>
+        <% if @state == 'bulk' %>
+          <li class="mr-1">
+            <%= button_to 'Convert to Bulk Order', {controller: 'orders', action: 'convert_to_bulk'}, {method: :post, params: {ids: ''}, class: 'text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm w-full sm:w-auto px-4 py-2 text-center'} %>
+          </li>
+          <li class="mr-1">
+            <%= button_to 'Convert to Regular Order', {controller: 'orders', action: 'convert_to_regular'}, {method: :post, params: {ids: ''}, class: 'text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm w-full sm:w-auto px-4 py-2 text-center'} %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <!-- list -->
+    <div>
+      <div class="mt-4 w-full flex bg-white rounded-b-lg border-b shadow-md">
+        <%= turbo_frame_tag 'orders-list' do %>
+          <% if @state == 'bulk' %>
+            <table class="order table-fixed mt-2 text-gray-500">
+              <tr class='bg-blue-500 whitespace-nowrap text-white'>
+                <th class='w-2/12 px-4 py-2 border'>
+                  <input type='checkbox' class='check-all' id='check-all' />
+                </th>
+                <th class='w-2/12 px-4 py-2 border'>PO Type</th>
+                <th class='w-2/12 px-4 py-2 border'>PO Number</th>
+                <th class='w-2/12 px-4 py-2 border'>State</th>
+                <th class='w-1/12 px-4 py-2 border'>PO Date</th>
+                <th class='w-1/12 px-4 py-2 border'>PO Change Date</th>
+                <th class='w-1/12 px-4 py-2 border'>PO State Change Date</th>
+                <th class='w-1/12 px-4 py-2 border'>Last Updated Date</th>
+                <th class='w-1/12 px-4 py-2 border'>Payment Method</th>
+                <th class='w-2/12 px-4 py-2 border'>Selling Party</th>
+                <th class='w-1/12 px-4 py-2 border'>Shipping Address</th>
+                <th class='w-1/12 px-4 py-2 border'>Ship Window</th>
+                <th class='w-1/12 px-4 py-2 border'>Delivery Window</th>
+              </tr>
+
+              <%= render :partial => 'bulk_order' %>
+
+            </table>
+          <% else %>
+            <% if @orders.any? %>
+              <div id='items' class='inline-block'>
+                <%= render @orders %>
+              </div>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
     </div>
   </div>
-
-  <ul class="list-reset flex mt-2 border-b-2 border-blue-600">
-    <li class="mr-1">
-      <%= tab_link_to orders_path(all: true), 'All' %>
-    </li>
-    <li class="mr-1">
-      <%= tab_link_to orders_path(new: true), 'New' %>
-    </li>
-    <li class="-mb-px mr-1">
-      <%= tab_link_to orders_path(acknowledged: true), 'Acknowledged' %>
-    </li>
-    <li class="mr-1">
-      <%= tab_link_to orders_path(rejected: true), 'Rejected' %>
-    </li>
-    <li class="mr-1">
-      <%= tab_link_to orders_path(closed: true), 'Closed' %>
-    </li>
-    <li class="mr-1">
-      <%= tab_link_to orders_path(bulk: true), 'Bulk' %>
-    </li>
-    <% if @state == 'bulk' %>
-      <li class="mr-1">
-        <%= button_to 'Convert to Bulk Order', {controller: 'orders', action: 'convert_to_bulk'}, {method: :post, params: {ids: ''}, class: 'text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm w-full sm:w-auto px-4 py-2 text-center'} %>
-      </li>
-      <li class="mr-1">
-        <%= button_to 'Convert to Regular Order', {controller: 'orders', action: 'convert_to_regular'}, {method: :post, params: {ids: ''}, class: 'text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm w-full sm:w-auto px-4 py-2 text-center'} %>
-      </li>
-    <% end %>
-  </ul>
-
-  <%= turbo_frame_tag 'orders-list' do %>
-    <% if @state == 'bulk' %>
-      <table class="order table-fixed mt-2 text-gray-500">
-        <tr class='bg-blue-500 whitespace-nowrap text-white'>
-          <th class='w-2/12 px-4 py-2 border'>
-            <input type='checkbox' class='check-all' id='check-all' />
-          </th>
-          <th class='w-2/12 px-4 py-2 border'>PO Type</th>
-          <th class='w-2/12 px-4 py-2 border'>PO Number</th>
-          <th class='w-2/12 px-4 py-2 border'>State</th>
-          <th class='w-1/12 px-4 py-2 border'>PO Date</th>
-          <th class='w-1/12 px-4 py-2 border'>PO Change Date</th>
-          <th class='w-1/12 px-4 py-2 border'>PO State Change Date</th>
-          <th class='w-1/12 px-4 py-2 border'>Last Updated Date</th>
-          <th class='w-1/12 px-4 py-2 border'>Payment Method</th>
-          <th class='w-2/12 px-4 py-2 border'>Selling Party</th>
-          <th class='w-1/12 px-4 py-2 border'>Shipping Address</th>
-          <th class='w-1/12 px-4 py-2 border'>Ship Window</th>
-          <th class='w-1/12 px-4 py-2 border'>Delivery Window</th>
-        </tr>
-
-        <%= render :partial => 'bulk_order' %>
-
-      </table>
-    <% else %>
-      <%= render @orders %>
-    <% end %>
-  <% end %>
-
 </div>
-

@@ -135,8 +135,6 @@ class Item < ApplicationRecord
         when 'GTIN'
           item.gtin = item.external_product_id
         end
-        unless item.valid?
-        end
         item.save
       end
     end

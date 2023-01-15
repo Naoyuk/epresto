@@ -34,16 +34,16 @@ gem 'roo'
 gem 'rubyzip'
 
 group :development, :test do
-  gem 'debug', platforms: %i[mri mingw x64_mingw]
-  gem 'factory_bot_rails'
-  gem 'rspec-rails'
-  gem 'rubocop'
-  gem 'rubocop-rspec'
   gem 'capistrano', '~> 3.17.1'
   gem 'capistrano3-puma'
   gem 'capistrano-rails', '~> 1.2'
   gem 'capistrano-rbenv'
   gem 'capistrano-yarn'
+  gem 'debug', platforms: %i[mri mingw x64_mingw]
+  gem 'factory_bot_rails'
+  gem 'rspec-rails'
+  gem 'rubocop'
+  gem 'rubocop-rspec'
 end
 
 group :development do
