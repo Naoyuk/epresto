@@ -4,28 +4,28 @@ class OrdersController < ApplicationController
   def index
     @search = Order.ransack(params[:q])
     @search.sorts = 'id desc' if @search.sorts.empty?
-    @orders_all = @search.result.page(params[:page])
-    @orders_new = @search.result.where('po_state = ?', 0).page(params[:page])
-    @orders_acknowledged = @search.result.where('po_state = ?', 1).page(params[:page])
-    @orders_rejected = @search.result.includes(order_items: :acks).references(:acks).where(:acks => { acknowledgement_code: 2 }).page(params[:page])
-    @orders_closed = @search.result.where('po_state = ?', 2).page(params[:page])
 
     if params[:new]
+      @orders_new = @search.result.where('po_state = ?', 0).page(params[:page])
       @orders = @orders_new
       @state = 'new'
     elsif params[:acknowledged]
+      @orders_acknowledged = @search.result.where('po_state = ?', 1).page(params[:page])
       @orders = @orders_acknowledged
       @state = 'acknowledged'
     elsif params[:rejected]
+      @orders_rejected = @search.result.includes(order_items: :acks).references(:acks).where(:acks => { acknowledgement_code: 2 }).page(params[:page])
       @orders = @orders_rejected
       @state = 'rejected'
     elsif params[:closed]
+      @orders_closed = @search.result.where('po_state = ?', 2).page(params[:page])
       @orders = @orders_closed
       @state = 'closed'
     elsif params[:bulk]
       @orders = @orders_all
       @state = 'bulk'
     else
+      @orders_all = @search.result.page(params[:page])
       @orders = @orders_all
       @state = 'all'
     end
