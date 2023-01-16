@@ -22,6 +22,7 @@ class OrdersController < ApplicationController
       @orders = @orders_closed
       @state = 'closed'
     elsif params[:bulk]
+      @orders_all = @search.result.page(params[:page])
       @orders = @orders_all
       @state = 'bulk'
     else
