@@ -28,7 +28,7 @@ RSpec.describe 'UserSessions', type: :system do
     fill_in 'Password', with: user.password
     click_button 'Log in'
 
-    expect(page).to have_content 'You need to sign in or sign up before continuing.'
+    expect(page).to have_content 'Invalid Email or password.'
   end
 
   scenario 'user failed to logs in with an invalid email' do
@@ -52,7 +52,7 @@ RSpec.describe 'UserSessions', type: :system do
     fill_in 'Password', with: nil
     click_button 'Log in'
 
-    expect(page).to have_content 'You need to sign in or sign up before continuing.'
+    expect(page).to have_content 'Invalid Email or password.'
   end
 
   scenario 'user failed to logs in with an invalid password' do
