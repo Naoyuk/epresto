@@ -1,6 +1,4 @@
 class Item < ApplicationRecord
-  validates :file, presence: true
-
   belongs_to :vendor
   has_many :order_items
   self.primary_key = 'asin'
@@ -15,8 +13,6 @@ class Item < ApplicationRecord
     Case: true,
     Each: false
   }
-
-  belongs_to :vendor
 
   def case_or_each
     pattern = /.*kg.*/

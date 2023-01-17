@@ -7,6 +7,25 @@ RSpec.describe 'ImportItems', type: :system do
     driven_by(:rack_test)
   end
 
+  scenario 'Itemマスターをインポートする対象のファイルを選択しなかった場合はアラートが表示される' do
+    # adminユーザーの作成
+    create(:vendor)
+    user = create(:user, sysadmin: true)
+
+    # adminユーザーでログイン
+    visit root_path
+    click_link 'Sign in'
+    fill_in 'Email', with: user.email
+    fill_in 'Password', with: user.password
+    click_button 'Log in'
+
+    # ファイルを選択せずにUploadボタンを押下
+    click_link 'Item Master'
+    click_on 'Upload'
+
+    expect(page).to have_content 'Please select a file before uploading.'
+  end
+
   scenario 'adminユーザーはログインしてItemマスターを更新インポートすることができる' do
     # adminユーザーの作成
     create(:vendor)
