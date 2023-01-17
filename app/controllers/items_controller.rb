@@ -23,7 +23,10 @@ class ItemsController < ApplicationController
   end
 
   def import
-    logger.debug 'ファイルのインポート開始(Controller)'
+    if params[:file].nil?
+      flash[:alert] = 'Please select a file before uploading.'
+      redirect_to items_url and return
+    end
 
     Item.import(params[:file], current_user.vendor_id)
     redirect_to items_url
