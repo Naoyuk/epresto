@@ -156,7 +156,9 @@
                 <th class='w-1/12 px-4 py-2 border'>Delivery Window</th>
               </tr>
 
-              <%= render :partial => 'bulk_order' %>
+              <% if @orders.any? %>
+                <%= render :partial => 'bulk_order' %>
+              <% end %>
 
             </table>
           <% else %>
