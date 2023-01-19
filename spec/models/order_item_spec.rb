@@ -9,10 +9,9 @@ RSpec.describe OrderItem, type: :model do
         item_each = create(:item, pack: 4, case: false)
         order = create(:order)
         order_item_each = create(:order_item,
-          order_id: order.id,
-          amazon_product_identifier: item_each.asin,
-          ordered_quantity_amount: 32
-        )
+                                 order_id: order.id,
+                                 amazon_product_identifier: item_each.asin,
+                                 ordered_quantity_amount: 32)
         order_item_each.convert_case_quantity
         order_item_each.save
         order_item_each.reload
@@ -26,10 +25,9 @@ RSpec.describe OrderItem, type: :model do
         item_case = create(:item, pack: 4, case: true)
         order = create(:order)
         order_item_case = create(:order_item,
-          order_id: order.id,
-          amazon_product_identifier: item_case.asin,
-          ordered_quantity_amount: 32
-        )
+                                 order_id: order.id,
+                                 amazon_product_identifier: item_case.asin,
+                                 ordered_quantity_amount: 32)
         order_item_case.convert_case_quantity
         order_item_case.save
         order_item_case.reload
@@ -43,10 +41,9 @@ RSpec.describe OrderItem, type: :model do
         item_case_undefined = create(:item, pack: 4, case: nil)
         order = create(:order)
         order_item_case_undefined = create(:order_item,
-          order_id: order.id,
-          amazon_product_identifier: item_case_undefined.asin,
-          ordered_quantity_amount: 32
-        )
+                                           order_id: order.id,
+                                           amazon_product_identifier: item_case_undefined.asin,
+                                           ordered_quantity_amount: 32)
         order_item_case_undefined.convert_case_quantity
         order_item_case_undefined.save
         order_item_case_undefined.reload

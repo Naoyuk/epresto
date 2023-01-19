@@ -1,95 +1,155 @@
-<!-- Search -->
-<div class="bg-white rounded-lg border shadow-md">
-  <div class="py-2 px-2 flex flex-wrap text-sm font-medium text-center text-gray-500 bg-gray-50 rounded-t-lg border-b border-gray-200">
-    Search
-  </div>
-
-  <div class="mb-3 text-gray-500">
-    <%= search_form_for @search, html: { data: { turbo_frame: "_top" } } do |f| %>
-      <div class="grid md:grid-cols-8 md:gap-2 p-2">
-        <div>
-          <%= f.label :item_code_cont, "Item Code", class: "block mb-2 text-sm font-medium text-gray-900" %>
-          <%= f.search_field :item_code_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
-        </div>
-
-        <div>
-          <%= f.label :model_number_cont, "Model Number", class: "block mb-2 text-sm font-medium text-gray-900" %>
-          <%= f.search_field :model_number_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
-        </div>
-
-        <div>
-          <%= f.label :upc_cont, "UPC", class: "block mb-2 text-sm font-medium text-gray-900" %>
-          <%= f.search_field :upc_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
-        </div>
-
-        <div>
-          <%= f.label :title_cont, "Title", class: "block mb-2 text-sm font-medium text-gray-900" %>
-          <%= f.search_field :title_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
-        </div>
-
-        <div>
-          <%= f.label :brand_cont, "Brand", class: "block mb-2 text-sm font-medium text-gray-900" %>
-          <%= f.search_field :brand_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
-        </div>
-
-        <div>
-          <%= f.label :asin_cont, "ASIN", class: "block mb-2 text-sm font-medium text-gray-900" %>
-          <%= f.search_field :asin_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
-        </div>
-
-        <div>
-          <%= f.label :description_cont, "Description", class: "block mb-2 text-sm font-medium text-gray-900" %>
-          <%= f.search_field :description_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
-        </div>
-
-        <div>
-          <%= button_tag(icon_with_text("search", "Search"), class: "inline-flex items-center mt-4 py-2 px-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300") %>
-          <%= link_to "Clear", items_path, class: "text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-3 py-2 text-center" %>
-        </div>
+<div class='overflow-x-scroll'>
+  <div class='inline-block'>
+    <!-- Search -->
+    <div class="bg-white rounded-lg border shadow-md">
+      <div class="py-2 px-2 flex flex-wrap text-sm font-medium text-center text-gray-500 bg-gray-50 rounded-t-lg border-b border-gray-200">
+        Search
       </div>
-    <% end %>
-  </div>
-</div>
 
-<!-- 一覧 -->
-<div class="mt-4 font-medium text-gray-500">
-  <%= form_with url: import_items_path, local: true do |f| %>
-    <%= f.file_field :file, class: 'text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none' %>
-    <button class='mx-4 py-2 px-4 bg-sky-400 text-white rounded'>Upload</button>
-  <% end %>
-</div>
+      <div class="mb-3 text-gray-500">
+        <%= search_form_for @search, html: { data: { turbo_frame: "_top" } } do |f| %>
+          <div class="flex">
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :asin_cont, "ASIN", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :asin_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
 
-<div class="mt-4 w-full flex bg-white rounded-b-lg border-b shadow-md">
-  <div class='overflow-x-scroll'>
-    <div class='inline-block'>
-      <div class='flex border-t border-b bg-blue-500 rounded-t-lg text-white'>
-        <%= sort_link(@search, :asin, 'Asin', class: 'inline-block px-2 py-2 w-36 border-r') %>
-        <%= sort_link(@search, :model_number, 'Model Number', class: 'inline-block px-2 py-2 w-36 border-r') %>
-        <%= sort_link(@search, :vendor_sku, 'SKU', class: 'inline-block px-2 py-2 w-36 border-r') %>
-        <%= sort_link(@search, :item_code, 'Item Code', class: 'inline-block px-2 py-2 w-24 border-r') %>
-        <%= sort_link(@search, :upc, 'UPC', class: 'inline-block px-2 py-2 w-36 border-r') %>
-        <%= sort_link(@search, :ean, 'EAN', class: 'inline-block px-2 py-2 w-36 border-r') %>
-        <%= sort_link(@search, :gtin, 'GTIN', class: 'inline-block px-2 py-2 w-36 border-r') %>
-        <%= sort_link(@search, :external_product_id, 'External ID', class: 'inline-block px-2 py-2 w-36 border-r') %>
-        <%= sort_link(@search, :external_product_id_type, 'ID Type', class: 'inline-block px-2 py-2 w-36 border-r') %>
-        <%= sort_link(@search, :title, 'Title', class: 'inline-block px-2 py-2 w-96 border-r') %>
-        <%= sort_link(@search, :brand, 'Brand', class: 'inline-block px-2 py-2 w-48 border-r') %>
-        <%= sort_link(@search, :pack, 'Pack', class: 'inline-block px-2 py-2 w-16 border-r') %>
-        <%= sort_link(@search, :price, 'Price', class: 'inline-block px-2 py-2 w-20 border-r') %>
-        <%= sort_link(@search, :z_prcie, 'Z-Prcie', class: 'inline-block px-2 py-2 w-20 border-r') %>
-        <%= sort_link(@search, :status, 'Status', class: 'inline-block px-1 py-2 w-36 border-r') %>
-        <%= sort_link(@search, :description, 'Description', class: 'inline-block px-2 py-2 w-96 border-r') %>
-        <%= sort_link(@search, :case, 'Case/Each', class: 'inline-block px-2 py-2 w-24 border-r') %>
-        <div class='inline-block w-20'></div>
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :model_number_cont, "Model Number", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :model_number_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :vendor_sku_cont, "SKU", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :vendor_sku_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[96px]'>
+              <%= f.label :item_code_cont, "Item Code", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :item_code_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :upc_cont, "UPC", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :upc_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :ean_cont, "EAN", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :ean_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :gtin_cont, "GTIN", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :gtin_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :external_product_id_cont, "External ID", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :external_product_id_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :external_product_id_type_cont, "External ID Type", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.select :external_product_id_type_cont, ['UPC', 'EAN', 'GTIN'], { include_blank: '' }, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[384px]'>
+              <%= f.label :title_cont, "Title", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :title_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[192px]'>
+              <%= f.label :brand_cont, "Brand", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :brand_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-16'>
+              <%= f.label :pack_cont, "Pack", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :pack_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[80px]'>
+              <%= f.label :price_cont, "Price", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :price_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[80px]'>
+              <%= f.label :z_pricing_cont, "Z-Price", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :z_pricing_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[144px]'>
+              <%= f.label :status_eq, "Status", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.select :status_eq, [['Current', 'Current'], ['Discontinued', 1], ['Future', 2]], { include_blank: '' }, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[384px]'>
+              <%= f.label :description_cont, "Description", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :description_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[100px]'>
+              <%= f.label :case_eq, "Case", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.select :case_eq, [['Case', true], ['Each', false]], { include_blank: '' }, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div>
+              <div class='mb-2'>
+              <%= button_tag(icon_with_text("search", "Search"), class: "items-center py-2 px-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300") %>
+              </div>
+              <div>
+              <%= link_to "Clear", items_path, class: "text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-3 py-2 text-center" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
       </div>
     </div>
 
-    <div id='items' class='inline-block'>
-      <%= render @items %>
+    <!-- file-uploader -->
+    <div class="mt-4 font-medium text-gray-500">
+      <%= form_with url: import_items_path, local: true do |f| %>
+        <%= f.file_field :file, class: 'text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none' %>
+        <button class='mx-4 py-2 px-4 bg-sky-400 text-white rounded'>Upload</button>
+      <% end %>
     </div>
 
-    <div class="d-flex justify-content-end mt-3">
-      <%= paginate @items %>
+    <!-- list -->
+    <div>
+      <div class="mt-4 w-full flex bg-white rounded-b-lg border-b shadow-md">
+        <!-- list-header-sort -->
+        <div class='flex border-t border-b bg-blue-500 rounded-t-lg text-white'>
+          <%= sort_link(@search, :asin, 'Asin', class: 'inline-block px-2 py-2 w-36 border-r') %>
+          <%= sort_link(@search, :model_number, 'Model Number', class: 'inline-block px-2 py-2 w-36 border-r') %>
+          <%= sort_link(@search, :vendor_sku, 'SKU', class: 'inline-block px-2 py-2 w-36 border-r') %>
+          <%= sort_link(@search, :item_code, 'Item Code', class: 'inline-block px-2 py-2 w-24 border-r') %>
+          <%= sort_link(@search, :upc, 'UPC', class: 'inline-block px-2 py-2 w-36 border-r') %>
+          <%= sort_link(@search, :ean, 'EAN', class: 'inline-block px-2 py-2 w-36 border-r') %>
+          <%= sort_link(@search, :gtin, 'GTIN', class: 'inline-block px-2 py-2 w-36 border-r') %>
+          <%= sort_link(@search, :external_product_id, 'External ID', class: 'inline-block px-2 py-2 w-36 border-r') %>
+          <%= sort_link(@search, :external_product_id_type, 'ID Type', class: 'inline-block px-2 py-2 w-36 border-r') %>
+          <%= sort_link(@search, :title, 'Title', class: 'inline-block px-2 py-2 w-96 border-r') %>
+          <%= sort_link(@search, :brand, 'Brand', class: 'inline-block px-2 py-2 w-48 border-r') %>
+          <%= sort_link(@search, :pack, 'Pack', class: 'inline-block px-2 py-2 w-16 border-r') %>
+          <%= sort_link(@search, :price, 'Price', class: 'inline-block px-2 py-2 w-20 border-r') %>
+          <%= sort_link(@search, :z_prcie, 'Z-Prcie', class: 'inline-block px-2 py-2 w-20 border-r') %>
+          <%= sort_link(@search, :status, 'Status', class: 'inline-block px-1 py-2 w-36 border-r') %>
+          <%= sort_link(@search, :description, 'Description', class: 'inline-block px-2 py-2 w-96 border-r') %>
+          <%= sort_link(@search, :case, 'Case/Each', class: 'inline-block px-2 py-2 w-24 border-r') %>
+          <div class='inline-block w-20'></div>
+        </div>
+      </div>
+
+      <% if @items.any? %>
+        <!-- list-body -->
+        <div id='items' class='inline-block'>
+          <%= render @items %>
+        </div>
+
+        <div class="d-flex justify-content-end mt-3">
+          <%= paginate @items %>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

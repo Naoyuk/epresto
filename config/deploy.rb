@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'net/ssh/proxy/command'
 
 # config valid for current version and patch releases of Capistrano
 lock '~> 3.17.1'
@@ -10,10 +11,12 @@ set :branch, 'main'
 set :deploy_to, "/home/epresto/#{fetch(:application)}"
 set :linked_files, %w(.env config/master.key)
 set :linked_dirs, %w(log tmp/pids tmp/cache tmp/sockets)
+puts ENV.fetch("DEPLOY_SSH_KEY_PATH", 'not set DEPLOY_SSH_KEY_PATH')
 set :ssh_options, {
-  keys: %w(~/.ssh/my-epresto-ec2-user),
+  keys: [ENV.fetch("DEPLOY_SSH_KEY_PATH", "~/.ssh/id_rsa")],
   forward_agent: true,
-  auth_methods: %w(publickey)
+  auth_methods: %w(publickey),
+  proxy: Net::SSH::Proxy::Command::new("aws ssm start-session --target #{ENV['INSTANCE_ID']} --document-name AWS-StartSSHSession --parameters 'portNumber=22'")
 }
 set :keep_releases, 5
 
@@ -44,7 +47,7 @@ set :assets_manifests, -> {
 #   end
 #   before :start, :make_dirs
 # end
-# 
+#
 # namespace :deploy do
 #   desc 'Make sure local git is in sync with remote.'
 #   task :check_revision do
@@ -74,7 +77,7 @@ set :assets_manifests, -> {
 #   after :finishing, :cleanup
 #   after :finishing, :restart
 # end
-# 
+#
 # namespace :config do
 #   task :display do
 #     Capistrano::Configuration.env.keys.each do |key|

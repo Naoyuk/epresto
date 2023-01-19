@@ -14,8 +14,6 @@ class Item < ApplicationRecord
     Each: false
   }
 
-  belongs_to :vendor
-
   def case_or_each
     pattern = /.*kg.*/
     if self.title.match(pattern)
@@ -28,7 +26,6 @@ class Item < ApplicationRecord
 
   class << self
     def import(file, vendor_id)
-      logger.debug "fileパス: #{file}"
       # インポートするファイルの読み込み
       xls = Roo::Excelx.new(file)
 
@@ -42,7 +39,6 @@ class Item < ApplicationRecord
         # 既存レコードの更新、または新規レコードを作成
         update_items_access(sheet_obj, cols_access(cols_xls), vendor_id)
       else
-        logger.debug 'Catalogファイルの取り込みを開始'
         # Catalogue.xlsxは複数シートでカラム名がその都度異なる
         sheets_arr = xls.sheets.select { |sheet| sheet.include?("Template-") }
 
@@ -134,8 +130,6 @@ class Item < ApplicationRecord
           item.ean = item.external_product_id
         when 'GTIN'
           item.gtin = item.external_product_id
-        end
-        unless item.valid?
         end
         item.save
       end

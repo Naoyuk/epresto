@@ -15,7 +15,7 @@ jobs:
       postgres:
         image: postgres:14
         env:
-          POSTGRES_HOST: localhost
+          POSTGRES_HOST: ${{ secrets.PSQL_HOST }}
           POSTGRES_USER: ${{ secrets.PSQL_USER_TEST }}
           POSTGRES_PASSWORD: ${{ secrets.PSQL_PASSWORD_TEST }}
           POSTGRES_DB: epresto_test
@@ -29,11 +29,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.1.2
-
       - uses: actions/setup-node@v2
         with:
           node-version: 16
@@ -56,14 +54,14 @@ jobs:
           path: node_modules
           key: yarn-v1-${{ hashFiles('yarn.lock') }}
 
-      - run: RAILS_ENV=test bundle exec rails assets:precompile
+      - name: Assets precompile
+        run: RAILS_ENV=test bundle exec rails assets:precompile
 
       - name: Test with RSpec
         env:
-          POSTGRES_HOST: localhost
-          DATABASE_URL: postgres://postgres:@localhost:5432/epresto_test
-          POSTGRES_USER: ${{ secrets.PSQL_USER_TEST }}
-          POSTGRES_PASSWORD: ${{ secrets.PSQL_PASSWORD_TEST }}
+          PSQL_HOST: localhost
+          PSQL_USER: ${{ secrets.PSQL_USER_TEST }}
+          PSQL_PASSWORD: ${{ secrets.PSQL_PASSWORD_TEST }}
           RAILS_ENV: test
         run: |
           bundle exec rails db:setup
@@ -77,23 +75,40 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install SSH key
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1.2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Cache bundle
+        uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: bundle-v1-${{ hashFiles('Gemfile.lock') }}
+
+      - name: Run bundle install
         run: |
+          bundle config --local path vendor/bundle
+          bundle config --local without production
+          bundle install
+
+      - name: Deploy
+        env:
+          DEPLOY_SSH_KEY_PATH: ~/.ssh/app_key
+          PRODUCTION_HOST: 10.0.1.154
+          INSTANCE_ID: i-06aa828227239c62c
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-west-2
+        run: |
+          # NOTE:
+          #   Not need install aws-cli. Because already install aws-cli command.
+          #   Not need install plugin for start ssm seesion on github actions
           mkdir -p -m 700 ~/.ssh
           echo "${{ secrets.SSH_KEY }}" > ~/.ssh/app_key
           chmod 600 ~/.ssh/app_key
-
-      - name: Deploy
-        run: |
-          eval $(ssh-agent)
-          ssh-add ~/.ssh/app_key
-          ssh -o StrictHostKeyChecking=no -A ${{ secrets.HOST_USER }}@${{ secrets.TARGET_HOSTNAME }} "mkdir -p epresto &&
-          cd epresto &&
-          git pull origin main &&
-          mkdir -p tmp/pids tmp/sockets &&
-          ~/.rbenv/shims/bundle config --local deployment true &&
-          ~/.rbenv/shims/bundle config --local without development:test &&
-          ~/.rbenv/shims/bundle install &&
-          RAILS_ENV=production ~/.rbenv/shims/bundle exec rails assets:precompile &&
-          RAILS_ENV=production ~/.rbenv/shims/bundle exec rails db:migrate &&
-          ~/.rbenv/shims/bundle exec pumactl restart"
+          eval `ssh-agent` && ssh-add ~/.ssh/app_key && ssh-add -l
+          bundle exec cap production deploy

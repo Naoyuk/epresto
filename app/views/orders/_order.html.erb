@@ -1,82 +1,110 @@
-<table class="order table-fixed mt-2 text-gray-500">
-  <tr class='bg-blue-500 whitespace-nowrap text-white'>
-    <th class='w-2/12 px-4 py-2 border'>PO Number</th>
-    <th class='w-2/12 px-4 py-2 border'>State</th>
-    <th class='w-1/12 px-4 py-2 border'>PO Date</th>
-    <th class='w-1/12 px-4 py-2 border'>PO Change Date</th>
-    <th class='w-1/12 px-4 py-2 border'>PO State Change Date</th>
-    <th class='w-1/12 px-4 py-2 border'>Last Updated Date</th>
-    <th class='w-1/12 px-4 py-2 border'>Payment Method</th>
-    <th class='w-2/12 px-4 py-2 border'>Selling Party</th>
-    <th class='w-1/12 px-4 py-2 border'>Shipping Address</th>
-    <th class='w-1/12 px-4 py-2 border'>Ship Window</th>
-    <th class='w-1/12 px-4 py-2 border'>Delivery Window</th>
-  </tr>
+<%= turbo_frame_tag order do %>
 
-  <tr class='whitespace-nowrap' id= '<%= dom_id(order) %>'>
-    <td class='px-4 text-center border'><%= order.po_number %></td>
-    <td class='px-4 text-center border'><%= order.po_state %></td>
-    <td class='px-4 text-center border'><%= order.po_date&.to_fs(:stamp) %></td>
-    <td class='px-4 text-center border'><%= order.po_changed_date&.to_fs(:stamp) %></td>
-    <td class='px-4 text-center border'><%= order.po_state_changed_date&.to_fs(:stamp) %></td>
-    <td class='px-4 text-center border'><%= order.last_updated_date&.to_fs(:stamp) %></td>
-    <td class='px-4 text-center border'><%= order.payment_method %></td>
-    <td class='px-4 text-center border'><%= order.selling_party_id %><%= order.selling_address_city %><%= order.selling_address_state_or_region %></td>
-    <td class='px-4 text-center border'><%= "#{order.shipto.location_code}, #{order.shipto.address_line1}, #{order.shipto.province}, #{order.shipto.postal_code}" unless order.shipto.nil? %></td>
-    </td>
-    <td class='px-4 text-center border'><%= "#{order.ship_window_from&.to_fs(:dat)} - #{order.ship_window_to&.to_fs(:dat)}" %></td>
-    <td class='px-4 text-center border'><%= order.delivery_window %></td>
-  </tr>
-</table>
-<% if order.order_items %>
-  <div class='mb-3'>
-    <table class='order-items pl-2'>
-      <tr class='bg-blue-50 whitespace-nowrap'>
-        <th class='px-4 border-b border-l'>#</th>
-        <th class='px-4 border-b border-l'>ASIN</th>
-        <th class='px-4 border-b border-l'>Item Code</th>
-        <th class='px-4 border-b border-l'>Title</th>
-        <th class='px-4 border-b border-l'>Case Quantity</th>
-        <th class='px-4 border-b border-l'>Unit</th>
-        <th class='px-4 border-b border-l'>Back order</th>
-        <th class='px-4 border-b border-l'>Net Cost</th>
-        <th class='px-4 border-b border-l'>List Price</th>
-        <th class='px-4 border-b border-l'>Item Price</th>
-        <th class='px-4 border-b border-l'>Item Availability</th>
-        <th class='px-4 border-b border-l'>Code</th>
-        <th class='px-4 border-b border-l'>Amount</th>
-        <th class='px-4 border-b border-l'>Unit</th>
-        <th class='px-4 border-b border-l'>Unit Size</th>
-        <th class='px-4 border-b border-l'>Ship Date</th>
-        <th class='px-4 border-b border-l'>Delivery Date</th>
-        <th class='px-4 border-b border-l'>Rejection Reason</th>
-      </tr>
-      <% order.order_items.order('id ASC').each_with_index do |item, index| %>
-        <tr class='whitespace-nowrap hover:bg-gray-100' id= '<%= dom_id(item) %>'>
-          <% if index == order.order_items.size - 1 %>
-            <td class='px-2 text-center border-b border-l'>┗ <%= item.item_seq_number %></td>
-          <% else %>
-            <td class='px-2 text-center border-b border-l'>┣ <%= item.item_seq_number %></td>
-          <% end %>
-          <td class='px-2 border-b border-l text-center'><%= item.amazon_product_identifier %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.vendor_product_identifier %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.item&.title %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.case_quantity %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.item&.case %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.back_order_allowed %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.netcost_amount %> <%= item.netcost_currency_code %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.listprice_amount %> <%= item.listprice_currency_code %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.item&.price %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.item&.status %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledgement_code %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledged_quantity_amount %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledged_quantity_unit_of_measure %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledged_quantity_unit_size %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.scheduled_ship_date&.to_fs(:dat) %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.scheduled_delivery_date&.to_fs(:dat) %></td>
-          <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.rejection_reason %></td>
-        </tr>
-      <% end %>
-    </table>
+  <!-- list-header -->
+  <div class='flex border-t border-b bg-blue-500 rounded-t-lg text-white'>
+    <div class='inline-block px-2 py-2 w-36 border-r'>PO Number</div>
+    <div class='inline-block px-2 py-2 w-36 border-r'>Status</div>
+    <div class='inline-block px-2 py-2 w-48 border-r'>PO Date</div>
+    <div class='inline-block px-2 py-2 w-48 border-r'>Change Date</div>
+    <div class='inline-block px-2 py-2 w-48 border-r'>State Change Date</div>
+    <div class='inline-block px-2 py-2 w-48 border-r'>Last Updated Date</div>
+    <div class='inline-block px-2 py-2 w-36 border-r'>Payment Method</div>
+    <div class='inline-block px-2 py-2 w-36 border-r'>Selling Party</div>
+    <div class='inline-block px-2 py-2 w-96 border-r'>Shipping Address</div>
+    <div class='inline-block px-2 py-2 w-60 border-r'>Ship Window</div>
+    <div class='inline-block px-2 py-2 w-48'>Delivery Window</div>
   </div>
+
+  <!-- list-body -->
+  <div class='flex border-top hover:bg-gray-100' id='<%= dom_id(order) %>'>
+    <div class='px-2 w-36 border-l border-r border-b'>
+      <span class='inline-block po-number'><%= order.po_number %></span>
+    </div>
+    <div class='px-2 w-36 border-r border-b'>
+      <span class='inline-block po-number'><%= order.po_state %></span>
+    </div>
+    <div class='px-2 w-48 border-r border-b'>
+      <span class='inline-block po-number'><%= order.po_date&.to_fs(:stamp) %></span>
+    </div>
+    <div class='px-2 w-48 border-r border-b'>
+      <span class='inline-block po-number'><%= order.po_changed_date&.to_fs(:stamp) %></span>
+    </div>
+    <div class='px-2 w-48 border-r border-b'>
+      <span class='inline-block po-number'><%= order.po_state_changed_date&.to_fs(:stamp) %></span>
+    </div>
+    <div class='px-2 w-48 border-r border-b'>
+      <span class='inline-block po-number'><%= order.last_updated_date&.to_fs(:stamp) %></span>
+    </div>
+    <div class='px-2 w-36 border-r border-b'>
+      <span class='inline-block po-number'><%= order.payment_method %></span>
+    </div>
+    <div class='px-2 w-36 border-r border-b'>
+      <span class='inline-block po-number'><%= order.selling_party_id %><%= order.selling_address_city %><%= order.selling_address_state_or_region %></span>
+    </div>
+    <div class='px-2 w-96 border-r border-b'>
+      <span class='inline-block po-number'><%= "#{order.shipto.location_code}, #{order.shipto.address_line1}, #{order.shipto.province}, #{order.shipto.postal_code}" unless order.shipto.nil? %></span>
+    </div>
+    <div class='px-2 w-60 border-r border-b'>
+      <span class='inline-block po-number'><%= "#{order.ship_window_from&.to_fs(:dat)} - #{order.ship_window_to&.to_fs(:dat)}" %></span>
+    </div>
+    <div class='px-2 w-48 border-r border-b'>
+      <span class='inline-block po-number'><%= order.delivery_window %></span>
+    </div>
+  </div>
+
+  <% if order.order_items %>
+    <div class='mb-3'>
+      <table class='order-items pl-2'>
+        <tr class='bg-blue-50 whitespace-nowrap'>
+          <th class='px-4 border-b border-l w-12'>#</th>
+          <th class='px-4 border-b border-l w-48'>ASIN</th>
+          <th class='px-4 border-b border-l w-48'>Item Code</th>
+          <th class='px-4 border-b border-l w-48'>Title</th>
+          <th class='px-4 border-b border-l w-48'>Case Quantity</th>
+          <th class='px-4 border-b border-l w-48'>Unit</th>
+          <th class='px-4 border-b border-l w-48'>Back order</th>
+          <th class='px-4 border-b border-l w-48'>Net Cost</th>
+          <th class='px-4 border-b border-l w-48'>List Price</th>
+          <th class='px-4 border-b border-l w-48'>Item Price</th>
+          <th class='px-4 border-b border-l w-48'>Item Availability</th>
+          <th class='px-4 border-b border-l w-48'>Code</th>
+          <th class='px-4 border-b border-l w-48'>Amount</th>
+          <th class='px-4 border-b border-l w-48'>Unit</th>
+          <th class='px-4 border-b border-l w-48'>Unit Size</th>
+          <th class='px-4 border-b border-l w-48'>Ship Date</th>
+          <th class='px-4 border-b border-l w-48'>Delivery Date</th>
+          <th class='px-4 border-b border-l border-r w-60'>Rejection Reason</th>
+        </tr>
+        <% order.order_items.order('id ASC').each_with_index do |item, index| %>
+          <tr class='whitespace-nowrap hover:bg-gray-100' id= '<%= dom_id(item) %>'>
+            <% if index == order.order_items.size - 1 %>
+              <td class='px-2 text-center border-b border-l'>┗ <%= item.item_seq_number %></td>
+            <% else %>
+              <td class='px-2 text-center border-b border-l'>┣ <%= item.item_seq_number %></td>
+            <% end %>
+            <td class='px-2 border-b border-l text-left'><%= item.amazon_product_identifier %></td>
+            <td class='px-2 border-b border-l text-left'><%= item.vendor_product_identifier %></td>
+            <td class='px-2 border-b border-l text-center'><%= item.item&.title %></td>
+            <td class='px-2 border-b border-l text-center'><%= item.case_quantity %></td>
+            <td class='px-2 border-b border-l text-center'><%= item.item&.case %></td>
+            <td class='px-2 border-b border-l text-center'><%= item.back_order_allowed %></td>
+            <td class='px-2 border-b border-l text-center'><%= item.netcost_amount %> <%= item.netcost_currency_code %></td>
+            <td class='px-2 border-b border-l text-center'><%= item.listprice_amount %> <%= item.listprice_currency_code %></td>
+            <td class='px-2 border-b border-l text-center'><%= item.item&.price %></td>
+            <td class='px-2 border-b border-l text-center'><%= item.item&.status %></td>
+            <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledgement_code %></td>
+            <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledged_quantity_amount %></td>
+            <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledged_quantity_unit_of_measure %></td>
+            <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.acknowledged_quantity_unit_size %></td>
+            <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.scheduled_ship_date&.to_fs(:dat) %></td>
+            <td class='px-2 border-b border-l text-center'><%= item.acks[0]&.scheduled_delivery_date&.to_fs(:dat) %></td>
+            <td class='px-2 border-b border-l border-r text-center'><%= item.acks[0]&.rejection_reason %></td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+  <% end %>
+
+
+
 <% end %>
