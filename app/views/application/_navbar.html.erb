@@ -6,10 +6,10 @@
       <% end %>
       <%= link_to 'Sign in', new_user_session_path, class: 'block py-2 px-4 text-gray-700 rounded hover:bg-gray-100 hover:text-blue-500' %>
     <% else %>
-      <%= link_to orders_path(all: true), class: "flex items-center" do %>
+      <%= link_to orders_path(tab: 'all'), class: "flex items-center" do %>
         <%= image_tag 'logo.png', size: '200x30', class: 'hover:bg-blue-100 rounded-lg px-4 py-2' %>
       <% end %>
-      <%= link_to 'Purchase Order', orders_path(all: true), class: 'block py-2 px-4 text-white rounded hover:bg-gray-100 hover:text-blue-500' %>
+      <%= link_to 'Purchase Order', orders_path(tab: 'all'), class: 'block py-2 px-4 text-white rounded hover:bg-gray-100 hover:text-blue-500' %>
       <% if current_user.sysadmin? %>
         <%= link_to 'Item Master', items_path, class: 'block py-2 px-4 text-white rounded hover:bg-gray-100 hover:text-blue-700' %>
         <%= link_to 'Location Master', shiptos_path, class: 'block py-2 px-4 text-white rounded hover:bg-gray-100 hover:text-blue-500' %>
