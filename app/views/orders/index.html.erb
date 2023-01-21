@@ -59,6 +59,10 @@
             </div>
 
             <div>
+              <%= hidden_field_tag :tab, @state %>
+            </div>
+
+            <div>
               <div class='mb-2'>
                 <%= button_tag(icon_with_text("search", "Search"), class: "inline-flex items-center mt-4 py-2 px-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300") %>
               </div>
@@ -104,22 +108,22 @@
     <div>
       <ul class="list-reset flex mt-2 border-b-2 border-blue-600">
         <li class="mr-1">
-          <%= tab_link_to orders_path(all: true), 'All' %>
+          <%= tab_link_to orders_path(tab: 'all'), 'All' %>
         </li>
         <li class="mr-1">
-          <%= tab_link_to orders_path(new: true), 'New' %>
+          <%= tab_link_to orders_path(tab: 'new'), 'New' %>
         </li>
         <li class="-mb-px mr-1">
-          <%= tab_link_to orders_path(acknowledged: true), 'Acknowledged' %>
+          <%= tab_link_to orders_path(tab: 'acknowledged'), 'Acknowledged' %>
         </li>
         <li class="mr-1">
-          <%= tab_link_to orders_path(rejected: true), 'Rejected' %>
+          <%= tab_link_to orders_path(tab: 'rejected'), 'Rejected' %>
         </li>
         <li class="mr-1">
-          <%= tab_link_to orders_path(closed: true), 'Closed' %>
+          <%= tab_link_to orders_path(tab: 'closed'), 'Closed' %>
         </li>
         <li class="mr-1">
-          <%= tab_link_to orders_path(bulk: true), 'Bulk' %>
+          <%= tab_link_to orders_path(tab: 'bulk'), 'Bulk' %>
         </li>
         <% if @state == 'bulk' %>
           <li class="mr-1">
