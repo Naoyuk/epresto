@@ -3,9 +3,11 @@
 module OrdersHelper
   def tab_link_to(path, text)
     classes = %w[inline-block py-2 px-4 font-semibold rounded-t-lg]
-    classes << %w[bg-gray-200 text-grey-light] unless current_page?(path)
-    classes << %w[bg-blue-600 text-white border-l border-t border-r border-blue-600
-                  text-blue-dark] if current_page?(path)
+    if request.query_string.include?("tab=#{text.downcase}")
+      classes << %w[bg-blue-600 text-white border-l border-t border-r border-blue-600 text-blue-dark]
+    else
+      classes << %w[bg-gray-200 text-grey-light]
+    end
 
     link_to(path, class: classes) do
       tag.span text
@@ -44,5 +46,10 @@ module OrdersHelper
     link_to(orders_path(**state, format: :csv), class: 'mx-4 py-2 px-4 bg-sky-400 text-white rounded') do
       tag.span 'Download JS Import file'
     end
+  end
+
+  def state_selection_index(state_string)
+    selection = [['New', 0], ['Acknowledged', 1], ['Closed', 2]]
+    selection.find { |arr| arr[0] == 'Closed' }[1]
   end
 end
