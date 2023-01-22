@@ -36,6 +36,11 @@ class Order < ApplicationRecord
       @refresh_token = ENV['DEV_CENTRAL_REFRESH_TOKEN']
     end
 
+    # TODO: AmazonApiクラスに移動
+    # インスタンスメソッドにする
+    # api = AmazonApi.new
+    # access_token = api.generate_access_token(refresh_token, client_id, clinet_secret)
+    # になるようにする
     def generate_access_token
       url = URI('https://api.amazon.com/auth/o2/token')
 
@@ -76,6 +81,10 @@ class Order < ApplicationRecord
       { orders: Order.where(po_number: response[:po_numbers].split(' ')).ids, errors: }
     end
 
+    # TODO: AmazonApiクラスに移動
+    # インスタンスメソッドにする
+    # api = AmazonApi.new
+    # response = api.get_purchase_orders(params)
     def get_purchase_orders(params)
       url_and_signature = generate_url_and_sign(params)
 
@@ -88,6 +97,10 @@ class Order < ApplicationRecord
       send_http_request(request_params)
     end
 
+    # TODO: OrderBuilderクラスに移動
+    # インスタンスメソッドにする
+    # order_builder = OrderBuilder.new
+    # order_builder.create_order_and_order_items(response)
     def create_order_and_order_items(params)
       po_numbers = []
       errors = []
@@ -286,6 +299,10 @@ class Order < ApplicationRecord
       private :capitalize
     end
 
+    # TODO: AmazonApiクラスに移動させる
+    # インスタンスメソッドにする
+    # api = AmazonApi.new
+    # api.generate_url_and_sign(params)
     def generate_url_and_sign(params)
       # POs: params include :api, :path
       # Acknowledgement: params include :api, :po_number, :req_body
@@ -341,6 +358,8 @@ class Order < ApplicationRecord
       { url:, signature:, body_values: }
     end
 
+    # TODO: AmazonApiクラスに移動させる
+    # privateメソッドにする
     def send_http_request(params)
       # params[:method]
       # params[:signature]
@@ -364,6 +383,10 @@ class Order < ApplicationRecord
       https.request(req)
     end
 
+    # TODO: RequestBuilderクラスに移動
+    # インスタンスメソッドにする
+    # request_builder = RequestBuilder.new
+    # request_builder.create_request_body(orders)
     def create_request_body(orders)
       # return
       req_body = {}
@@ -533,6 +556,8 @@ class Order < ApplicationRecord
       return req_body
     end
 
+    # TODO: RequestBuilderクラスに移動
+    # privateメソッドにする
     def formatted_query(query_hash)
       list = []
       query_hash.each_pair do |k, v|
@@ -545,6 +570,8 @@ class Order < ApplicationRecord
       end.join('&')
     end
 
+    # TODO: OrderBuilderクラスに移動
+    # privateメソッドにする
     def calc_delivery_window(ship_to_id, _ordered_date)
       shipto = Shipto.find_by(location_code: ship_to_id)
       province = shipto&.province
