@@ -27,15 +27,6 @@ class Order < ApplicationRecord
   }
 
   class << self
-    # Class methods
-    def api_credentials
-      @aws_access_key = ENV['AWS_ACCESS_KEY_ID']
-      @aws_secret_key = ENV['AWS_SECRET_ACCESS_KEY']
-      @iam_access_key_id = ENV['IAM_ACCESS_KEY']
-      @iam_secret_access_key = ENV['IAM_SECRET_ACCESS_KEY']
-      @refresh_token = ENV['DEV_CENTRAL_REFRESH_TOKEN']
-    end
-
     # TODO: AmazonApiクラスに移動
     # インスタンスメソッドにする
     # api = AmazonApi.new
@@ -51,9 +42,9 @@ class Order < ApplicationRecord
       request['Content-Type'] = 'application/x-www-form-urlencoded'
       request.body =
         "grant_type=refresh_token&"\
-        "refresh_token=#{@refresh_token}&"\
-        "client_id=#{@aws_access_key}&"\
-        "client_secret=#{@aws_secret_key}"
+        "refresh_token=#{ENV['DEV_CENTRAL_REFRESH_TOKEN']}&"\
+        "client_id=#{ENV['AWS_ACCESS_KEY_ID']}&"\
+        "client_secret=#{ENV['AWS_SECRET_ACCESS_KEY']}"
 
       https.request(request).body
     end
@@ -338,8 +329,8 @@ class Order < ApplicationRecord
       signer = Aws::Sigv4::Signer.new(
         service: service,
         region: region,
-        access_key_id: @iam_access_key_id,
-        secret_access_key: @iam_secret_access_key
+        access_key_id: ENV['IAM_ACCESS_KEY'],
+        secret_access_key: ENV['IAM_SECRET_ACCESS_KEY']
       )
 
       if params[:api] == 'pos'
