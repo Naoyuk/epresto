@@ -4,6 +4,5 @@ FactoryBot.define do
     acknowledged_quantity_amount { 1 }
     acknowledged_quantity_unit_of_measure { 1 }
     acknowledged_quantity_unit_size { 1 }
-    OrderItem { nil }
   end
 end

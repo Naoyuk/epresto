@@ -8,7 +8,7 @@ RSpec.describe Order, type: :model do
   end
 
   # describe 'GET generate_access_token' do
-  #   context 'when invalid params are given', :vcr do
+  #   context 'when invalid params are given' do
   #     it 'returns errors' do
   #       access_token = Order.generate_access_token
   #       expect(access_token).not_to include('access_token')
@@ -16,7 +16,7 @@ RSpec.describe Order, type: :model do
   #     end
   #   end
 
-  #   context 'when valid params are given', :vcr do
+  #   context 'when valid params are given' do
   #     it 'returns an access token' do
   #       Order.api_credentials
   #       access_token = Order.generate_access_token
@@ -27,7 +27,7 @@ RSpec.describe Order, type: :model do
   # end
 
   # describe 'GET get_purchase_orders' do
-  #   context 'when valid params are given', :vcr do
+  #   context 'when valid params are given' do
   #     it 'returns 200 response' do
   #       params = {
   #         api: 'pos',
@@ -40,7 +40,7 @@ RSpec.describe Order, type: :model do
   #     end
   #   end
 
-  #   context 'when invalid params are given', :vcr do
+  #   context 'when invalid params are given' do
   #     it 'does not return 200 response' do
   #       params = {
   #         api: 'pos',
@@ -55,17 +55,19 @@ RSpec.describe Order, type: :model do
   #   end
   # end
 
-  # describe '#formatted_query' do
-  #   it 'クエリを渡すとソートされて返る' do
-  #     query_hash = {
-  #       'limit' => 50,
-  #       'createdAfter' => Time.now - 7 * 24 * 3600,
-  #       'sortOrder' => 'DESC',
-  #       'createdBefor' => Time.now
-  #     }
-  #     query_should_be = "createdAfter=#{Time.now - 7 * 24 * 3600}&createdBefor=#{Time.now}&limit=50&sortOrder=DESC"
-  #     query_formatted = Order.formatted_query(query_hash)
-  #     expect(query_formatted).to eq query_should_be
-  #   end
-  # end
+  describe 'Order.formatted_query' do
+    it 'クエリを渡すとソートされて返る' do
+      created_after = Time.now - 7 * 24 * 3600
+      created_before = Time.now
+      query_hash = {
+        'limit' => 50,
+        'createdAfter' => created_after,
+        'sortOrder' => 'DESC',
+        'createdBefor' => created_before
+      }
+      query_should_be = "createdAfter=#{created_after}&createdBefor=#{created_before}&limit=50&sortOrder=DESC"
+      query_formatted = Order.formatted_query(query_hash)
+      expect(query_formatted).to eq query_should_be
+    end
+  end
 end
