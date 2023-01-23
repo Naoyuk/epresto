@@ -5,7 +5,7 @@ RSpec.describe "SearchOrders", type: :system do
     driven_by(:rack_test)
 
     @user = create(:user)
-    shipto = create(:shipto)
+    create(:shipto)
     @order_new = create(:order, po_state: 0, po_number: 'new-order')
     @order_acknowledged = create(:order, po_state: 1, po_number: 'acknowledged-order')
     @order_closed = create(:order, po_state: 2, po_number: 'closed-order')
