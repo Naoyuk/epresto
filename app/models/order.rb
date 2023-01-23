@@ -27,44 +27,20 @@ class Order < ApplicationRecord
   }
 
   class << self
-    # TODO: AmazonApiクラスに移動
-    # インスタンスメソッドにする
-    # api = AmazonApi.new
-    # access_token = api.generate_access_token(refresh_token, client_id, clinet_secret)
-    # になるようにする
-    def generate_access_token
-      url = URI('https://api.amazon.com/auth/o2/token')
-
-      https = Net::HTTP.new(url.host, url.port)
-      https.use_ssl = true
-
-      request = Net::HTTP::Post.new(url)
-      request['Content-Type'] = 'application/x-www-form-urlencoded'
-      request.body =
-        "grant_type=refresh_token&"\
-        "refresh_token=#{ENV['DEV_CENTRAL_REFRESH_TOKEN']}&"\
-        "client_id=#{ENV['AWS_ACCESS_KEY_ID']}&"\
-        "client_secret=#{ENV['AWS_SECRET_ACCESS_KEY']}"
-
-      https.request(request).body
-    end
-
     def import_po(vendor_id, created_after, created_before)
-      # AmazonからPOを取得
-      params = {
-        api: 'pos',
-        vendor_id:,
-        path: '/vendor/orders/v1/purchaseOrders',
-        created_after:,
-        created_before:
-      }
-      response = get_purchase_orders(params)
-      pos = JSON.parse(response.body)
-      # なんらかのエラーでPOを取得できなかったらエラーコードをviewに渡して終了
-      return pos if pos.has_key?('errors')
+      # AmazonからPurchaseOrderを取得してOrderテーブルにレコードを更新/追加する
 
-      # posからOrdersとOrderItemsにレコードを作成していく
-      params = { pos:, vendor_id: }
+      amazon_api = AmazonAPIClient.new
+
+      # SP-APIのgetPurchaseOrdersのレスポンスを取得
+      response = amazon_api.get_purchase_orders(created_after, created_before)
+      purchase_orders = JSON.parse(response.body)
+
+      # なんらかのエラーでPOを取得できなかったらエラーコードをviewに渡して終了
+      return purchase_orders if purchase_orders.has_key?('errors')
+
+      # purchase_ordersからOrdersとOrderItemsにレコードを作成していく
+      params = { purchase_orders:, vendor_id: }
       response = create_order_and_order_items(params)
 
       # GETしたPOを元に作成したOrderのオブジェクト、またはエラーを返す
@@ -72,22 +48,49 @@ class Order < ApplicationRecord
       { orders: Order.where(po_number: response[:po_numbers].split(' ')).ids, errors: }
     end
 
-    # TODO: AmazonApiクラスに移動
-    # インスタンスメソッドにする
-    # api = AmazonApi.new
-    # response = api.get_purchase_orders(params)
-    def get_purchase_orders(params)
-      url_and_signature = generate_url_and_sign(params)
+    def acknowledge(po_numbers)
+      # 対象のPOに対してAcknowledgeする
 
-      request_params = {
-        method: 'get',
-        url: url_and_signature[:url],
-        signature: url_and_signature[:signature]
+      # Acknowledge対象のPOを検索
+      order_ids = Order.where(po_number: po_numbers.split(' ')).ids
+      orders = Order.where(id: order_ids)
+
+      amazon_api = AmazonAPIClient.new
+
+      # HTTPリクエストのbodyのJSONを作る
+      req_body = create_request_body(orders)
+
+      # signatureとurlを取得
+      params_for_get_url_and_sign = {
+        path: '/vendor/orders/v1/acknowledgements',
+        method: 'POST',
+        req_body:
+      }
+      url_and_sign = amazon_api.generate_url_and_sign(params_for_get_url_and_sign)
+
+      # acknowledgementsをPOSTする
+      params_for_post_acknowledgements = {
+        method: 'post',
+        content_type: 'application/json',
+        url: url_and_sign[:url],
+        signature: url_and_sign[:signature],
+        body: JSON.dump(url_and_sign[:body_values]),
+        access_token: amazon_api.access_token
       }
 
-      send_http_request(request_params)
+      begin
+        response = amazon_api.send_http_request(params_for_post_acknowledgements)
+      rescue => e
+        puts e
+      end
+      JSON.parse(response.body)
+      # @cost_difference_notice
     end
 
+    #
+    #
+    #
+    #
     # TODO: OrderBuilderクラスに移動
     # インスタンスメソッドにする
     # order_builder = OrderBuilder.new
@@ -95,7 +98,7 @@ class Order < ApplicationRecord
     def create_order_and_order_items(params)
       po_numbers = []
       errors = []
-      params[:pos]['payload']['orders'].each do |order|
+      params[:purchase_orders]['payload']['orders'].each do |order|
         # Ordersの作成
         odr = find_or_initialize_by(po_number: order['purchaseOrderNumber'])
         odr.vendor_id = params[:vendor_id]
@@ -251,129 +254,26 @@ class Order < ApplicationRecord
       { po_numbers:, errors: }
     end
 
-    def acknowledge(po_numbers)
-      # Acknowledgeする対象のPOを検索
-      order_ids = Order.where(po_number: po_numbers.split(' ')).ids
-      orders = Order.where(id: order_ids)
-
-      # HTTPリクエストのbodyのJSONを作る
-      req_body = create_request_body(orders)
-
-      # signatureとurlを取得
-      params = { api: 'acknowledgement', path: '/vendor/orders/v1/acknowledgements', req_body: }
-      url_and_signature = generate_url_and_sign(params)
-
-      request_params = {
-        method: 'post',
-        content_type: 'application/json',
-        url: url_and_signature[:url],
-        signature: url_and_signature[:signature],
-        body: JSON.dump(url_and_signature[:body_values])
-      }
-
-      begin
-        response = send_http_request(request_params)
-      rescue => e
-        puts e
-      end
-      JSON.parse(response.body)
-      # @cost_difference_notice
-    end
-
-    require 'uri'
-    require 'net/http'
-
-    module Net::HTTPHeader
-      def capitalize(name)
-        name
-      end
-      private :capitalize
-    end
-
-    # TODO: AmazonApiクラスに移動させる
-    # インスタンスメソッドにする
-    # api = AmazonApi.new
-    # api.generate_url_and_sign(params)
-    def generate_url_and_sign(params)
-      # POs: params include :api, :path
-      # Acknowledgement: params include :api, :po_number, :req_body
-
-      host = hostname
-      service = 'execute-api'
-      region = 'us-east-1'
-      endpoint = "https://#{host}"
-      path = params[:path]
-      if params[:api] == 'pos'
-        start_date = params[:created_after].to_date.to_fs(:iso8601).gsub(':', '%3A')
-        end_date = params[:created_before].to_date.to_fs(:iso8601).gsub(':', '%3A')
-        limit = 54
-        method = 'GET'
-        query_hash = {
-          'limit' => limit,
-          'createdAfter' => start_date,
-          'createdBefor' => end_date,
-          'sortOrder' => 'DESC'
-        }
-        query = formatted_query(query_hash)
-        url = URI("#{endpoint}#{path}?#{query}")
-      elsif params[:api] == 'acknowledgement'
-        body_values = params[:req_body]
-        path = '/vendor/orders/v1/acknowledgements'
-        method = 'POST'
-        url = URI("#{endpoint}#{path}")
-      end
-
-      api_credentials
-      @access_token = JSON.parse(generate_access_token)['access_token']
-
-      signer = Aws::Sigv4::Signer.new(
-        service: service,
-        region: region,
-        access_key_id: ENV['IAM_ACCESS_KEY'],
-        secret_access_key: ENV['IAM_SECRET_ACCESS_KEY']
-      )
-
-      if params[:api] == 'pos'
-        signature = signer.sign_request(
-          http_method: method,
-          url: url
-        )
-      elsif params[:api] == 'acknowledgement'
-        signature = signer.sign_request(
-          http_method: method,
-          url: url,
-          body: JSON.dump(body_values)
-        )
-      end
-
-      { url:, signature:, body_values: }
-    end
-
-    # TODO: AmazonApiクラスに移動させる
+    # TODO: OrderBuilderクラスに移動
     # privateメソッドにする
-    def send_http_request(params)
-      # params[:method]
-      # params[:signature]
-      # params[:url]
-      # params[:content_type]
-      # params[:body]
-      # return SP-API response(JSON)
-
-      req = Object.const_get("Net::HTTP::#{params[:method].capitalize}").new(params[:url])
-      req['host'] = params[:signature].headers['host']
-      req['x-amz-access-token'] = @access_token
-      req['user-agent'] = 'ePresto Connection1/1.0 (Language=Ruby/3.1.2)'
-      req['x-amz-date'] = params[:signature].headers['x-amz-date']
-      req['x-amz-content-sha256'] = params[:signature].headers['x-amz-content-sha256']
-      req['Authorization'] = params[:signature].headers['authorization']
-      req['Content-Type'] = params[:content_type]
-      req.body = params[:body] unless params[:body].nil?
-
-      https = Net::HTTP.new(params[:url].host, params[:url].port)
-      https.use_ssl = true
-      https.request(req)
+    def calc_delivery_window(ship_to_id, _ordered_date)
+      shipto = Shipto.find_by(location_code: ship_to_id)
+      province = shipto&.province
+      if province == 'BC'
+        (Time.now + 3).to_fs(:dat)
+      elsif province == 'AB'
+        (Time.now + 7).to_fs(:dat)
+      elsif province == 'ON'
+        (Time.now + 21).to_fs(:dat)
+      else
+        # Not given any information
+      end
     end
 
+    #
+    #
+    #
+    #
     # TODO: RequestBuilderクラスに移動
     # インスタンスメソッドにする
     # request_builder = RequestBuilder.new
@@ -559,22 +459,6 @@ class Order < ApplicationRecord
       list.sort.map do |k, v|
         "#{k}=#{v}"
       end.join('&')
-    end
-
-    # TODO: OrderBuilderクラスに移動
-    # privateメソッドにする
-    def calc_delivery_window(ship_to_id, _ordered_date)
-      shipto = Shipto.find_by(location_code: ship_to_id)
-      province = shipto&.province
-      if province == 'BC'
-        (Time.now + 3).to_fs(:dat)
-      elsif province == 'AB'
-        (Time.now + 7).to_fs(:dat)
-      elsif province == 'ON'
-        (Time.now + 21).to_fs(:dat)
-      else
-        # Not given any information
-      end
     end
 
     def hostname
