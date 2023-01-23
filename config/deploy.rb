@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'net/ssh/proxy/command'
 
 # config valid for current version and patch releases of Capistrano
