@@ -47,9 +47,4 @@ module OrdersHelper
       tag.span 'Download JS Import file'
     end
   end
-
-  def state_selection_index(state_string)
-    selection = [['New', 0], ['Acknowledged', 1], ['Closed', 2]]
-    selection.find { |arr| arr[0] == 'Closed' }[1]
-  end
 end
