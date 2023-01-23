@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AmazonAPI
+class AmazonAPIClient
   # RubyがNet::HTTPHeaderにヘッダを渡す時にcapitalizeしてしまう
   # AmazonAPIは小文字のままにしてほしいのでハックしておく
   require 'uri'
@@ -13,36 +13,40 @@ class AmazonAPI
     private :capitalize
   end
 
-  attr_accessor :access_token
-
   def initialize
     @refresh_token = ENV['DEV_CENTRAL_REFRESH_TOKEN']
     @client_id = ENV['AWS_ACCESS_KEY_ID']
     @client_secret = ENV['AWS_SECRET_ACCESS_KEY']
-    @access_token = JSON.parse(self.generate_access_token(@refresh_token, @client_id, @client_secret))['access_token']
   end
 
   def get_purchase_orders(created_after, created_before)
-      # signatureとurlを取得
-      params_for_get_url_and_sign = {
-        path: '/vendor/orders/v1/purchaseOrders',
-        method: 'GET',
-        created_after:,
-        created_before:
-      }
-      url_and_sign = generate_url_and_sign(params_for_get_url_and_sign)
+    # signatureとurlを取得
+    params_for_get_url_and_sign = {
+      path: '/vendor/orders/v1/purchaseOrders',
+      method: 'GET',
+      created_after:,
+      created_before:
+    }
+    url_and_sign = generate_url_and_sign(params_for_get_url_and_sign)
 
-      # SP-APIのgetPurchaseOrdersのレスポンスを取得して返す
-      params_for_get_purchase_order = {
-        method: 'get',
-        url: url_and_sign[:url],
-        signature: url_and_sign[:signature],
-        access_token: @access_token
-      }
-      send_http_request(params_for_get_purchase_order)
+    # access_tokenを取得
+    access_token = fetch_access_token
+
+    # SP-APIのgetPurchaseOrdersのレスポンスを取得して返す
+    params_for_get_purchase_order = {
+      method: 'get',
+      url: url_and_sign[:url],
+      signature: url_and_sign[:signature],
+      access_token:
+    }
+    send_http_request(params_for_get_purchase_order)
   end
 
   private
+
+  def fetch_access_token
+    JSON.parse(self.generate_access_token(@refresh_token, @client_id, @client_secret))['access_token']
+  end
 
   def generate_url_and_sign(params)
     # POs: params include :api, :path, :created_after, :created_before
@@ -56,7 +60,7 @@ class AmazonAPI
     if params[:path].include?('purchaseOrders')
       start_date = params[:created_after].to_date.to_fs(:iso8601).gsub(':', '%3A')
       end_date = params[:created_before].to_date.to_fs(:iso8601).gsub(':', '%3A')
-      limit = 54
+      limit = 100
       query_hash = {
         'limit' => limit,
         'createdAfter' => start_date,
@@ -81,7 +85,6 @@ class AmazonAPI
       http_method: params[:method],
       url: url
     }
-
 
     if params[:path].include?('acknowledgements')
       params_for_get_sign[:body] = JSON.dump(body_values) if defined? body_values
