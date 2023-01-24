@@ -35,40 +35,40 @@ class OrderBuilder
       odr.delivery_window = calc_delivery_window(odr.ship_to_party_id, odr.po_date)
       odr.deal_code = order_detail['dealCode'] unless order_detail.nil?
       unless order_detail['importDetails'].nil?
-        import_detail = order['orderDetails']['importDetails']
+        import_detail = order_detail['importDetails']
         odr.import_method_of_payment = import_detail['methodOfPayment']
         odr.import_international_commercial_terms = import_detail['internationalCommercialTerms']
         odr.import_port_of_delivery = import_detail['portOfDelivery']
         odr.import_containers = import_detail['importContainers']
         odr.import_shipping_instructions = import_detail['shippingInstructions']
       end
-      unless order['orderDetails']['sellingParty'].nil?
-        unless order['orderDetails']['sellingParty']['address'].nil?
-          address = order['orderDetails']['sellingParty']['address']
+      unless order_detail['sellingParty'].nil?
+        unless order_detail['sellingParty']['address'].nil?
+          address = order_detail['sellingParty']['address']
           input_address(odr, 'selling', address)
         end
       end
-      unless order['orderDetails']['buyingParty'].nil?
-        unless order['orderDetails']['buyingParty']['address'].nil?
-          address = order['orderDetails']['buyingParty']['address']
+      unless order_detail['buyingParty'].nil?
+        unless order_detail['buyingParty']['address'].nil?
+          address = order_detail['buyingParty']['address']
           input_address(odr, 'buying', address)
         end
       end
-      unless order['orderDetails']['shipToParty'].nil?
-        unless order['orderDetails']['shipToParty']['address'].nil?
-          address = order['orderDetails']['shipToParty']['address']
+      unless order_detail['shipToParty'].nil?
+        unless order_detail['shipToParty']['address'].nil?
+          address = order_detail['shipToParty']['address']
           input_address(odr, 'ship_to', address)
         end
       end
-      unless order['orderDetails']['billToParty'].nil?
-        unless order['orderDetails']['billToParty']['address'].nil?
-          address = order['orderDetails']['billToParty']['address']
+      unless order_detail['billToParty'].nil?
+        unless order_detail['billToParty']['address'].nil?
+          address = order_detail['billToParty']['address']
           input_address(odr, 'bill_to', address)
         end
       end
-      unless order['orderDetails']['taxInfo'].nil?
-        odr.buying_tax_type = order['orderDetails']['taxInfo']['taxType']
-        odr.buying_tax_number = order['orderDetails']['taxInfo']['taxRegistrationNumber']
+      unless order_detail['taxInfo'].nil?
+        odr.buying_tax_type = order_detail['taxInfo']['taxType']
+        odr.buying_tax_number = order_detail['taxInfo']['taxRegistrationNumber']
       end
 
       if odr.valid?
@@ -84,7 +84,7 @@ class OrderBuilder
       end
 
       # OrderItemsの作成
-      order['items'].each do |item|
+      order_detail['items'].each do |item|
         itm = OrderItem.find_or_initialize_by(
           order_id: odr.id,
           amazon_product_identifier: item['amazonProductIdentifier']
@@ -143,11 +143,11 @@ class OrderBuilder
     shipto = Shipto.find_by(location_code: ship_to_id)
     province = shipto&.province
     if province == 'BC'
-      (Time.now + 3).to_fs(:dat)
+      (Time.now + 3 * 24 * 60 * 60).to_fs(:dat)
     elsif province == 'AB'
-      (Time.now + 7).to_fs(:dat)
+      (Time.now + 7 * 24 * 60 * 60).to_fs(:dat)
     elsif province == 'ON'
-      (Time.now + 21).to_fs(:dat)
+      (Time.now + 21 * 24 * 60 * 60).to_fs(:dat)
     else
       # Not given any information
     end
