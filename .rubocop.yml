@@ -19,3 +19,15 @@ Style:
 
 Layout/LineLength:
   Enabled: false
+
+Layout/SpaceAroundOperators:
+  Exclude:
+    - "spec/**/*_spec.rb"
+
+Layout/SpaceInsideHashLiteralBraces:
+  Exclude:
+    - "spec/**/*_spec.rb"
+
+Layout/HashAlignment:
+  Exclude:
+    - "spec/**/*_spec.rb"

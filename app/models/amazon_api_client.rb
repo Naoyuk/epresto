@@ -42,6 +42,36 @@ class AmazonAPIClient
     send_http_request(params_for_get_purchase_order)
   end
 
+  def submit_acknowledgements(req_body)
+    # signatureとurlを取得
+    params_for_get_url_and_sign = {
+      path: '/vendor/orders/v1/acknowledgements',
+      method: 'POST',
+      req_body:
+    }
+    url_and_sign = generate_url_and_sign(params_for_get_url_and_sign)
+
+    # access_tokenを取得
+    access_token = fetch_access_token
+
+    # acknowledgementsをsubmitする
+    params_for_submit_acknowledgements = {
+      method: 'post',
+      content_type: 'application/json',
+      url: url_and_sign[:url],
+      signature: url_and_sign[:signature],
+      body: JSON.dump(url_and_sign[:body_values]),
+      access_token:
+    }
+
+    send_http_request(params_for_submit_acknowledgements)
+    # begin
+    #   send_http_request(params_for_submit_acknowledgements)
+    # rescue => e
+    #   puts e
+    # end
+  end
+
   private
 
   def fetch_access_token

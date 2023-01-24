@@ -60,30 +60,10 @@ class Order < ApplicationRecord
       # HTTPリクエストのbodyのJSONを作る
       req_body = create_request_body(orders)
 
-      # signatureとurlを取得
-      params_for_get_url_and_sign = {
-        path: '/vendor/orders/v1/acknowledgements',
-        method: 'POST',
-        req_body:
-      }
-      url_and_sign = amazon_api.generate_url_and_sign(params_for_get_url_and_sign)
-
-      # acknowledgementsをPOSTする
-      params_for_post_acknowledgements = {
-        method: 'post',
-        content_type: 'application/json',
-        url: url_and_sign[:url],
-        signature: url_and_sign[:signature],
-        body: JSON.dump(url_and_sign[:body_values]),
-        access_token: amazon_api.access_token
-      }
-
-      begin
-        response = amazon_api.send_http_request(params_for_post_acknowledgements)
-      rescue => e
-        puts e
-      end
+      # SP-APIのsubmitAcknowledgementを叩く
+      response = amazon_api.submit_acknowledgements(req_body)
       JSON.parse(response.body)
+
       # @cost_difference_notice
     end
 
@@ -445,20 +425,6 @@ class Order < ApplicationRecord
       end
       req_body["acknowledgements"] = acknowledgements
       return req_body
-    end
-
-    # TODO: RequestBuilderクラスに移動
-    # privateメソッドにする
-    def formatted_query(query_hash)
-      list = []
-      query_hash.each_pair do |k, v|
-        # k = k.downcase
-        list << [k, v]
-      end
-
-      list.sort.map do |k, v|
-        "#{k}=#{v}"
-      end.join('&')
     end
 
     def hostname
