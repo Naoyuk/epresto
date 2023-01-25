@@ -6,25 +6,26 @@ require 'json'
 RSpec.describe OrderBuilder, type: :model do
   describe 'OrderBuilder#create_order_and_order_items' do
     before do
-        vendor = create(:vendor)
-        purchase_orders_raw = file_fixture('purchase_orders.json').read
-        purchase_orders = JSON.parse(purchase_orders_raw)
-        @params = { purchase_orders:, vendor_id: vendor.id }
-        @order_records = Order.all.count
-        @item_records = OrderItem.all.count
-        @order_builder = OrderBuilder.new
+      vendor = create(:vendor)
+      purchase_orders_raw = file_fixture('purchase_orders.json').read
+      purchase_orders = JSON.parse(purchase_orders_raw)
+      @params = { purchase_orders:, vendor_id: vendor.id }
+      @order_records = Order.all.count
+      @item_records = OrderItem.all.count
+      @order_builder = OrderBuilder.new
     end
 
     context '必要な値が揃っている場合' do
       it 'Orderのレコードを作成する' do
         create(:shipto, location_code: 'ABCD')
         response = @order_builder.create_order_and_order_items(@params)
+        success_response = {
+          :errors => [],
+          :po_numbers => ["L8266355"]
+        }
         expect(Order.all.count).to eq @order_records + 1
         expect(OrderItem.all.count).to eq @item_records + 1
-        expect(response).to eq ({
-          :errors => [],
-          :po_numbers => [ "L8266355" ]
-        })
+        expect(response).to eq(success_response)
       end
     end
 

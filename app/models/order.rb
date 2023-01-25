@@ -68,7 +68,6 @@ class Order < ApplicationRecord
       # @cost_difference_notice
     end
 
-
     #
     #
     #

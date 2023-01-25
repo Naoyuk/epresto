@@ -166,4 +166,3 @@ class OrderBuilder
     odr.send("#{prefix}_address_phone=", address['phone'])
   end
 end
-
