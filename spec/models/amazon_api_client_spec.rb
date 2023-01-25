@@ -81,4 +81,12 @@ RSpec.describe AmazonAPIClient, type: :model do
       end
     end
   end
+
+  describe '#build_acknowledge_request_body' do
+    it '正しいRequest Bodyを生成する' do
+      # Order, OrderItem * 2, OrderItemAcknowledgement * 2, Item, Shiptoを作成
+      # build_acknowledge_request_bodyを実行したら
+      # fixtures/files/acknowledgement_req_body.jsonと同じになることを確認する
+    end
+  end
 end

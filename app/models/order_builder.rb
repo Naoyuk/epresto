@@ -27,12 +27,12 @@ class OrderBuilder
       end
 
       unless odr.ship_window.nil?
-        from_and_to = split_shippin_window(odr.ship_window)
+        from_and_to = split_shipping_window(odr.ship_window)
         odr.ship_window_from = from_and_to[:ship_window_from]
         odr.ship_window_to = from_and_to[:ship_window_to]
       end
 
-      odr.delivery_window = calc_delivery_window(odr.ship_to_party_id, odr.po_date)
+      # odr.delivery_window = calc_delivery_window(odr.ship_to_party_id, odr.po_date)
       odr.deal_code = order_detail['dealCode'] unless order_detail.nil?
       unless order_detail['importDetails'].nil?
         import_detail = order_detail['importDetails']
@@ -121,9 +121,62 @@ class OrderBuilder
     { po_numbers:, errors: }
   end
 
+  def create_acknowledgement(order, item)
+    ack = item.acks.build
+    ack.acknowledged_quantity_amount = item.ordered_quantity_amount
+    ack.acknowledged_quantity_unit_of_measure = item.ordered_quantity_unit_of_measure
+    ack.acknowledged_quantity_unit_size = item.ordered_quantity_unit_size
+    ack.scheduled_ship_date = order.ship_window_to
+    ack.scheduled_delivery_date = calc_scheduled_delivery_date(order.shipto.province, order.ship_window_to)
+
+    if item.item&.Current?
+      ack.acknowledgement_code = 'Accepted'
+      # TODO: Phase2以降の実装内容。Price違いの警告
+      # unless item.listprice_amount == item.item.price
+      #   @notice_title ||= 'Prices for the following items differ from Item Master prices.'
+      #   price_diff_items << "\nASIN: #{item.amazon_product_identifier}, PO Price: #{item.listprice_amount}, Item Master Price: #{item.item.price}"
+      # end
+    else
+      ack.acknowledgement_code = 'Rejected'
+    end
+
+    if item.item.nil?
+      ack.rejection_reason = 'InvalidProductIdentifier'
+    elsif item.item.Discontinued?
+      ack.rejection_reason = 'ObsoleteProduct'
+      # elsif item.item.price != item.listprice_amount
+      #   # TODO: Phase2以降でこの条件は実装予定
+      #   ack.rejection_reason = 'TemporarilyUnavailable'
+    end
+    ack.save
+
+    # TODO: 以下はPhase2以降で実装予定
+    # if # 在庫がオーダー数よりも少なかった場合
+    #   # 配列itemAcknowledgementを1個追加
+    #   acknowledge_additional = acknowledge_detail
+    #   acknowledged_additional_quantity = {}
+    #   if item.item.Current? && (item.listprice_amount == item.item.price)
+    #     acknowledge_additional['acknowledgementCode'] = 'Accepted'
+    #   elsif # バックオーダーの条件
+    #     acknowledge_additional['acknowledgementCode'] = 'Backordered'
+    #     acknowledge_additional['rejectionReason'] = 'TemporarilyUnavailable'
+    #   else
+    #     # ディスコンの場合
+    #     acknowledge_additional['acknowledgementCode'] = 'Rejected'
+    #     acknowledge_additional['rejectionReason'] = 'ObsoleteProduct'
+    #   end
+    #   acknowledged_additional_quantity['amount'] = item.ordered_quantity_amount -
+    #   acknowledged_additional_quantity['unitOfMeasure'] = item.acks.acknowledged_quantity_unit_of_measure
+    #   acknowledged_additional_quantity['unitSize'] = item.acks.acknowledged_quantity_unit_size
+    #   acknowledge_additional['acknowledgedQuantity'] = acknowledged_additional_quantity
+
+    #   item_acknowledgements << acknowledge_additional
+    # end
+  end
+
   private
 
-  def split_shippin_window(window)
+  def split_shipping_window(window)
     pos_of_div = window.index('--')
     from = window.slice(0, pos_of_div)
     to = window.slice(pos_of_div + 2, 20)
@@ -139,15 +192,16 @@ class OrderBuilder
     { ship_window_from:, ship_window_to: }
   end
 
-  def calc_delivery_window(ship_to_id, _ordered_date)
-    shipto = Shipto.find_by(location_code: ship_to_id)
-    province = shipto&.province
+  def calc_scheduled_delivery_date(province, ship_window_to)
     if province == 'BC'
-      (Time.now + 3 * 24 * 60 * 60).to_fs(:dat)
+      # Shipping within B.C. = 3 days
+      (ship_window_to + 3 * 24 * 60 * 60).to_fs(:iso8601)
     elsif province == 'AB'
-      (Time.now + 7 * 24 * 60 * 60).to_fs(:dat)
+      # Calgary = 1 week
+      (ship_window_to + 7 * 24 * 60 * 60).to_fs(:iso8601)
     elsif province == 'ON'
-      (Time.now + 21 * 24 * 60 * 60).to_fs(:dat)
+      # Ontario = 3 weeks
+      (ship_window_to + 21 * 24 * 60 * 60).to_fs(:iso8601)
     else
       # Not given any information
     end
