@@ -68,7 +68,7 @@ class OrdersController < ApplicationController
         errors.each { |error| errors_formatted << "Error Code: #{error[:code]}, #{error[:desc]}" }
         error_message = "#{errors_formatted.join('<br>')}<br>Contact to an administrator."
       end
-      redirect_to orders_path, alert: error_message
+      redirect_to orders_path(tab: 'new'), alert: error_message
       # end
     end
   end
@@ -80,11 +80,11 @@ class OrdersController < ApplicationController
   def acknowledge
     @cost_difference_notice = Order.acknowledge(params[:po_numbers])
     unless @cost_difference_notice.nil?
-      redirect_to orders_path
+      redirect_to orders_path(tab: 'acknowledged')
       # TODO: Phase2でPriceの違うオーダーがある場合に警告を出力するバージョン
       # redirect_to orders_path, :alert => @cost_difference_notice.gsub("\n", '<br>')
     else
-      redirect_to orders_path
+      redirect_to orders_path(tab: 'acknowledged')
     end
   end
 
@@ -117,23 +117,23 @@ class OrdersController < ApplicationController
   def convert_to_regular
     @ids = params[:ids]
     if @ids.empty?
-      return redirect_to orders_path(bulk: true), alert: 'No purchase orders are selected.'
+      return redirect_to orders_path(tab: 'bulk'), alert: 'No purchase orders are selected.'
     end
 
     toggle_po_type(:regular)
 
-    redirect_to orders_path(bulk: true), notice: 'Selected purchase orders are set to Regular Order.'
+    redirect_to orders_path(tab: 'bulk'), notice: 'Selected purchase orders are set to Regular Order.'
   end
 
   def convert_to_bulk
     @ids = params[:ids]
     if @ids.empty?
-      return redirect_to orders_path(bulk: true), alert: 'No purchase orders are selected.'
+      return redirect_to orders_path(tab: 'bulk'), alert: 'No purchase orders are selected.'
     end
 
     toggle_po_type(:bulk)
 
-    redirect_to orders_path(bulk: true), notice: 'Selected purchase orders are set to Bulk Order.'
+    redirect_to orders_path(tab: 'bulk'), notice: 'Selected purchase orders are set to Bulk Order.'
   end
 
   private

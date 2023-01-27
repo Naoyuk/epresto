@@ -61,9 +61,12 @@ class Order < ApplicationRecord
       # HTTPリクエストのbodyのJSONを作る
       req_body = amazon_api.build_acknowledge_request_body(orders)
 
+      # Acknowledgementのデバッグ用のログ
+      logger.debug('Acknowledgement Reqest')
+      logger.debug(req_body)
+
       # SP-APIのsubmitAcknowledgementを叩く
       response = amazon_api.submit_acknowledgements(req_body)
-      debugger
       JSON.parse(response.body)
 
       # @cost_difference_notice

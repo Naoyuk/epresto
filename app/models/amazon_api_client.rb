@@ -181,7 +181,6 @@ class AmazonAPIClient
     # POs: params include :api, :path, :created_after, :created_before
     # Acknowledgement: params include :api, :po_number, :req_body
 
-    debugger
     host = hostname
     service = 'execute-api'
     region = 'us-east-1'
