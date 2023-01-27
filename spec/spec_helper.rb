@@ -97,18 +97,3 @@ RSpec.configure do |config|
   #   # as the one that triggered the failure.
   #   Kernel.srand config.seed
 end
-
-require 'vcr'
-VCR.configure do |config|
-  config.cassette_library_dir = "spec/cassettes"
-  config.hook_into :webmock
-  config.configure_rspec_metadata!
-  config.default_cassette_options = {
-    record: :new_episodes,
-    match_requests_on: [:method, :path, :query, :body]
-  }
-  config.before_record do |interaction| # カセット保存前の処理の設定
-      interaction.response.body.force_encoding 'UTF-8'
-      interaction.response.body = JSON.pretty_generate(JSON.parse(interaction.response.body)) if interaction.response.body.present?
-  end
-end
