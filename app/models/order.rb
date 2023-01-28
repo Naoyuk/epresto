@@ -68,7 +68,7 @@ class Order < ApplicationRecord
         order_items = orders['orderDetais']['items']
 
         order_items.each do |order_item_params|
-          order_item = order_builder.build_order_item(order_item_params)
+          order_item = order_builder.build_order_item(order_item_params, order.id)
           if order_item.valid?
             order_item.save
             po_numbers << order.po_number

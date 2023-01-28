@@ -15,6 +15,7 @@ class OrderBuilder
     order.po_type = order_detail['purchaseOrderType']
     order.payment_method = order_detail['paymentMethod']
     order.ship_window = order_detail['shipWindow']
+    order.ship_to_party_id = order_detail['shipToParty']['partyId']
 
     unless order.ship_to_party_id.nil?
       order.shipto_id = Shipto.find_by(location_code: order.ship_to_party_id)&.id
@@ -51,7 +52,6 @@ class OrderBuilder
       end
     end
     unless order_detail['shipToParty'].nil?
-      order.ship_to_party_id = order_detail['shipToParty']['partyId']
       unless order_detail['shipToParty']['address'].nil?
         address = order_detail['shipToParty']['address']
         input_address(order, 'ship_to', address)
@@ -73,13 +73,12 @@ class OrderBuilder
   end
 
 
-  def build_order_item(params)
-      # order_detail['items'].each do |item|
+  def build_order_item(params, order_id)
+    # params = purchase_orders['payload']['orders']['orderDetails']['items'][n]
     order_item = OrderItem.find_or_initialize_by(
-      order_id: odr.id,
+      order_id: order_id,
       amazon_product_identifier: params['amazonProductIdentifier']
     )
-    # itm.order_id = order_id
     order_item.item_seq_number = params['itemSequenceNumber']
     order_item.amazon_product_identifier = params['amazonProductIdentifier']
     order_item.vendor_product_identifier = params['vendorProductIdentifier']
