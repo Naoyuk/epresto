@@ -18,7 +18,7 @@ class OrderItem < ApplicationRecord
     # リレーションが成立しない、またはItem.caseがnilの場合はcase_quantityはnil
     if self.item&.Case?
       self.case_quantity = self.ordered_quantity_amount
-    elsif self.item&.Each?
+    elsif self.item&.Each? && !self.item&.pack.nil?
       self.case_quantity = self.ordered_quantity_amount / self.item.pack
     end
   end

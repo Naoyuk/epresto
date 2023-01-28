@@ -39,7 +39,8 @@ class AmazonAPIClient
       signature: url_and_sign[:signature],
       access_token:
     }
-    send_http_request(params_for_get_purchase_order)
+    response = send_http_request(params_for_get_purchase_order)
+    JSON.parse(response.body)
   end
 
   def build_acknowledge_request_body(orders)

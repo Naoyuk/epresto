@@ -53,9 +53,8 @@ class OrdersController < ApplicationController
       created_before = params[:created_before].to_datetime
       response = Order.import_po(current_user.vendor_id, created_after, created_before)
 
-      # 取得したPOから作成したOrderのidとエラーのどちらか又は両方が返ってくる
-      order_ids = response[:orders]
-      @orders = Order.where(id: order_ids)
+      # 取得したPOから作成したOrderのOrderオブジェクトとエラーのどちらか又は両方が返ってくる
+      @orders = response[:orders]
       errors = response[:errors]
 
       # if @orders.count > 0

@@ -32,21 +32,60 @@ class Order < ApplicationRecord
 
       amazon_api = AmazonAPIClient.new
 
-      # SP-APIのgetPurchaseOrdersのレスポンスを取得
-      response = amazon_api.get_purchase_orders(created_after, created_before)
-      purchase_orders = JSON.parse(response.body)
+      # SP-APIのgetPurchaseOrdersのJSONパース済response.bodyを取得
+      purchase_orders = amazon_api.get_purchase_orders(created_after, created_before)
+      orders = purchase_orders['payload']['orders']
 
       # なんらかのエラーでPOを取得できなかったらエラーコードをviewに渡して終了
       return purchase_orders if purchase_orders.has_key?('errors')
 
-      # purchase_ordersからOrdersとOrderItemsにレコードを作成していく
+      # purchase_ordersからOrderとOrderItemにレコードを作成していく
       order_builder = OrderBuilder.new
-      params = { purchase_orders:, vendor_id: }
-      response = order_builder.create_order_and_order_items(params)
 
-      # GETしたPOを元に作成したOrderのオブジェクト、またはエラーを返す
-      errors = response[:errors]
-      { orders: Order.where(po_number: response[:po_numbers].split(' ')).ids, errors: }
+      # Orderと、それに紐づくOrderItemの作成
+      orders.each do |order_params|
+        po_numbers = []
+        errors = []
+
+        # Orderの作成
+        # order_builder.build_orderは検索or新規して各値をセットしたOrderオブジェクトを返す
+        order = order_builder.build_order(order_params, vendor_id)
+        # TODO: 例外の処理が合ってるか確認
+        begin
+          order.save
+          po_numbers << order.po_number
+        rescue
+          errors << STDERR
+          #   error = {
+          #   TODO: エラー情報は仮
+          #     code: '010',
+          #     desc: 'Import Purchase Order Error',
+          #     messages: odr.errors.full_messages
+          #   }
+        end
+
+        # OrderItemの作成
+        order_items = orders['orderDetais']['items']
+
+        order_items.each do |order_item_params|
+          order_item = order_builder.build_order_item(order_item_params)
+          if order_item.valid?
+            order_item.save
+            po_numbers << order.po_number
+          else
+            errors << STDERR
+            #   error = {
+            #   TODO: エラー情報は仮
+            #     code: '020',
+            #     desc: 'Import Order Item Error',
+            #     messages: itm.errors.full_messages
+            #   }
+          end
+        end
+      end
+
+      orders = Order.where(po_number: po_numbers)
+      { orders:, errors: }
     end
 
     def acknowledge(po_numbers)
