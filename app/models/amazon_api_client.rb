@@ -1,22 +1,22 @@
 # frozen_string_literal: true
 
-class AmazonAPIClient
-  # RubyがNet::HTTPHeaderにヘッダを渡す時にcapitalizeしてしまう
-  # AmazonAPIは小文字のままにしてほしいのでハックしておく
-  require 'uri'
-  require 'net/http'
+require 'uri'
+require 'net/http'
 
+class AmazonAPIClient
+  def initialize
+    @refresh_token = ENV['DEV_CENTRAL_REFRESH_TOKEN']
+    @client_id = ENV['AWS_ACCESS_KEY_ID']
+    @client_secret = ENV['AWS_SECRET_ACCESS_KEY']
+  end
+
+  # RubyがNet::HTTPHeaderにヘッダを渡す時にcapitalizeしてしまう
+  # AmazonAPIは小文字のままにしてほしいのでそのままの文字列を返すようにcapitalizeメソッドをオーバーライドしておく
   module Net::HTTPHeader
     def capitalize(name)
       name
     end
     private :capitalize
-  end
-
-  def initialize
-    @refresh_token = ENV['DEV_CENTRAL_REFRESH_TOKEN']
-    @client_id = ENV['AWS_ACCESS_KEY_ID']
-    @client_secret = ENV['AWS_SECRET_ACCESS_KEY']
   end
 
   def get_purchase_orders(created_after, created_before)
@@ -229,19 +229,23 @@ class AmazonAPIClient
     # params[:method], [:signature], [:access_token], [:url], [:content_type], [:body]
     # return SP-API response(JSON)
 
-    req = Object.const_get("Net::HTTP::#{params[:method].capitalize}").new(params[:url])
-    req['host'] = params[:signature].headers['host']
-    req['x-amz-access-token'] = params[:access_token]
-    req['user-agent'] = 'ePresto Connection1/1.0 (Language=Ruby/3.1.2)'
-    req['x-amz-date'] = params[:signature].headers['x-amz-date']
-    req['x-amz-content-sha256'] = params[:signature].headers['x-amz-content-sha256']
-    req['Authorization'] = params[:signature].headers['authorization']
-    req['Content-Type'] = params[:content_type]
-    req.body = params[:body] unless params[:body].nil?
+    begin
+      req = Object.const_get("Net::HTTP::#{params[:method].capitalize}").new(params[:url])
+      req['host'] = params[:signature].headers['host']
+      req['x-amz-access-token'] = params[:access_token]
+      req['user-agent'] = 'ePresto Connection1/1.0 (Language=Ruby/3.1.2)'
+      req['x-amz-date'] = params[:signature].headers['x-amz-date']
+      req['x-amz-content-sha256'] = params[:signature].headers['x-amz-content-sha256']
+      req['Authorization'] = params[:signature].headers['authorization']
+      req['Content-Type'] = params[:content_type]
+      req.body = params[:body] unless params[:body].nil?
 
-    https = Net::HTTP.new(params[:url].host, params[:url].port)
-    https.use_ssl = true
-    https.request(req)
+      https = Net::HTTP.new(params[:url].host, params[:url].port)
+      https.use_ssl = true
+      https.request(req)
+    rescue => e
+      puts e
+    end
   end
 
   def generate_access_token(refresh_token, client_id, client_secret)

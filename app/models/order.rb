@@ -42,45 +42,30 @@ class Order < ApplicationRecord
       # purchase_ordersからOrderとOrderItemにレコードを作成していく
       order_builder = OrderBuilder.new
 
+      # 作成したOrderのpo_numberと発生したエラーコードを入れる配列を用意
+      po_numbers = []
+      errors = []
+
       # Orderと、それに紐づくOrderItemの作成
       orders.each do |order_params|
-        po_numbers = []
-        errors = []
-
         # Orderの作成
         # order_builder.build_orderは検索or新規して各値をセットしたOrderオブジェクトを返す
         order = order_builder.build_order(order_params, vendor_id)
+
+        # buildしたorderをcreateする
         # TODO: 例外の処理が合ってるか確認
-        begin
-          order.save
-          po_numbers << order.po_number
-        rescue
-          errors << STDERR
-          #   error = {
-          #   TODO: エラー情報は仮
-          #     code: '010',
-          #     desc: 'Import Purchase Order Error',
-          #     messages: odr.errors.full_messages
-          #   }
-        end
+        create_order(order)
+        po_numbers << order.po_number
+        error = { po_number: order.po_number, messages: @errors } unless @errors.nil?
 
         # OrderItemの作成
-        order_items = orders['orderDetais']['items']
+        order_items = order_params['orderDetails']['items']
 
         order_items.each do |order_item_params|
           order_item = order_builder.build_order_item(order_item_params, order.id)
-          if order_item.valid?
-            order_item.save
-            po_numbers << order.po_number
-          else
-            errors << STDERR
-            #   error = {
-            #   TODO: エラー情報は仮
-            #     code: '020',
-            #     desc: 'Import Order Item Error',
-            #     messages: itm.errors.full_messages
-            #   }
-          end
+
+          create_order_item(order_item)
+          error = { po_number: order.po_number, asin: order_item.amazon_product_identifier, messages: @errors } unless @errors.nil?
         end
       end
 
@@ -109,6 +94,21 @@ class Order < ApplicationRecord
       JSON.parse(response.body)
 
       # @cost_difference_notice
+    end
+
+    def create_order(order)
+      po_number = order.po_number
+      odr = Order.find_or_initialize_by(id: order.id)
+      odr.update!(order.attributes)
+    rescue ActiveRecord::RecordInvalid => e
+      @errors = e.record.errors.full_messages
+    end
+
+    def create_order_item(order_item)
+      odr_itm = OrderItem.find_or_initialize_by(id: order_item.id)
+      odr_itm.update!(order_item.attributes)
+    rescue ActiveRecord::RecordInvalid => e
+      @errors = e.record.errors.full_messages
     end
   end
 end
