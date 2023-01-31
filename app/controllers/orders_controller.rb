@@ -51,7 +51,7 @@ class OrdersController < ApplicationController
     else
       created_after = params[:created_after].to_datetime
       created_before = params[:created_before].to_datetime
-      response = Order.import_po(current_user.vendor_id, created_after, created_before)
+      response = Order.import_purchase_orders(current_user.vendor_id, created_after, created_before)
 
       # 取得したPOから作成したOrderのOrderオブジェクトとエラーのどちらか又は両方が返ってくる
       # @orders = response[:orders]

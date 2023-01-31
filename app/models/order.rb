@@ -27,8 +27,8 @@ class Order < ApplicationRecord
   }
 
   class << self
-    def import_po(vendor_id, created_after, created_before)
-      # AmazonからPurchaseOrderを取得してOrderテーブルにレコードを更新/追加する
+    def import_purchase_orders(vendor_id, created_after, created_before)
+      # AmazonからPurchaseOrdersを取得してOrderテーブルにレコードを更新/追加する
 
       amazon_api = AmazonAPIClient.new
 
