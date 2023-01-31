@@ -54,9 +54,9 @@ class OrdersController < ApplicationController
       response = Order.import_po(current_user.vendor_id, created_after, created_before)
 
       # 取得したPOから作成したOrderのOrderオブジェクトとエラーのどちらか又は両方が返ってくる
-      @orders = response[:orders]
-      errors = response[:errors]
-      debugger
+      # @orders = response[:orders]
+      # errors = response[:errors]
+      # debugger
 
       # if @orders.count > 0
       #   redirect_to orders_path

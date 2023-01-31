@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 class OrderBuilder
-  def build_order(params, vendor_id)
-    order = Order.find_or_initialize_by(po_number: params['purchaseOrderNumber'])
+  def build_order(order_params, vendor_id)
+    order = Order.find_or_initialize_by(po_number: order_params['purchaseOrderNumber'])
     order.vendor_id = vendor_id
-    order.po_number = params['purchaseOrderNumber']
-    order.po_state = params['purchaseOrderState']
+    order.po_number = order_params['purchaseOrderNumber']
+    order.po_state = order_params['purchaseOrderState']
 
-    order_detail = params['orderDetails']
+    order_detail = order_params['orderDetails']
 
     order.po_date = order_detail['purchaseOrderDate']
     order.po_changed_date = order_detail['purchaseOrderChangedDate']
@@ -69,10 +69,36 @@ class OrderBuilder
       order.buying_tax_number = order_detail['taxInfo']['taxRegistrationNumber']
     end
 
+    order_detail['items'].each do |order_item_params|
+      # params = purchase_orders['payload']['orders']['orderDetails']['items'][n]
+      order_item = OrderItem.find_or_initialize_by(
+        order_id: order.id,
+        amazon_product_identifier: order_item_params['amazonProductIdentifier']
+      )
+      order_item.item_seq_number = order_item_params['itemSequenceNumber']
+      order_item.amazon_product_identifier = order_item_params['amazonProductIdentifier']
+      order_item.vendor_product_identifier = order_item_params['vendorProductIdentifier']
+      order_item.ordered_quantity_amount = order_item_params['orderedQuantity']['amount']
+      order_item.ordered_quantity_unit_of_measure = order_item_params['orderedQuantity']['unitOfMeasure']
+      order_item.ordered_quantity_unit_size = order_item_params['orderedQuantity']['unitSize']
+      order_item.back_order_allowed = order_item_params['isBackOrderAllowed']
+      order_item.netcost_amount = order_item_params['netCost']['amount'] unless order_item_params['netCost'].nil?
+      order_item.netcost_currency_code = order_item_params['netCost']['currencyCode'] unless order_item_params['netCost'].nil?
+      order_item.listprice_amount = order_item_params['listPrice']['amount'] unless order_item_params['listPrice'].nil?
+      order_item.listprice_currency_code = order_item_params['listPrice']['currencyCode'] unless order_item_params['listPrice'].nil?
+      order_item.convert_case_quantity
+    end
+
+    # 外部のメソッドに出す場合
+    # order_detail['items'].each do | order_item_params|
+    #   build_order_item(order_item_params, order.id)
+    # end
+    
     order
   end
 
 
+  # build_order_itemは使ってない
   def build_order_item(params, order_id)
     # params = purchase_orders['payload']['orders']['orderDetails']['items'][n]
     order_item = OrderItem.find_or_initialize_by(
@@ -91,8 +117,6 @@ class OrderBuilder
     order_item.listprice_amount = params['listPrice']['amount'] unless params['listPrice'].nil?
     order_item.listprice_currency_code = params['listPrice']['currencyCode'] unless params['listPrice'].nil?
     order_item.convert_case_quantity
-
-    order_item
   end
 
   # TODO: これもbuild_acknowledgementに修正する(order_builderみたいに)
