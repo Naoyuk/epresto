@@ -58,6 +58,7 @@ class ShiptosController < ApplicationController
       :address_line2,
       :city,
       :postal_code,
+      :transit_time,
       :contact_name1,
       :contact_name2,
       :email1,

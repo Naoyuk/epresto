@@ -47,6 +47,11 @@
             </div>
 
             <div class='pr-1 w-[144px]'>
+              <%= f.label :transit_time_cont, "Transit Time", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :transit_time_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            </div>
+
+            <div class='pr-1 w-[144px]'>
               <%= f.label :contact_name1_cont, "Contact Name1", class: "block mb-2 text-sm font-medium text-gray-900" %>
               <%= f.search_field :contact_name1_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
             </div>
@@ -110,6 +115,7 @@
         <%= sort_link(@search, :city, 'City', class: 'inline-block px-2 py-2 w-36 border-r') %>
         <%= sort_link(@search, :province, 'Province', class: 'inline-block px-2 py-2 w-24 border-r') %>
         <%= sort_link(@search, :postal_code, 'Postal Code', class: 'inline-block px-2 py-2 w-36 border-r') %>
+        <%= sort_link(@search, :transit_time, 'Transit Time', class: 'inline-block px-2 py-2 w-36 border-r') %>
         <%= sort_link(@search, :contact_name1, 'Contact Name1', class: 'inline-block px-2 py-2 w-36 border-r') %>
         <%= sort_link(@search, :email1, 'Email1', class: 'inline-block px-2 py-2 w-36 border-r') %>
         <%= sort_link(@search, :phone1, 'Phone1', class: 'inline-block px-2 py-2 w-36 border-r') %>
