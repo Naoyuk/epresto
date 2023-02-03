@@ -87,6 +87,7 @@ class OrderBuilder
       order_item.listprice_amount = order_item_params['listPrice']['amount'] unless order_item_params['listPrice'].nil?
       order_item.listprice_currency_code = order_item_params['listPrice']['currencyCode'] unless order_item_params['listPrice'].nil?
       order_item.convert_case_quantity
+      order_item.save
     end
 
     # 外部のメソッドに出す場合
