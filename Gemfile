@@ -32,6 +32,7 @@ gem 'ransack'
 gem 'rolify'
 gem 'roo'
 gem 'rubyzip'
+gem 'business_time'
 
 group :development, :test do
   gem 'capistrano', '~> 3.17.1'

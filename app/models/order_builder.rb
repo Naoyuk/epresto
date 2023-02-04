@@ -127,7 +127,7 @@ class OrderBuilder
     ack.acknowledged_quantity_unit_of_measure = item.ordered_quantity_unit_of_measure
     ack.acknowledged_quantity_unit_size = item.ordered_quantity_unit_size
     ack.scheduled_ship_date = order.ship_window_to
-    ack.scheduled_delivery_date = calc_scheduled_delivery_date(order.shipto.province, order.ship_window_to)
+    ack.scheduled_delivery_date = order.shipto.transit_time.business_days.after(order.ship_window_to)
 
     if item.item&.Current?
       ack.acknowledgement_code = 'Accepted'
@@ -190,21 +190,6 @@ class OrderBuilder
     )
 
     { ship_window_from:, ship_window_to: }
-  end
-
-  def calc_scheduled_delivery_date(province, ship_window_to)
-    if province == 'BC'
-      # Shipping within B.C. = 3 days
-      (ship_window_to + 3 * 24 * 60 * 60).to_fs(:iso8601)
-    elsif province == 'AB'
-      # Calgary = 1 week
-      (ship_window_to + 7 * 24 * 60 * 60).to_fs(:iso8601)
-    elsif province == 'ON'
-      # Ontario = 3 weeks
-      (ship_window_to + 21 * 24 * 60 * 60).to_fs(:iso8601)
-    else
-      # Not given any information
-    end
   end
 
   def input_address(order, prefix, address)
