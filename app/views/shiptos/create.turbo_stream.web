@@ -1,0 +1,8 @@
+<%# `#shiptos`の先頭に登録されたShiptoを追加する %>
+<%= turbo_stream.prepend "shiptos", @shipto %>
+
+<%# 登録の入力フォームの中身を空にする %>
+<%= turbo_stream.update Shipto.new, "" %>
+
+<%# Flashを表示 %>
+<%= turbo_stream_flash %>

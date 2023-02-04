@@ -104,6 +104,14 @@
       </div>
     </div>
 
+    <div class='my-2'>
+      <%= link_to 'Add',
+        new_shipto_path,
+        class: 'items-center py-2 px-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300',
+        data: { turbo_frame: dom_id(Shipto.new) }
+      %>
+    </div>
+
     <!-- list -->
     <div class="mt-4 w-full flex bg-white rounded-lg border shadow-md">
       <!-- list-header -->
@@ -130,6 +138,7 @@
 
     <% if @shiptos.any? %>
       <!-- list-body -->
+      <%= turbo_frame_tag Shipto.new %>
       <div id='shiptos' class='inline-block'>
         <%= render @shiptos %>
       </div>

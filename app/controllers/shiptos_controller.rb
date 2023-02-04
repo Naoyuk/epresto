@@ -26,7 +26,6 @@ class ShiptosController < ApplicationController
 
     if @shipto.save
       flash.now.notice = 'A new location was successfully created.'
-      redirect_to :index
     else
       render :new, status: :unprocessable_entity
     end
