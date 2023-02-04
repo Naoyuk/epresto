@@ -56,7 +56,6 @@ class OrdersController < ApplicationController
       # 取得したPOから作成したOrderのOrderオブジェクトとエラーのどちらか又は両方が返ってくる
       # @orders = response[:orders]
       # errors = response[:errors]
-      # debugger
 
       # if @orders.count > 0
       #   redirect_to orders_path
