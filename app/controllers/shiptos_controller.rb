@@ -26,7 +26,6 @@ class ShiptosController < ApplicationController
 
     if @shipto.save
       flash.now.notice = 'A new location was successfully created.'
-      redirect_to :index
     else
       render :new, status: :unprocessable_entity
     end
@@ -58,6 +57,7 @@ class ShiptosController < ApplicationController
       :address_line2,
       :city,
       :postal_code,
+      :transit_time,
       :contact_name1,
       :contact_name2,
       :email1,
