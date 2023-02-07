@@ -9,7 +9,8 @@ Shipto.create!(
   postal_code: 'L6Y 0C9',
   contact_name1: 'Brampton, ON',
   send_report: false,
-  visu_email: true
+  visu_email: true,
+  transit_time: 28
 )
 Shipto.create!(
   location_code: 'YYC1',
@@ -20,7 +21,8 @@ Shipto.create!(
   postal_code: 'T4A 1C6',
   contact_name1: 'Calgary, AB',
   send_report: false,
-  visu_email: true
+  visu_email: true,
+  transit_time: 14
 )
 Shipto.create!(
   location_code: 'YVR2',
@@ -31,7 +33,8 @@ Shipto.create!(
   postal_code: 'V3M 5Y9',
   contact_name1: 'Delta, BC',
   send_report: false,
-  visu_email: true
+  visu_email: true,
+  transit_time: 7
 )
 Shipto.create!(
   location_code: 'YYZ7',
@@ -42,7 +45,8 @@ Shipto.create!(
   postal_code: 'L7E 4L8',
   contact_name1: 'Bolton, ON',
   send_report: false,
-  visu_email: true
+  visu_email: true,
+  transit_time: 28
 )
 Shipto.create!(
   location_code: 'YVR4',
@@ -53,7 +57,8 @@ Shipto.create!(
   postal_code: 'V4M 0B9',
   contact_name1: 'Tsawwassen, BC',
   send_report: false,
-  visu_email: true
+  visu_email: true,
+  transit_time: 7
 )
 Shipto.create!(
   location_code: 'YYZ2',
@@ -64,7 +69,8 @@ Shipto.create!(
   postal_code: 'L9T 0K1',
   contact_name1: 'Milton, ON',
   send_report: false,
-  visu_email: true
+  visu_email: true,
+  transit_time: 28
 )
 Shipto.create!(
   location_code: 'YYZ1',
@@ -75,7 +81,8 @@ Shipto.create!(
   postal_code: 'L5N 1L8',
   contact_name1: 'Mississauga, ON',
   send_report: false,
-  visu_email: true
+  visu_email: true,
+  transit_time: 28
 )
 Shipto.create!(
   location_code: 'YOW1',
@@ -86,7 +93,8 @@ Shipto.create!(
   postal_code: 'K4B 0L3',
   contact_name1: 'Navan, ON',
   send_report: false,
-  visu_email: true
+  visu_email: true,
+  transit_time: 28
 )
 Shipto.create!(
   location_code: 'YYZ9',
@@ -97,7 +105,8 @@ Shipto.create!(
   postal_code: 'M1X 1N5',
   contact_name1: 'Scarborough, ON',
   send_report: false,
-  visu_email: true
+  visu_email: true,
+  transit_time: 28
 )
 Shipto.create!(
   location_code: 'YEG1',
@@ -108,7 +117,8 @@ Shipto.create!(
   postal_code: 'T9E 0B4',
   contact_name1: 'Nisku, AB',
   send_report: false,
-  visu_email: true
+  visu_email: true,
+  transit_time: 21
 )
 Shipto.create!(
   location_code: 'YXX2',
@@ -119,7 +129,8 @@ Shipto.create!(
   postal_code: 'V6W 0A3',
   contact_name1: 'Richmond, BC',
   send_report: false,
-  visu_email: true
+  visu_email: true,
+  transit_time: 7
 )
 Shipto.create!(
   location_code: 'YHM1',
@@ -128,7 +139,8 @@ Shipto.create!(
   city: 'Mount Hope',
   province: 'ON',
   postal_code: 'L0R 1W1',
-  contact_name1: 'Mount Hope, ON'
+  contact_name1: 'Mount Hope, ON',
+  transit_time: 28
 )
 Shipto.create!(
   location_code: 'YOO1',
@@ -137,7 +149,8 @@ Shipto.create!(
   city: 'Ajax',
   province: 'ON',
   postal_code: 'L1Z 0J2',
-  contact_name1: 'Ajax, ON'
+  contact_name1: 'Ajax, ON',
+  transit_time: 28
 )
 Shipto.create!(
   location_code: 'YOW3',
@@ -146,7 +159,8 @@ Shipto.create!(
   city: 'Nepean',
   province: 'ON',
   postal_code: 'K2J 7C7',
-  contact_name1: 'Nepean, ON'
+  contact_name1: 'Nepean, ON',
+  transit_time: 28
 )
 Shipto.create!(
   location_code: 'YYZ3',
@@ -155,7 +169,18 @@ Shipto.create!(
   city: 'Winston',
   province: 'ON',
   postal_code: 'L6Y 5Z4',
-  contact_name1: 'Winston, ON'
+  contact_name1: 'Winston, ON',
+  transit_time: 28
+)
+Shipto.create!(
+  location_code: 'XCAC',
+  customer_name: 'Woodbridge, ON - XCAC',
+  address_line1: '9501 Highway 50 Woodbridge',
+  city: 'Woodbridge',
+  province: 'ON',
+  postal_code: 'L4H 2B9',
+  contact_name1: 'Woodbridge, ON',
+  transit_time: 28
 )
 
 Vendor.create!(name: 'ePresto')

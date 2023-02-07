@@ -21,6 +21,7 @@ gem 'bootsnap', require: false
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 # gem "image_processing", "~> 1.2"
 gem 'aws-sigv4'
+gem 'business_time'
 gem 'cancancan'
 gem 'caxlsx'
 gem 'caxlsx_rails'
@@ -32,7 +33,6 @@ gem 'ransack'
 gem 'rolify'
 gem 'roo'
 gem 'rubyzip'
-gem 'business_time'
 
 group :development, :test do
   gem 'capistrano', '~> 3.17.1'
