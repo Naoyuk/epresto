@@ -126,7 +126,6 @@ class AmazonAPIClient
         acknowledge_detail['acknowledgedQuantity'] = acknowledged_quantity unless acknowledged_quantity.empty?
         item_acknowledgements << acknowledge_detail unless acknowledge_detail.empty?
 
-
         item_body['itemAcknowledgements'] = item_acknowledgements unless item_acknowledgements.empty?
 
         items << item_body

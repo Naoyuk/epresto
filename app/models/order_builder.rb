@@ -94,10 +94,8 @@ class OrderBuilder
     # order_detail['items'].each do | order_item_params|
     #   build_order_item(order_item_params, order.id)
     # end
-    
     order
   end
-
 
   # build_order_itemは使ってない
   def build_order_item(params, order_id)
