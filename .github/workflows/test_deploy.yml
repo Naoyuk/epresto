@@ -93,6 +93,7 @@ jobs:
         run: |
           bundle config --local path vendor/bundle
           bundle config --local without production
+          bundle lock --add-platform ruby
           bundle install
 
       - name: Deploy
