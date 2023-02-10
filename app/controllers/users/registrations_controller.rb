@@ -70,6 +70,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
   #   super(resource)
   # end
 
+  def update_resource(resource, params)
+    resource.update_without_password(params)
+  end
+
   def current_user_is_admin?
     # user_signed_in? && current_user.has_role?(:admin)
     user_signed_in? && current_user.sysadmin?
