@@ -6,5 +6,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
+  validates :name, presence: true
   belongs_to :vendor
+
+  attr_accessor :current_password
 end

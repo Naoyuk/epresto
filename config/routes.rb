@@ -7,7 +7,9 @@ Rails.application.routes.draw do
 
   get '/users', to: 'users#index'
   get '/profile', to: 'users#show'
+  get '/edit_user', to: 'users#edit'
   get 'pages/home'
+  resources :users
 
   resources :items do
     collection do

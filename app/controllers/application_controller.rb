@@ -17,5 +17,6 @@ class ApplicationController < ActionController::Base
   def configure_permitted_parameters
     sign_up_params = %i[name vendor_id sysadmin]
     devise_parameter_sanitizer.permit(:sign_up, keys: sign_up_params)
+    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :vendor_id, :password])
   end
 end
