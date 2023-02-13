@@ -50,7 +50,7 @@ class Order < ApplicationRecord
         order = order_builder.build_order(order_params, vendor_id)
 
         # buildしたorderをcreateする
-        order.save
+        # order.save
       end
     end
 

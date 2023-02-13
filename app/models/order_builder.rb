@@ -69,6 +69,8 @@ class OrderBuilder
       order.buying_tax_number = order_detail['taxInfo']['taxRegistrationNumber']
     end
 
+    order.save
+
     order_detail['items'].each do |order_item_params|
       # params = purchase_orders['payload']['orders']['orderDetails']['items'][n]
       order_item = OrderItem.find_or_initialize_by(
@@ -94,7 +96,7 @@ class OrderBuilder
     # order_detail['items'].each do | order_item_params|
     #   build_order_item(order_item_params, order.id)
     # end
-    order
+    # order
   end
 
   # build_order_itemは使ってない
