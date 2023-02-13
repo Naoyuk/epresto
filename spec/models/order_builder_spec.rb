@@ -16,8 +16,9 @@ RSpec.describe OrderBuilder, type: :model do
       it 'Orderのレコードを作成する' do
         create(:shipto, location_code: 'ABCD')
         order_builder = OrderBuilder.new
-        order = order_builder.build_order(@order, @vendor.id)
-        expect(order).to be_valid
+        expect {
+          order_builder.build_order(@order, @vendor.id)
+        }.to change(Order, :count).by(1)
       end
     end
 
@@ -25,9 +26,9 @@ RSpec.describe OrderBuilder, type: :model do
       it 'Orderのレコードの作成に失敗する' do
         create(:shipto, location_code: 'XXXX')
         order_builder = OrderBuilder.new
-        order = order_builder.build_order(@order, @vendor.id)
-        order.valid?
-        expect(order.errors.full_messages).to include('Shipto must exist')
+        expect {
+          order_builder.build_order(@order, @vendor.id)
+        }.to change(Order, :count).by(0)
       end
     end
 
@@ -35,9 +36,9 @@ RSpec.describe OrderBuilder, type: :model do
       it 'Orderのレコードの作成に失敗する' do
         create(:shipto, location_code: 'ABCD')
         order_builder = OrderBuilder.new
-        order = order_builder.build_order(@order, nil)
-        order.valid?
-        expect(order.errors.full_messages).to include('Vendor must exist')
+        expect {
+          order_builder.build_order(@order, nil)
+        }.to change(Order, :count).by(0)
       end
     end
   end
