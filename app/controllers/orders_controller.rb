@@ -3,6 +3,15 @@
 class OrdersController < ApplicationController
   def index
     @search = Order.ransack(params[:q])
+    if params[:q].nil?
+      # ransackの検索条件がない場合はPO Dateが今週のOrderをデフォルト検索範囲とする
+      @search.po_date_gteq = Time.zone.now.beginning_of_week
+      @search.po_date_lteq = Time.zone.now.end_of_week
+    elsif params[:q][:po_date_gteq].nil? && params[:q][:po_date_lteq].nil?
+      # ransackの検索条件にpo_dateがない場合はPO Dateが今週のOrderをデフォルト検索範囲とする
+      @search.po_date_gteq = Time.zone.now.beginning_of_week
+      @search.po_date_lteq = Time.zone.now.end_of_week
+    end
     @search.sorts = 'id desc' if @search.sorts.empty?
 
     if params[:tab] == 'new'
