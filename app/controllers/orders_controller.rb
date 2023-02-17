@@ -49,8 +49,8 @@ class OrdersController < ApplicationController
     if params[:created_after].blank? || params[:created_before].blank?
       redirect_to ({ action: :index }), alert: 'Error: "From" and "To" are required.'
     else
-      created_after = params[:created_after].to_datetime
-      created_before = params[:created_before].to_datetime
+      created_after = Time.zone.parse(params[:created_after])
+      created_before = Time.zone.parse(params[:created_before])
       Order.import_purchase_orders(current_user.vendor_id, created_after, created_before)
 
       # 取得したPOから作成したOrderのOrderオブジェクトとエラーのどちらか又は両方が返ってくる
