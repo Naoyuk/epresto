@@ -51,7 +51,6 @@ RSpec.describe Item, type: :model do
         "I_DEPT" => "dept",
         "I_STATUS" => "status",
         "I_VENDOR" => "vendor",
-        "IM_CASE_UPC" => "external_product_id"
       }
       expect(cols).to eq result
     end
@@ -125,6 +124,44 @@ RSpec.describe Item, type: :model do
         value13 = '1123486789012'
         upc = value13 + Item.check_digit(value13)
         expect(upc).to eq '11234867890122'
+      end
+    end
+  end
+
+  describe 'Item.item_case' do
+    context "SKUに'-Case'が含まれる場合" do
+      it "'Case'を返す" do
+        expect(Item.item_case('ABC123-Case')).to eq 'Case'
+      end
+    end
+
+    context "SKUに'-CASE'が含まれる場合" do
+      it "'Case'を返す" do
+        expect(Item.item_case('ABC123-CASE')).to eq 'Case'
+      end
+    end
+
+    context "SKUに'-case'が含まれる場合" do
+      it "'Case'を返す" do
+        expect(Item.item_case('ABC123-case')).to eq 'Case'
+      end
+    end
+
+    context "SKUに'-Unit'が含まれる場合" do
+      it "'Each'を返す" do
+        expect(Item.item_case('ABC123-Unit')).to eq 'Each'
+      end
+    end
+
+    context "SKUに'-UNIT'が含まれる場合" do
+      it "'Each'を返す" do
+        expect(Item.item_case('ABC123-UNIT')).to eq 'Each'
+      end
+    end
+
+    context "SKUに'-unit'が含まれる場合" do
+      it "'Each'を返す" do
+        expect(Item.item_case('ABC123-unit')).to eq 'Each'
       end
     end
   end

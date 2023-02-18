@@ -47,10 +47,7 @@ class Order < ApplicationRecord
       order_params_list.map do |order_params|
         # Orderの作成
         # order_builder.build_orderは検索or新規して各値をセットしたOrderオブジェクトを返す
-        order = order_builder.build_order(order_params, vendor_id)
-
-        # buildしたorderをcreateする
-        # order.save
+        order_builder.build_order(order_params, vendor_id)
       end
     end
 
