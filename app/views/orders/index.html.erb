@@ -9,14 +9,12 @@
       <div class="mb-3 text-gray-500">
         <%= search_form_for @search, html: { data: { turbo_frame: "_top" } } do |f| %>
           <div class="flex">
-            <div class='pr-1 w-[144px]'>
+            <div class='pl-1 pr-1 w-[288px]'>
               <%= f.label :po_number_cont, "PO Number", class: "block mb-2 text-sm font-medium text-gray-900" %>
               <%= f.search_field :po_number_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
             </div>
 
-            <div class='pr-1 w-[144px]'>
-              <%= f.label :po_state_cont, "State", class: "block mb-2 text-sm font-medium text-gray-900" %>
-              <%= f.select :po_state_cont, [['New', 0], ['Acknowledged', 1], ['Closed', 2]], { include_blank: '' }, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            <div class='w-[0px]'>
             </div>
 
             <div class='pr-1 w-48'>
