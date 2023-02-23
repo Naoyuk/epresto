@@ -10,8 +10,8 @@
         <%= search_form_for @search, html: { data: { turbo_frame: "_top" } } do |f| %>
           <div class="flex">
             <div class='pl-1 pr-1 w-[288px]'>
-              <%= f.label :po_number_cont, "PO Number", class: "block mb-2 text-sm font-medium text-gray-900" %>
-              <%= f.search_field :po_number_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+              <%= f.label :po_number_cont_any, "PO Number", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :po_number_cont_any, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
             </div>
 
             <div class='w-[0px]'>
