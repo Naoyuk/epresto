@@ -187,8 +187,10 @@ class AmazonAPIClient
     endpoint = "https://#{host}"
     path = params[:path]
     if params[:path].include?('purchaseOrders')
-      start_date = params[:created_after].to_date.to_fs(:iso8601).gsub(':', '%3A')
-      end_date = params[:created_before].to_date.to_fs(:iso8601).gsub(':', '%3A')
+      start_date = params[:created_after].strftime('%FT%H:%M:%S.%3N').gsub(':', '%3A')
+      end_date = params[:created_before].strftime('%FT%H:%M:%S.%3N').gsub(':', '%3A')
+      # start_date = params[:created_after].to_date.to_fs(:iso8601).gsub(':', '%3A')
+      # end_date = params[:created_before].to_date.to_fs(:iso8601).gsub(':', '%3A')
       limit = 100
       query_hash = {
         'limit' => limit,

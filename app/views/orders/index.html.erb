@@ -9,14 +9,12 @@
       <div class="mb-3 text-gray-500">
         <%= search_form_for @search, html: { data: { turbo_frame: "_top" } } do |f| %>
           <div class="flex">
-            <div class='pr-1 w-[144px]'>
-              <%= f.label :po_number_cont, "PO Number", class: "block mb-2 text-sm font-medium text-gray-900" %>
-              <%= f.search_field :po_number_cont, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            <div class='pl-1 pr-1 w-[288px]'>
+              <%= f.label :po_number_cont_any, "PO Number", class: "block mb-2 text-sm font-medium text-gray-900" %>
+              <%= f.search_field :po_number_cont_any, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
             </div>
 
-            <div class='pr-1 w-[144px]'>
-              <%= f.label :po_state_cont, "State", class: "block mb-2 text-sm font-medium text-gray-900" %>
-              <%= f.select :po_state_cont, [['New', 0], ['Acknowledged', 1], ['Closed', 2]], { include_blank: '' }, class: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" %>
+            <div class='w-[0px]'>
             </div>
 
             <div class='pr-1 w-48'>
@@ -83,9 +81,9 @@
 
       <div class='p-2 flex flex-wrap text-sm font-medium text-gray-500 border-b'>
         <%= form_with url: import_orders_path, data: { turbo_confirm: 'Fetch PO from Amazon?' }, class: 'flex items-center px-4', local: true do |f| %>
-          <%= f.date_field :created_after, value: (Time.now - 24 * 60 * 60 * 7).strftime("%Y-%m-%d"), class: 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5' %>
+          <%= f.date_field :created_after, value: (Time.zone.now - 24 * 60 * 60 * 7).strftime("%Y-%m-%d"), class: 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5' %>
           <span class='px-2'>~</span>
-          <%= f.date_field :created_before, value: Time.now.strftime("%Y-%m-%d"), class: 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5' %>
+          <%= f.date_field :created_before, value: Time.zone.now.strftime("%Y-%m-%d"), class: 'bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5' %>
           <%= f.submit 'Update', class: "ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded text-sm w-full sm:w-auto px-4 py-2 text-center" %>
         <% end %>
 

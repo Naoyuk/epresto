@@ -2,11 +2,13 @@
   <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl px-4 py-2.5">
     <% unless user_signed_in? %>
       <%= link_to new_user_session_path, class: "flex items-center" do %>
+        <%= image_tag 'logo1.png', size: '150x66', class: 'hover:bg-blue-100 rounded-lg px-4 py-2' %>
         <span class='text-transparent text-2xl bg-clip-text bg-gradient-to-r from-sky-900 to-cyan-500 font-sans'>ePresto-Connection</span>
       <% end %>
       <%= link_to 'Sign in', new_user_session_path, class: 'block py-2 px-4 text-gray-700 rounded hover:bg-gray-100 hover:text-blue-500' %>
     <% else %>
       <%= link_to orders_path(tab: 'all'), class: "flex items-center" do %>
+        <%= image_tag 'logo1.png', size: '150x66', class: 'hover:bg-blue-100 rounded-lg px-4 py-2' %>
         <span class='text-transparent text-2xl bg-clip-text bg-gradient-to-r from-sky-900 to-cyan-500 font-sans'>ePresto-Connection</span>
       <% end %>
       <%= link_to 'Purchase Order', orders_path(tab: 'all'), class: 'block py-2 px-4 text-white rounded hover:bg-gray-100 hover:text-blue-500' %>
