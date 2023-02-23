@@ -45,8 +45,14 @@ class Order < ApplicationRecord
 
       # Orderと、それに紐づくOrderItemの作成
       order_params_list.map do |order_params|
-        # Orderの作成
+        # if order_params['purchaseOrderState'] == 'New'
+        # PO StatusがNewの場合のみOrderの作成
         # order_builder.build_orderは検索or新規して各値をセットしたOrderオブジェクトを返す
+        # order_builder.build_order(order_params, vendor_id)
+        # end
+
+        # PO StateばNewのOrderのみ更新したらStateがAcknowledgedからClosedなどにアップデートされないので、やはり全てを更新する必要がある
+        # 一覧で今週のものに絞ってるので、更新は全てに対して行って問題ないはず
         order_builder.build_order(order_params, vendor_id)
       end
     end
