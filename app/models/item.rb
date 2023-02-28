@@ -121,7 +121,11 @@ class Item < ApplicationRecord
         item.asin = item.merchant_suggested_asin
         item.model_number = item.vendor_sku
         # Item CodeはSKUから-CASEや-Unitという文字列を取り除いた値
-        item.item_code = item.vendor_sku.gsub(/-(case|unit)/i, '')
+        item.item_code = item.vendor_sku&.gsub(/-(case|unit)/i, '')
+        # SKUを見てCase/Eachをセット
+        unless item.vendor_sku.nil?
+          item.case = item_case(item.vendor_sku)
+        end
         # UPC, EAN, GTIN, ASINを設定する(check digitを付加する)
         case item.external_product_id_type
         when 'UPC'
@@ -169,8 +173,10 @@ class Item < ApplicationRecord
     def item_case(vendor_sku)
       if vendor_sku.match(/case/i)
         'Case'
-      else
+      elsif vendor_sku.match(/unit/i)
         'Each'
+      else
+        nil
       end
     end
   end
