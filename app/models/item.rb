@@ -65,8 +65,6 @@ class Item < ApplicationRecord
           col_db = 'title'
         when 'wholesale'
           col_db = 'price'
-        when 'im_case_upc'
-          col_db = 'external_product_id'
         end
         if cols_db.include?(col_db)
           cols_hash[col] = col_db
@@ -77,7 +75,7 @@ class Item < ApplicationRecord
     end
 
     def cols_catalog(cols_xls)
-      # Item.coumn_names とcols_xlsの共通カラムだけ抽出して{'取り込み元のカラム'=>'DBのカラム'}を作る
+      # Item.coumn_names とcols_xlsの共通カラムだけ抽出して{'取り込み元のカラム'=>'DBのカラム'}をマッピング
 
       cols_hash = {}
       cols_db = Item.column_names
@@ -100,7 +98,7 @@ class Item < ApplicationRecord
     end
 
     def update_or_create_items(sheet, cols, vendor_id)
-      # 処理対象のsheetとそのsheetにあるカラムの対照表Hashとvendor_idを受け取る
+      # 処理対象のsheetとそのsheetにあるカラムのマッピングしたハッシュとvendor_idを受け取る
       # Catalogue_Sourcingファイルの場合はASINで検索して既存または新規レコードオブジェクトを作成
       headers = sheet.row(3)
 
@@ -112,17 +110,25 @@ class Item < ApplicationRecord
           item = Item.find_by_asin(sheet.row(row_num)[idx])
         end
 
+        # マッピングしたカラムをセット
         cols.each do |col|
           col_index = headers.index(col[0])
           val = sheet.row(row_num)[col_index]
           item[col[1]] = val
         end
+        # その他のカラムをセット
         item.vendor_id = vendor_id
-        # インポート元がCatalogue_Sourcingファイルの場合、UPC, EAN, GTIN, ASINを設定する
-        # Catalogue_SourcingはAmazonから取得するItemのマスタ
-        # UPC, EAN, GTINは全てcheck digitが付加されている
         item.asin = item.merchant_suggested_asin
         item.model_number = item.vendor_sku
+        # Item CodeはSKUから-CASEや-Unitという文字列を取り除いた値
+        item.item_code = item.vendor_sku&.gsub(/-(case|unit)/i, '')
+        # SKUを見てCase/Eachをセット
+        unless item.vendor_sku.nil?
+          if item.vendor_sku.match(/(case|unit)/i)
+            item.case = item_case(item.vendor_sku)
+          end
+        end
+        # UPC, EAN, GTIN, ASINを設定する(check digitを付加する)
         case item.external_product_id_type
         when 'UPC'
           item.upc = item.external_product_id
@@ -142,69 +148,13 @@ class Item < ApplicationRecord
       # headers.delete('I_UPC')
 
       (2..sheet.last_row).each do |row_num|
-        index_of_im_case_upc = headers.index('IM_CASE_UPC')
-        key = sheet.row(row_num)[index_of_im_case_upc]
-        unless key.nil?
-          case key.size
-          when 11
-            # 11桁で検索してヒットしたらCD無しのUPCに確定
-            item = Item.find_by_external_product_id(key)
-            unless item.nil?
-              item.upc = key
-              update_item_access(item, sheet, cols, headers, row_num, vendor_id)
-            end
-
-          when 12
-            item = Item.find_by_external_product_id(key)
-            unless item.nil?
-              # 12桁のままで検索してヒットした場合
-              if item.external_product_id_type == 'UPC'
-                # typeがUPCならCD有りのUPCに確定
-                item.upc = key
-                update_item_access(item, sheet, cols, headers, row_num, vendor_id)
-              elsif item.external_product_id_type == 'EAN'
-                # typeがEANならCD無しのEANに確定
-                item.ean = key
-                update_item_access(item, sheet, cols, headers, row_num, vendor_id)
-              end
-            else
-              # 12桁のままでヒットしなかったのでCD付けて検索してヒットした場合はCD有りのEANに確定
-              item = Item.find_by_external_product_id(key + check_digit(key))
-              unless item.nil?
-                item.ean = key
-                update_item_access(item, sheet, cols, headers, row_num, vendor_id)
-              end
-            end
-
-          when 13
-            item = Item.find_by_external_product_id(key)
-            unless item.nil?
-              # 13桁のままで検索してヒットした場合
-              if item.external_product_id_type == 'EAN'
-                # typeがEANならCD有りのEANに確定
-                item.ean = key
-                update_item_access(item, sheet, cols, headers, row_num, vendor_id)
-              elsif item.external_product_id_type == 'GTIN'
-                # typeがGTINならCD無しのGTINに確定
-                item.gtin = key
-                update_item_access(item, sheet, cols, headers, row_num, vendor_id)
-              end
-            else
-              # 13桁のままでヒットしなかったのでCD付けて検索してヒットした場合はCD有りのGTINに確定
-              item = Item.find_by_external_product_id(key + check_digit(key))
-              unless item.nil?
-                item.gtin = key
-                update_item_access(item, sheet, cols, headers, row_num, vendor_id)
-              end
-            end
-
-          when 14
-            item = Item.find_by_external_product_id(key)
-            unless item.nil?
-              # 14桁で検索してヒットしたらCD有りのGTINに確定
-              item.gtin = key
-              update_item_access(item, sheet, cols, headers, row_num, vendor_id)
-            end
+        index_of_item_code = headers.index('I_ITEM_CODE')
+        val_item_code = sheet.row(row_num)[index_of_item_code]
+        items = Item.where('item_code = ?', val_item_code) unless val_item_code.nil?
+        unless items.nil?
+          items.each do |item|
+            update_item_access(item, sheet, cols, headers, row_num, vendor_id)
+            item.case = item_case(item.vendor_sku)
           end
         end
       end
@@ -212,7 +162,7 @@ class Item < ApplicationRecord
 
     def update_item_access(item, sheet, cols, headers, row_num, vendor_id)
       cols.each do |col|
-        unless col[0] == 'I_UPC'
+        unless (col[0] == 'I_UPC') || (col[0] == 'IM_CASE_UPC')
           col_index = headers.index(col[0])
           val = sheet.row(row_num)[col_index]
           item[col[1]] = val
@@ -220,6 +170,14 @@ class Item < ApplicationRecord
       end
       item.vendor_id = vendor_id
       item.save
+    end
+
+    def item_case(vendor_sku)
+      if vendor_sku.match(/case/i)
+        'Case'
+      elsif vendor_sku.match(/unit/i)
+        'Each'
+      end
     end
   end
 end
