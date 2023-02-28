@@ -124,7 +124,9 @@ class Item < ApplicationRecord
         item.item_code = item.vendor_sku&.gsub(/-(case|unit)/i, '')
         # SKUを見てCase/Eachをセット
         unless item.vendor_sku.nil?
-          item.case = item_case(item.vendor_sku)
+          if item.vendor_sku.match(/(case|unit)/i)
+            item.case = item_case(item.vendor_sku)
+          end
         end
         # UPC, EAN, GTIN, ASINを設定する(check digitを付加する)
         case item.external_product_id_type
@@ -175,8 +177,6 @@ class Item < ApplicationRecord
         'Case'
       elsif vendor_sku.match(/unit/i)
         'Each'
-      else
-        nil
       end
     end
   end
