@@ -79,72 +79,83 @@ class Order < ApplicationRecord
 
       # @cost_difference_notice
     end
-  end
 
-  def import_purchase_orders_history(file)
-    # Excelファイルで保存していた過去のPurchase Orderの取り込み
-    # One time usage
-    # インポートファイルの読み込み
-    xls = Roo::Excelx.new(file)
+    def import_purchase_orders_history(file)
+      # Excelファイルで保存していた過去のPurchase Orderの取り込み
+      # One time usage
+      # インポートファイルの読み込み
+      xls = Roo::Excelx.new(file)
 
-    # インポート対象のシートとカラム名を取得
-    sheet= xls.sheet(xls.sheets[0])
+      # インポート対象のシートとカラム名を取得
+      sheet= xls.sheet(xls.sheets[0])
 
-    # Excelデータを配列に入れる
-    order_params = []
-    sheet.each(po_number: 'PO', vendor: 'Vendor', po_date: 'Ordered On', location: 'Ship to location',
-               window_type: 'Window Type', window_start: 'Window Start', window_end: 'Window End') do |hash|
-                 unless hash[:po_number] == 'PO'
-                   order = Order.new(
-                     po_number: hash[:po_number],
-                     po_state: 2,
-                     po_date: hash[:po_date],
-                   )
+      # Excelデータを配列に入れる
+      order_params = []
+      vendor_id = Vendor.find_by_name('CCW').id
+      sheet.each(po_number: 'PO', vendor: 'Vendor', po_date: 'Ordered On', location: 'Ship to location',
+                 window_type: 'Window Type', window_start: 'Window Start', window_end: 'Window End') do |hash|
+                   unless hash[:po_number] == 'PO'
+                     order = Order.new
+                     order.po_number = hash[:po_number]
+                     order.po_date = Order.hash_dt_to_datetime(hash[:po_date])
+                     location_code = hash[:location].slice(0..3)
+                     ship_to = Shipto.find_by_location_code(location_code)
+                     order.shipto_id = ship_to.id
+                     order.ship_to_party_id = location_code
+                     order.po_state = 2
+                     order.payment_method = 0
+                     order.vendor_id = vendor_id
+                     order.ship_window_from = Order.hash_dt_to_datetime(hash[:window_start])
+                     order.ship_window_to = Order.hash_dt_to_datetime(hash[:window_end])
+                     order.ship_window = "#{order.ship_window_from.to_fs(:iso8601)}--#{order.ship_window_to.to_fs(:iso8601)}"
+                     order.save
+                   end
                  end
-                 location_code = hash[:location].slice(0..3)
-                 ship_to = Shipto.find_by_location_code(location_code)
-                 order.shipto_id = ship_to.id
-                 order.save
-               end
-  end
+    end
 
-  def import_order_items_history(file)
-    # Excelファイルで保存していた過去のOrderItemsの取り込み
-    # One time usage
-    # インポートファイルの読み込み
-    xls = Roo::Excelx.new(file)
+    def hash_dt_to_datetime(dt)
+      year = dt.slice(6, 4)
+      month = dt.slice(0, 2)
+      dt = dt.slice(3, 2)
+      Time.zone.parse("#{year}-#{month}-#{dt} 10:00:00")
+    end
 
-    # インポート対象のシートとカラム名を取得
-    sheet= xls.sheet(xls.sheets[0])
+    def import_order_items_history(file)
+      # Excelファイルで保存していた過去のOrderItemsの取り込み
+      # One time usage
+      # インポートファイルの読み込み
+      xls = Roo::Excelx.new(file)
 
-    # Excelデータを配列に入れる
-    order_params = []
-    sheet.each(po_number: 'PO', vendor: 'Vendor', location: 'Ship to location', asin: 'ASIN',
-               external_id: 'External ID', external_id_type: 'External Id Type', model_number: 'Model Number',
-               title: 'Title', availability: 'Availability', window_type: 'Window Type', window_start: 'Window Start',
-               window_end: 'Window End', expected_date: 'Expected Date', quantity_requested: 'Quantity Requested',
-               accepted_quantity: 'Accepted Quantity', quantity_received: 'Quantity received', quantity_outstanding: 'Quantity Outstanding',
-               unit_cost: 'Unit Cost') do |hash|
-                 unless hash[:po_number] == 'PO'
-                   order = Order.find_by_po_number(hash[:po_number])
-                   order_item = order.order_items.build(
-                     # item_seq_number: i,
-                     amazon_product_identifier: hash[:asin],
-                     ordered_quantity_amount: hash[:quantity_requested],
-                     ordered_quantity_unit_of_measure: hash[:no_data],
-                     ordered_quantity_unit_size: hash[:no_data],
-                     back_order_allowed: hash[:no_data],
-                     netcost_amount: hash[:no_data],
-                     netcost_currency_code: hash[:no_data],
-                     listprice_amount: hash[:no_data],
-                     listprice_currency_code: hash[:no_data],
-                     case_quantity: hash[:no_data]
-                   )
-                   item = Item.find_by_asin(order_item.amazon_product_identifier)
-                   order_item.item_id = item.id
-                   order_item.vendor_product_identifier = item.item_code
-                   order_item.save
+      # インポート対象のシートとカラム名を取得
+      sheet= xls.sheet(xls.sheets[0])
+
+      # Excelデータを配列に入れる
+      order_params = []
+      sheet.each(po_number: 'PO', vendor: 'Vendor', location: 'Ship to location', asin: 'ASIN',
+                 external_id: 'External ID', external_id_type: 'External Id Type', model_number: 'Model Number',
+                 title: 'Title', availability: 'Availability', window_type: 'Window Type', window_start: 'Window Start',
+                 window_end: 'Window End', expected_date: 'Expected Date', quantity_requested: 'Quantity Requested',
+                 accepted_quantity: 'Accepted Quantity', quantity_received: 'Quantity received', quantity_outstanding: 'Quantity Outstanding',
+                 unit_cost: 'Unit Cost') do |hash|
+                   unless hash[:po_number] == 'PO'
+                     order = Order.find_by_po_number(hash[:po_number])
+                     order_item = order.order_items.build(
+                       # item_seq_number: i,
+                       amazon_product_identifier: hash[:asin],
+                       ordered_quantity_amount: hash[:quantity_requested],
+                       ordered_quantity_unit_of_measure: hash[:no_data],
+                       ordered_quantity_unit_size: hash[:no_data],
+                       netcost_amount: hash[:unit_cost],
+                       netcost_currency_code: 'CAD',
+                       listprice_currency_code: 'CAD'
+                     )
+                     item = Item.find_by_asin(order_item.amazon_product_identifier)
+                     order_item.item_id = item.id
+                     order_item.vendor_product_identifier = item.item_code
+                     order_item.convert_case_quantity
+                     order_item.save
+                   end
                  end
-               end
+    end
   end
 end
