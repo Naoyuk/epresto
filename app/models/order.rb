@@ -87,11 +87,12 @@ class Order < ApplicationRecord
       xls = Roo::Excelx.new(file)
 
       # インポート対象のシートとカラム名を取得
-      sheet= xls.sheet(xls.sheets[0])
+      sheet = xls.sheet(xls.sheets[0])
 
-      # Excelデータを配列に入れる
-      order_params = []
+      # vendor_idを取得
       vendor_id = Vendor.find_by_name('CCW').id
+
+      # エクセルの各行からOrderのデータを作成
       sheet.each(po_number: 'PO', vendor: 'Vendor', po_date: 'Ordered On', location: 'Ship to location',
                  window_type: 'Window Type', window_start: 'Window Start', window_end: 'Window End') do |hash|
                    unless hash[:po_number] == 'PO'
@@ -113,11 +114,11 @@ class Order < ApplicationRecord
                  end
     end
 
-    def hash_dt_to_datetime(dt)
-      year = dt.slice(6, 4)
-      month = dt.slice(0, 2)
-      dt = dt.slice(3, 2)
-      Time.zone.parse("#{year}-#{month}-#{dt} 10:00:00")
+    def hash_date_to_datetime(string)
+      year = string.slice(6, 4)
+      month = string.slice(0, 2)
+      day = string.slice(3, 2)
+      Time.zone.parse("#{year}-#{month}-#{day} 10:00:00")
     end
 
     def import_order_items_history(file)
@@ -127,10 +128,8 @@ class Order < ApplicationRecord
       xls = Roo::Excelx.new(file)
 
       # インポート対象のシートとカラム名を取得
-      sheet= xls.sheet(xls.sheets[0])
+      sheet = xls.sheet(xls.sheets[0])
 
-      # Excelデータを配列に入れる
-      order_params = []
       sheet.each(po_number: 'PO', vendor: 'Vendor', location: 'Ship to location', asin: 'ASIN',
                  external_id: 'External ID', external_id_type: 'External Id Type', model_number: 'Model Number',
                  title: 'Title', availability: 'Availability', window_type: 'Window Type', window_start: 'Window Start',
