@@ -118,7 +118,7 @@ class OrdersController < ApplicationController
               csv << [order.ship_to_party_id]
               csv << ['0' * 12 + '988']
               order.order_items.each do |item|
-                csv << [0, item.vendor_product_identifier, item.case_quantity, 0, 0, 0]
+                csv << [0, item.item&.item_code, item.case_quantity, 0, 0, 0]
               end
             end
           )
