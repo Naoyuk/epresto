@@ -135,15 +135,15 @@ class Order < ApplicationRecord
                  title: 'Title', availability: 'Availability', window_type: 'Window Type', window_start: 'Window Start',
                  window_end: 'Window End', expected_date: 'Expected Date', quantity_requested: 'Quantity Requested',
                  accepted_quantity: 'Accepted Quantity', quantity_received: 'Quantity received', quantity_outstanding: 'Quantity Outstanding',
-                 unit_cost: 'Unit Cost') do |hash|
+                 unit_cost: 'Unit Cost', case_quantity: 'Quantity Correction') do |hash|
                    unless hash[:po_number] == 'PO'
                      order = Order.find_by_po_number(hash[:po_number])
                      order_item = order.order_items.build(
                        # item_seq_number: i,
                        amazon_product_identifier: hash[:asin],
+                       vendor_product_identifier: hash[:external_id],
+                       external_product_id_type: hash[:external_id_type],
                        ordered_quantity_amount: hash[:quantity_requested],
-                       ordered_quantity_unit_of_measure: hash[:no_data],
-                       ordered_quantity_unit_size: hash[:no_data],
                        netcost_amount: hash[:unit_cost],
                        netcost_currency_code: 'CAD',
                        listprice_currency_code: 'CAD'
@@ -151,6 +151,9 @@ class Order < ApplicationRecord
                      item = Item.find_by_asin(order_item.amazon_product_identifier)
                      order_item.item_id = item.id
                      order_item.vendor_product_identifier = item.item_code
+                     order_item.ordered_quantity_unit_of_measure = item.case
+                     order_item.ordered_quantity_unit_size = item.pack
+                     order_item.pack = order.ordered_quantity_amount / hash[:case_quantity]
                      order_item.convert_case_quantity
                      order_item.save
                    end
