@@ -159,6 +159,8 @@ class Order < ApplicationRecord
                            order_item.pack = order_item.ordered_quantity_amount / hash[:case_quantity]
                          end
                        end
+                       order_item.title = hash[:title]
+                       order_item.availability = hash[:availability]
                        order_item.ordered_quantity_unit_size = hash[:pack_size]
                        order_item.convert_case_quantity
                        order_item.save
