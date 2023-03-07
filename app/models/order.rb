@@ -98,7 +98,7 @@ class Order < ApplicationRecord
                    unless hash[:po_number] == 'PO'
                      order = Order.new
                      order.po_number = hash[:po_number]
-                     order.po_date = Order.hash_dt_to_datetime(hash[:po_date])
+                     order.po_date = Order.hash_date_to_datetime(hash[:po_date])
                      location_code = hash[:location].slice(0..3)
                      ship_to = Shipto.find_by_location_code(location_code)
                      order.shipto_id = ship_to.id
@@ -106,8 +106,8 @@ class Order < ApplicationRecord
                      order.po_state = 2
                      order.payment_method = 0
                      order.vendor_id = vendor_id
-                     order.ship_window_from = Order.hash_dt_to_datetime(hash[:window_start])
-                     order.ship_window_to = Order.hash_dt_to_datetime(hash[:window_end])
+                     order.ship_window_from = Order.hash_date_to_datetime(hash[:window_start])
+                     order.ship_window_to = Order.hash_date_to_datetime(hash[:window_end])
                      order.ship_window = "#{order.ship_window_from.to_fs(:iso8601)}--#{order.ship_window_to.to_fs(:iso8601)}"
                      order.save
                    end
@@ -131,31 +131,38 @@ class Order < ApplicationRecord
       sheet = xls.sheet(xls.sheets[0])
 
       sheet.each(po_number: 'PO', vendor: 'Vendor', location: 'Ship to location', asin: 'ASIN',
-                 external_id: 'External ID', external_id_type: 'External Id Type', model_number: 'Model Number',
-                 title: 'Title', availability: 'Availability', window_type: 'Window Type', window_start: 'Window Start',
-                 window_end: 'Window End', expected_date: 'Expected Date', quantity_requested: 'Quantity Requested',
-                 accepted_quantity: 'Accepted Quantity', quantity_received: 'Quantity received', quantity_outstanding: 'Quantity Outstanding',
-                 unit_cost: 'Unit Cost', case_quantity: 'Quantity Correction') do |hash|
+                 external_id: 'External ID', pack_size: 'Pack Size', external_id_type: 'External Id Type',
+                 model_number: 'Model Number', title: 'Title', availability: 'Availability',
+                 window_type: 'Window Type', window_start: 'Window Start', window_end: 'Window End',
+                 quantity_requested: 'Quantity Requested', accepted_quantity: 'Accepted Quantity',
+                 case_quantity: 'Quantity Correction', unit_cost: 'Unit Cost') do |hash|
                    unless hash[:po_number] == 'PO'
                      order = Order.find_by_po_number(hash[:po_number])
-                     order_item = order.order_items.build(
-                       # item_seq_number: i,
-                       amazon_product_identifier: hash[:asin],
-                       vendor_product_identifier: hash[:external_id],
-                       external_product_id_type: hash[:external_id_type],
-                       ordered_quantity_amount: hash[:quantity_requested],
-                       netcost_amount: hash[:unit_cost],
-                       netcost_currency_code: 'CAD',
-                       listprice_currency_code: 'CAD'
-                     )
-                     item = Item.find_by_asin(order_item.amazon_product_identifier)
-                     order_item.item_id = item.id
-                     order_item.vendor_product_identifier = item.item_code
-                     order_item.ordered_quantity_unit_of_measure = item.case
-                     order_item.ordered_quantity_unit_size = item.pack
-                     order_item.pack = order.ordered_quantity_amount / hash[:case_quantity]
-                     order_item.convert_case_quantity
-                     order_item.save
+                     unless order.nil?
+                       order_item = order.order_items.build(
+                         # item_seq_number: i,
+                         amazon_product_identifier: hash[:asin],
+                         vendor_product_identifier: hash[:external_id],
+                         ordered_quantity_amount: hash[:quantity_requested],
+                         netcost_amount: hash[:unit_cost],
+                         netcost_currency_code: 'CAD',
+                         listprice_currency_code: 'CAD'
+                       )
+                       item = Item.find_by_asin(order_item.amazon_product_identifier)
+                       if item&.Case?
+                         order_item.ordered_quantity_unit_of_measure = 0
+                       else
+                         order_item.ordered_quantity_unit_of_measure = 1
+                       end
+                       unless hash[:case_quantity].nil? || hash[:case_quantity] == 0
+                         unless order_item.ordered_quantity_amount.nil?
+                           order_item.pack = order_item.ordered_quantity_amount / hash[:case_quantity]
+                         end
+                       end
+                       order_item.ordered_quantity_unit_size = hash[:pack_size]
+                       order_item.convert_case_quantity
+                       order_item.save
+                     end
                    end
                  end
     end
