@@ -2,7 +2,7 @@
 
 class OrdersController < ApplicationController
   def index
-    params[:q][:po_number_cont_any] = params[:q][:po_number_cont_any].split(/\p{blank}/) unless params[:q].blank?
+    params[:q][:po_number_cont_any] = params[:q][:po_number_cont_any].split(/\p{blank}/) unless params[:q].blank? || params[:q][:po_number_cont_any].blank?
     @search = Order.ransack(params[:q])
     if params[:q].nil?
       # ransackの検索条件がない場合はPO Dateが今週のOrderをデフォルト検索範囲とする
