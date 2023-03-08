@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_06_230015) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_07_231631) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -164,7 +164,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_06_230015) do
     t.datetime "ship_window_from"
     t.datetime "ship_window_to"
     t.bigint "shipto_id"
-    t.string "vendor"
+    t.string "vendor_code"
     t.index ["shipto_id"], name: "index_orders_on_shipto_id"
     t.index ["vendor_id"], name: "index_orders_on_vendor_id"
   end
