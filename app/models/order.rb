@@ -140,98 +140,80 @@ class Order < ApplicationRecord
       # インポート対象のシートとカラム名を取得
       sheet = xls.sheet(xls.sheets[0])
 
-      # 実際にレコードを作成し始める前にタイムスタンプを取得。
-      # 後でレコードの更新処理対象を絞り込むために使用する。
-      exec_datetime = Time.zone.now
-
-      # errors = []
-      # sheet.each_with_index(po_number: 'PO', vendor: 'Vendor', location: 'Ship to location', asin: 'ASIN',
-      #            external_id: 'External ID', pack_size: 'Pack Size', external_id_type: 'External Id Type',
-      #            model_number: 'Model Number', title: 'Title', availability: 'Availability',
-      #            window_type: 'Window Type', window_start: 'Window Start', window_end: 'Window End',
-      #            quantity_requested: 'Quantity Requested', accepted_quantity: 'Accepted Quantity',
-      #            case_quantity: 'Quantity Correction', unit_cost: 'Unit Cost') do |hash, i|
-      #              unless hash[:po_number] == 'PO'
-      #                order = Order.find_by_po_number(hash[:po_number])
-      #                errors << hash[:po_number] if order.nil?
-      #              end
-      #            end
-      # puts errors
-
       # 一つでも失敗したレコードがあれば処理を中止したいのでトランザクションする
       ActiveRecord::Base.transaction do
         sheet.each_with_index(po_number: 'PO', vendor: 'Vendor', location: 'Ship to location', asin: 'ASIN',
-                   external_id: 'External ID', external_id_type: 'External Id Type',
-                   model_number: 'Model Number', title: 'Title', availability: 'Availability',
-                   window_type: 'Window Type', window_start: 'Window Start', window_end: 'Window End',
-                   quantity_requested: 'Quantity Requested', accepted_quantity: 'Accepted Quantity',
-                   case_quantity: 'Quantity Correction', unit_cost: 'Unit Cost') do |hash, i|
-                     unless hash[:po_number] == 'PO'
-                       order = Order.find_by_po_number(hash[:po_number])
-                       order_item = order.order_items.build(
-                         item_seq_number: i + 1,
-                         amazon_product_identifier: hash[:asin],
-                         vendor_product_identifier: hash[:external_id],
-                         ordered_quantity_amount: hash[:quantity_requested],
-                         netcost_amount: hash[:unit_cost],
-                         netcost_currency_code: 'CAD',
-                         listprice_currency_code: 'CAD'
-                       )
-                       item = Item.find_by_asin(order_item.amazon_product_identifier)
-                       if item&.Case?
-                         order_item.ordered_quantity_unit_of_measure = 0
-                       else
-                         order_item.ordered_quantity_unit_of_measure = 1
-                       end
-                       unless hash[:case_quantity].nil? || hash[:case_quantity] == 0
-                         unless order_item.ordered_quantity_amount.nil?
-                           order_item.pack = order_item.ordered_quantity_amount / hash[:case_quantity]
-                         end
-                       end
-                       unless hash[:title].nil?
-                         order_item.title = hash[:title]
-                       else
-                         order_item.title = order_item&.item&.title
-                       end
-                       unless hash[:availability].nil?
-                         order_item.availability = hash[:availability]
-                       else
-                         if order_item&.item&.Current?
-                           order_item.availability = 0
-                         elsif order_item&.item&.Discontinued?
-                           order_item.availability = 1
-                         elsif order_item&.item&.Future?
-                           order_item.availability = 2
-                         else
-                           order_item.availability = nil
-                         end
-                       end
-                       order_item.pack = order_item&.item&.pack
-                       order_item.ordered_quantity_unit_size = order_item.pack
-                       order_item.convert_case_quantity
-                       order_item.save
+                              external_id: 'External ID', external_id_type: 'External Id Type',
+                              model_number: 'Model Number', title: 'Title', availability: 'Availability',
+                              window_type: 'Window Type', window_start: 'Window Start', window_end: 'Window End',
+                              quantity_requested: 'Quantity Requested', accepted_quantity: 'Accepted Quantity',
+                              case_quantity: 'Quantity Correction', unit_cost: 'Unit Cost') do |hash, i|
+          unless hash[:po_number] == 'PO'
+            order = Order.find_by_po_number(hash[:po_number])
+            order_item = order.order_items.build(
+              item_seq_number: i + 1,
+              amazon_product_identifier: hash[:asin],
+              vendor_product_identifier: hash[:external_id],
+              ordered_quantity_amount: hash[:quantity_requested],
+              netcost_amount: hash[:unit_cost],
+              netcost_currency_code: 'CAD',
+              listprice_currency_code: 'CAD'
+            )
+            item = Item.find_by_asin(order_item.amazon_product_identifier)
+            if item&.Case?
+              order_item.ordered_quantity_unit_of_measure = 0
+            else
+              order_item.ordered_quantity_unit_of_measure = 1
+            end
+            unless hash[:case_quantity].nil? || hash[:case_quantity] == 0
+              unless order_item.ordered_quantity_amount.nil?
+                order_item.pack = order_item.ordered_quantity_amount / hash[:case_quantity]
+              end
+            end
+            unless hash[:title].nil?
+              order_item.title = hash[:title]
+            else
+              order_item.title = order_item&.item&.title
+            end
+            unless hash[:availability].nil?
+              order_item.availability = hash[:availability]
+            else
+              if order_item&.item&.Current?
+                order_item.availability = 0
+              elsif order_item&.item&.Discontinued?
+                order_item.availability = 1
+              elsif order_item&.item&.Future?
+                order_item.availability = 2
+              else
+                order_item.availability = nil
+              end
+            end
+            order_item.pack = order_item&.item&.pack
+            order_item.ordered_quantity_unit_size = order_item.pack
+            order_item.convert_case_quantity
+            order_item.save
 
-                       ack = order_item.acks.build
-                       ack.acknowledged_quantity_amount = order_item.ordered_quantity_amount
-                       ack.acknowledged_quantity_unit_of_measure = order_item.ordered_quantity_unit_of_measure
-                       ack.acknowledged_quantity_unit_size = order_item.ordered_quantity_unit_size
-                       ack.scheduled_ship_date = order.ship_window_to
-                       ack.scheduled_delivery_date = order.shipto&.transit_time&.business_days&.after(order.ship_window_to)
+            ack = order_item.acks.build
+            ack.acknowledged_quantity_amount = order_item.ordered_quantity_amount
+            ack.acknowledged_quantity_unit_of_measure = order_item.ordered_quantity_unit_of_measure
+            ack.acknowledged_quantity_unit_size = order_item.ordered_quantity_unit_size
+            ack.scheduled_ship_date = order.ship_window_to
+            ack.scheduled_delivery_date = order.shipto&.transit_time&.business_days&.after(order.ship_window_to)
 
-                       if order_item&.item&.Current?
-                         ack.acknowledgement_code = 'Accepted'
-                       else
-                         ack.acknowledgement_code = 'Rejected'
-                       end
+            if order_item&.item&.Current?
+              ack.acknowledgement_code = 'Accepted'
+            else
+              ack.acknowledgement_code = 'Rejected'
+            end
 
-                       if order_item&.item&.nil?
-                         ack.rejection_reason = 'InvalidProductIdentifier'
-                       elsif order_item&.item&.Discontinued?
-                         ack.rejection_reason = 'ObsoleteProduct'
-                       end
-                       ack.save
-                     end
-                   end
+            if order_item&.item&.nil?
+              ack.rejection_reason = 'InvalidProductIdentifier'
+            elsif order_item&.item&.Discontinued?
+              ack.rejection_reason = 'ObsoleteProduct'
+            end
+            ack.save
+          end
+        end
         puts 'Order History records are successfully imported.'
       rescue => e
         puts "PO Number: #{order.po_number}"
