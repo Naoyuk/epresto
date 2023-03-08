@@ -117,6 +117,9 @@ class OrderBuilder
     order_item.netcost_currency_code = params['netCost']['currencyCode'] unless params['netCost'].nil?
     order_item.listprice_amount = params['listPrice']['amount'] unless params['listPrice'].nil?
     order_item.listprice_currency_code = params['listPrice']['currencyCode'] unless params['listPrice'].nil?
+    order_item.title = order_item.item.title
+    order_item.availability = order_item.item.status
+    order_item.pack = order_item.item.pack
     order_item.convert_case_quantity
   end
 
