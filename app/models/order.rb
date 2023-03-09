@@ -112,6 +112,7 @@ class Order < ApplicationRecord
                        order.po_state = 2
                        order.payment_method = 0
                        order.vendor_id = vendor_id
+                       order.history = 'imported'
                        order.save
                      end
                    end
@@ -190,6 +191,7 @@ class Order < ApplicationRecord
             end
             order_item.pack = order_item&.item&.pack
             order_item.ordered_quantity_unit_size = order_item.pack
+            order_item.history = 'imported'
             order_item.convert_case_quantity
             order_item.save
 
@@ -211,6 +213,7 @@ class Order < ApplicationRecord
             elsif order_item&.item&.Discontinued?
               ack.rejection_reason = 'ObsoleteProduct'
             end
+            ack.history = 'imported'
             ack.save
           end
         end
