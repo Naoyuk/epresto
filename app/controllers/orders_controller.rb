@@ -2,22 +2,22 @@
 
 class OrdersController < ApplicationController
   def index
+    # スペース区切りでの複数のPO Numberの検索をする場合は検索条件を配列化する
     params[:q][:po_number_cont_any] = params[:q][:po_number_cont_any].split(/\p{blank}/) unless params[:q].blank? || params[:q][:po_number_cont_any].blank?
-    @search = Order.ransack(params[:q])
+
     if params[:q].nil?
-      # ransackの検索条件がない場合はPO Dateが今週のOrderをデフォルト検索範囲とする
+      # ransackの検索条件がない場合はPO Dateが今週のOrderをオブジェクトを返す
       po_date_gteq = Time.zone.now.beginning_of_week
       po_date_lteq = Time.zone.now.end_of_week
       @search = Order.ransack(po_date_gteq:, po_date_lteq:)
-      # @search.po_date_gteq = po_date_gteq
-      # @search.po_date_lteq = po_date_lteq
     elsif params[:q][:po_date_gteq].nil? && params[:q][:po_date_lteq].nil?
       # ransackの検索条件にpo_dateがない場合はPO Dateが今週のOrderをデフォルト検索範囲とする
       po_date_gteq = Time.zone.now.beginning_of_week
       po_date_lteq = Time.zone.now.end_of_week
-      @search = Order.ransack(po_date_gteq:, po_date_lteq:)
-      # @search.po_date_gteq = po_date_gteq
-      # @search.po_date_lteq = po_date_lteq
+      @search = Order.ransack(params[:q]).where('po_date >= ? and po_date <= ?', po_date_gteq, po_date_lteq)
+    else
+      # ransackの検索条件にpo_dateがある場合はransackの検索条件にあったオブジェクトを返す
+      @search = Order.ransack(params[:q])
     end
     @search.sorts = 'id desc' if @search.sorts.empty?
 
