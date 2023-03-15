@@ -158,7 +158,7 @@ class OrdersController < ApplicationController
   end
 
   def carton_mapping
-    @orders = Order.where(po_number: params[:po_numbers].split(' '))
+    @orders = Order.where(po_number: params[:po_numbers_carton].split(' '))
     respond_to do |format|
       format.xlsx do
         response.headers['Content-Disposition'] =

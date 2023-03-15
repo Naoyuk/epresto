@@ -101,7 +101,7 @@
         </div>
 
         <%= form_with url: carton_mapping_orders_path(format: :xlsx), class: 'items-center mt-1', local: true do |f| %>
-          <%= f.hidden_field :po_numbers, :value => @orders_all_page.pluck(:po_number) %>
+          <%= f.hidden_field :po_numbers_carton, :value => @orders_all_page.pluck(:po_number) %>
           <%= f.submit 'Download Carton Mapping Data', class: "mx-4 py-3 px-4 bg-sky-400 text-white rounded" %>
         <% end %>
       </div>
