@@ -24,4 +24,16 @@ class OrderItem < ApplicationRecord
       end
     end
   end
+
+  def quantity_correction
+    if self.item.Case?
+      self.ordered_quantity_amount
+    else
+      if self.case_quantity.nil? || self.case_quantity == 0
+        self.ordered_quantity_amount / self.item.pack
+      else
+        self.ordered_quantity_amount / self.case_quantity
+      end
+    end
+  end
 end

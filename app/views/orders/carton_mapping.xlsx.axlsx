@@ -1,0 +1,36 @@
+wb = xlsx_package.workbook
+
+header = [
+  'amazonProductIdentifier',
+  'CCWItemCode',
+  'I_ITEM',
+  'I_PACK',
+  'quantity',
+  'netCost',
+  'I_WHOLESALE',
+  'I_Z_PRICING',
+  'Identif',
+  'QTY_Corr',
+  'purchaseOrderNumber',
+]
+
+wb.add_worksheet(name: 'Carton Mapping Data') do |sheet|
+  sheet.add_row(header)
+  @orders.each do |order|
+    order.order_items.each do |item|
+      sheet.add_row [
+        item.amazon_product_identifier,
+        item.item.item_code,
+        item.item&.title,
+        item.item&.pack,
+        item.ordered_quantity_amount,
+        item.netcost_amount,
+        item.item&.price,
+        item.item&.z_pricing,
+        item.item&.case,
+        item.quantity_correction,
+        item.order.po_number
+      ]
+    end
+  end
+end
