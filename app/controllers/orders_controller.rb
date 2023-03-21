@@ -22,22 +22,28 @@ class OrdersController < ApplicationController
     @search.sorts = 'id desc' if @search.sorts.empty?
 
     if params[:tab] == 'new'
-      @orders = @search.result.where('po_state = ?', 0).page(params[:page])
+      @orders_all_page = @search.result.where('po_state = ?', 0)
+      @orders = @orders_all_page.page(params[:page])
       @state = 'new'
     elsif params[:tab] == 'acknowledged'
-      @orders = @search.result.where('po_state = ?', 1).page(params[:page])
+      @orders_all_page = @search.result.where('po_state = ?', 1)
+      @orders = @orders_all_page.page(params[:page])
       @state = 'acknowledged'
     elsif params[:tab] == 'rejected'
-      @orders = @search.result.includes(order_items: :acks).references(:acks).where(:acks => { acknowledgement_code: 2 }).page(params[:page])
+      @orders_all_page = @search.result.includes(order_items: :acks).references(:acks).where(:acks => { acknowledgement_code: 2 })
+      @orders = @orders_all_page.page(params[:page])
       @state = 'rejected'
     elsif params[:tab] == 'closed'
-      @orders = @search.result.where('po_state = ?', 2).page(params[:page])
+      @orders_all_page = @search.result.where('po_state = ?', 2)
+      @orders = @orders_all_page.page(params[:page])
       @state = 'closed'
     elsif params[:tab] == 'bulk'
-      @orders = @search.result.page(params[:page])
+      @orders_all_page = @search.result
+      @orders = @orders_all_page.page(params[:page])
       @state = 'bulk'
     else
-      @orders = @search.result.page(params[:page])
+      @orders_all_page = @search.result
+      @orders = @orders_all_page.page(params[:page])
       @state = 'all'
     end
     # TODO: POのインポート時のエラーをflashで表示したい
@@ -149,6 +155,16 @@ class OrdersController < ApplicationController
     toggle_po_type(:bulk)
 
     redirect_to orders_path(tab: 'bulk'), notice: 'Selected purchase orders are set to Bulk Order.'
+  end
+
+  def carton_mapping
+    @orders = Order.where(po_number: params[:po_numbers_carton].split(' '))
+    respond_to do |format|
+      format.xlsx do
+        response.headers['Content-Disposition'] =
+          "attachment; filename=Carton_Mapping_#{@orders[0].po_date.strftime('%Y%m%d')}.xlsx"
+      end
+    end
   end
 
   private
