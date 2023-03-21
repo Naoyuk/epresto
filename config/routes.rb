@@ -23,6 +23,7 @@ Rails.application.routes.draw do
       post :acknowledge
       post :convert_to_bulk
       post :convert_to_regular
+      post :carton_mapping
     end
   end
 

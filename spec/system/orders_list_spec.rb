@@ -54,6 +54,15 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_new_this_week.po_number,
+          @order_acknowledged_this_week.po_number,
+          @order_rejected_this_week.po_number,
+          @order_closed_this_week.po_number,
+          @order_accepted_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Allタブをアクティブにして先週の期間で検索すると先週の全てのOrderが表示される' do
@@ -79,6 +88,15 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).to have_content @order_rejected_last_week.po_number
         expect(page).to have_content @order_closed_last_week.po_number
         expect(page).to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_new_last_week.po_number,
+          @order_acknowledged_last_week.po_number,
+          @order_rejected_last_week.po_number,
+          @order_closed_last_week.po_number,
+          @order_accepted_last_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Newタブをアクティブにすると今週のOrder.po_stateがNewのOrderのみが表示される' do
@@ -101,6 +119,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_new_this_week.po_number,
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Newタブをアクティブにして先週の期間で検索すると先週のOrder.po_stateがNewのOrderのみが表示される' do
@@ -126,6 +149,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_new_last_week.po_number,
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Acknowledgedタブをアクティブにすると今週のOrder.po_stateがAcknowledgedのOrderのみが表示される' do
@@ -148,6 +176,13 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_acknowledged_this_week.po_number,
+          @order_rejected_this_week.po_number,
+          @order_accepted_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Acknowledgedタブをアクティブにして先週の期間で検索すると先週のOrder.po_stateがAcknowledgedのOrderのみが表示される' do
@@ -173,6 +208,13 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_acknowledged_last_week.po_number,
+          @order_rejected_last_week.po_number,
+          @order_accepted_last_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Rejectedタブをアクティブにすると今週のAcknowledgementをrejectされたOrderItemを含むOrderのみが表示される' do
@@ -195,6 +237,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_rejected_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Rejectedタブをアクティブにして先週の期間で検索すると先週のAcknowledgementをrejectされたOrderItemを含むOrderのみが表示される' do
@@ -220,6 +267,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_rejected_last_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Closedタブをアクティブにすると今週のOrder.po_stateがClosedのOrderのみが表示される' do
@@ -242,6 +294,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_closed_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Closedタブをアクティブにして先週の期間で検索すると先週のOrder.po_stateがClosedのOrderのみが表示される' do
@@ -267,6 +324,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_closed_last_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Bulkタブをアクティブにすると今週の全てのOrderを対象にBulk切り替えチェックが表示される' do
@@ -292,6 +354,15 @@ RSpec.describe "Orders一覧", type: :system do
 
         expect(page).to have_button 'Convert to Bulk Order'
         expect(page).to have_button 'Convert to Regular Order'
+
+        po_numbers = [
+          @order_new_this_week.po_number,
+          @order_acknowledged_this_week.po_number,
+          @order_rejected_this_week.po_number,
+          @order_closed_this_week.po_number,
+          @order_accepted_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Bulkタブをアクティブにして先週の期間で検索すると先週の全てのOrderを対象にBulk切り替えチェックが表示される' do
@@ -320,6 +391,15 @@ RSpec.describe "Orders一覧", type: :system do
 
         expect(page).to have_button 'Convert to Bulk Order'
         expect(page).to have_button 'Convert to Regular Order'
+
+        po_numbers = [
+          @order_new_last_week.po_number,
+          @order_acknowledged_last_week.po_number,
+          @order_rejected_last_week.po_number,
+          @order_closed_last_week.po_number,
+          @order_accepted_last_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
     end
 
@@ -346,6 +426,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_new_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Allタブを表示中にPO Number new-order-last-week を先週の期間で検索するとnew-order-last-weekだけがヒットする' do
@@ -372,6 +457,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_new_last_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Allタブを表示中にPO Number acknowledged-order-this-week で検索するとacknowledged-order-this-weekだけがヒットする' do
@@ -396,6 +486,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_acknowledged_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Allタブを表示中にPO Number acknowledged-order-last-week を先週の期間で検索するとacknowledged-order-last-weekだけがヒットする' do
@@ -422,6 +517,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_acknowledged_last_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Allタブを表示中にPO Number closed-order-this-week で検索するとclosed-order-this-weekだけがヒットする' do
@@ -446,6 +546,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_closed_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Allタブを表示中にPO Number closed-order-last-week を先週の期間で検索するとclosed-order-last-weekだけがヒットする' do
@@ -472,6 +577,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_closed_last_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Allタブを表示中にPO Number rejected-order-this-week で検索するとrejected-order-this-weekだけがヒットする' do
@@ -496,6 +606,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_rejected_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Allタブを表示中にPO Number rejected-order-last-week を先週の期間で検索するとrejected-order-last-weekだけがヒットする' do
@@ -522,6 +637,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_rejected_last_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Allタブを表示中にPO Number accepted-order-this-week で検索するとaccepted-order-this-weekだけがヒットする' do
@@ -546,6 +666,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_accepted_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Allタブを表示中にPO Number accepted-order-last-week を先週の期間で検索するとaccepted-order-last-weekだけがヒットする' do
@@ -572,6 +697,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_accepted_last_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
     end
 
@@ -824,6 +954,8 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to eq []
       end
     end
 
@@ -850,6 +982,8 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to eq []
       end
 
       scenario 'Acknowledgedタブを表示中にPO Number new-order-last-week を先週の期間で検索すると何もヒットしない' do
@@ -876,6 +1010,8 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to eq []
       end
 
       scenario 'Acknowledgedタブを表示中にPO Number acknowledged-order-this-week 検索するとacknowledged-order-this-weekだけがヒットする' do
@@ -900,6 +1036,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_acknowledged_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Acknowledgedタブを表示中にPO Number acknowledged-order-last-week を先週の期間で検索するとacknowledged-order-last-weekだけがヒットする' do
@@ -926,6 +1067,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_acknowledged_last_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Acknowledgedタブを表示中にPO Number closed-order-this-week で検索すると何もヒットしない' do
@@ -950,6 +1096,8 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to eq []
       end
 
       scenario 'Acknowledgedタブを表示中にPO Number closed-order-last-week で検索すると何もヒットしない' do
@@ -976,6 +1124,8 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to eq []
       end
 
       scenario 'Acknowledgedタブを表示中にPO Number rejected-order-this-week で検索すると rejected-order-this-weekだけがヒットする' do
@@ -1000,6 +1150,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_rejected_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Acknowledgedタブを表示中にPO Number rejected-order-last-week を先週の期間で検索すると rejected-order-last-weekだけがヒットする' do
@@ -1026,6 +1181,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_rejected_last_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Acknowledgedタブを表示中にPO Number accepted-order-this-week で検索するとaccepted-order-this-weekだけがヒットする' do
@@ -1050,6 +1210,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_accepted_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Acknowledgedタブを表示中にPO Number accepted-order-last-week を先週の期間で検索するとaccepted-order-last-weekだけがヒットする' do
@@ -1076,6 +1241,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_accepted_last_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
     end
 
@@ -1102,6 +1272,12 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_new_this_week.po_number,
+          @order_acknowledged_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Allタブを表示中にPO Number new-order-this-week new-order-last-weekを先週の期間で検索するとnew-order-last-weekだけがヒットする' do
@@ -1128,6 +1304,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_new_last_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Allタブを表示中にPO Number acknowledged-order-this-week rejected-order-this-weekを検索するとacknowledged-order-this-weekとrejected-order-this-weekだけがヒットする' do
@@ -1152,6 +1333,12 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_acknowledged_this_week.po_number,
+          @order_rejected_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Allタブを表示中にPO Number new-order-this-week acknowledged-order-this-week accepted-order-this-week を検索するとその3つだけがヒットする' do
@@ -1176,6 +1363,13 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_new_this_week.po_number,
+          @order_acknowledged_this_week.po_number,
+          @order_accepted_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Newタブを表示中にPO Number new-order-this-week acknowledged-order-this-week を検索するとnew-order-this-weekだけがヒットする' do
@@ -1200,6 +1394,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_new_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Newタブを表示中にPO Number new-order-this-week new-order-last-week を先週の期間で検索するとnew-order-last-weekだけがヒットする' do
@@ -1226,6 +1425,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_new_last_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Newタブを表示中にPO Number acknowledged-order-this-week rejected-order-this-week を検索すると何もヒットしない' do
@@ -1250,6 +1454,8 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to eq []
       end
 
       scenario 'Newタブを表示中にPO Number new-order-this-week acknowledged-order-this-week accepted-order-this-week を検索するとnew-order-this-weekだけがヒットする' do
@@ -1274,6 +1480,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_new_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Acknowledgedタブを表示中にPO Number new-order-this-week acknowledged-order-this-week を検索するとacknowledged-order-this-weekだけがヒットする' do
@@ -1298,6 +1509,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_acknowledged_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Acknowledgedタブを表示中にPO Number acknowledged-order-this-week acknowledged-order-last-week を先週の期間で検索するとacknowledged-order-last-weekだけがヒットする' do
@@ -1324,6 +1540,11 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_acknowledged_last_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
 
       scenario 'Acknowledgedタブを表示中にPO Number new-order-this-week closed-order-this-week を検索すると何もヒットしない' do
@@ -1348,6 +1569,8 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to eq []
       end
 
       scenario 'Acknowledgedタブを表示中にPO Number new-order-this-week acknowledged-order-this-week accepted-order-this-week を検索するとacknowledged-order-this-weekとaccepted-order-this-weekだけがヒットする' do
@@ -1372,6 +1595,12 @@ RSpec.describe "Orders一覧", type: :system do
         expect(page).not_to have_content @order_rejected_last_week.po_number
         expect(page).not_to have_content @order_closed_last_week.po_number
         expect(page).not_to have_content @order_accepted_last_week.po_number
+
+        po_numbers = [
+          @order_acknowledged_this_week.po_number,
+          @order_accepted_this_week.po_number
+        ]
+        expect( find('#po_numbers_carton', visible: false).value.split(' ') ).to match_array po_numbers
       end
     end
   end
@@ -1413,6 +1642,9 @@ RSpec.describe "Orders一覧", type: :system do
       expect(page).not_to have_content("PO-75")
       expect(page).not_to have_content("PO-76")
       expect(page).not_to have_content("PO-80")
+
+      po_numbers = (1..80).map {|num| "PO-#{num.to_s}" }
+      expect( find('#po_numbers_carton', visible: false).value ).to eq po_numbers.join(' ')
     end
 
     scenario '2ページを表示すると26件目から50件目が表示される' do
@@ -1440,6 +1672,9 @@ RSpec.describe "Orders一覧", type: :system do
       expect(page).not_to have_content("PO-75")
       expect(page).not_to have_content("PO-76")
       expect(page).not_to have_content("PO-80")
+
+      po_numbers = (1..80).map {|num| "PO-#{num.to_s}" }
+      expect( find('#po_numbers_carton', visible: false).value ).to eq po_numbers.join(' ')
     end
 
     scenario '3ページを表示すると51件目から75件目が表示される' do
@@ -1467,6 +1702,9 @@ RSpec.describe "Orders一覧", type: :system do
       expect(page).to have_content("PO-75")
       expect(page).not_to have_content("PO-76")
       expect(page).not_to have_content("PO-80")
+
+      po_numbers = (1..80).map {|num| "PO-#{num.to_s}" }
+      expect( find('#po_numbers_carton', visible: false).value ).to eq po_numbers.join(' ')
     end
 
     scenario '3ページを表示してから1ページ目を表示すると1件目から25件目が表示される' do
@@ -1495,6 +1733,9 @@ RSpec.describe "Orders一覧", type: :system do
       expect(page).not_to have_content("PO-75")
       expect(page).not_to have_content("PO-76")
       expect(page).not_to have_content("PO-80")
+
+      po_numbers = (1..80).map {|num| "PO-#{num.to_s}" }
+      expect( find('#po_numbers_carton', visible: false).value ).to eq po_numbers.join(' ')
     end
 
     scenario '最初のページを表示すると1件目から25件目が表示される' do
@@ -1523,6 +1764,9 @@ RSpec.describe "Orders一覧", type: :system do
       expect(page).not_to have_content("PO-75")
       expect(page).not_to have_content("PO-76")
       expect(page).not_to have_content("PO-80")
+
+      po_numbers = (1..80).map {|num| "PO-#{num.to_s}" }
+      expect( find('#po_numbers_carton', visible: false).value ).to eq po_numbers.join(' ')
     end
 
     scenario '最終ページを表示すると76件目から80件目が表示される' do
@@ -1550,6 +1794,9 @@ RSpec.describe "Orders一覧", type: :system do
       expect(page).not_to have_content("PO-75")
       expect(page).to have_content("PO-76")
       expect(page).to have_content("PO-80")
+
+      po_numbers = (1..80).map {|num| "PO-#{num.to_s}" }
+      expect( find('#po_numbers_carton', visible: false).value ).to eq po_numbers.join(' ')
     end
   end
 end
