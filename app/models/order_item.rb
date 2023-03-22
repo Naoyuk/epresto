@@ -32,7 +32,7 @@ class OrderItem < ApplicationRecord
       if self.case_quantity.nil? || self.case_quantity == 0
         self.ordered_quantity_amount / self.item.pack
       else
-        self.ordered_quantity_amount / self.case_quantity
+        self.case_quantity
       end
     end
   end
