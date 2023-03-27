@@ -2,42 +2,48 @@
 
 class OrdersController < ApplicationController
   def index
-    params[:q][:po_number_cont_any] = params[:q][:po_number_cont_any].split(/\p{blank}/) unless params[:q].blank?
-    @search = Order.ransack(params[:q])
+    # スペース区切りでの複数のPO Numberの検索をする場合は検索条件を配列化する
+    params[:q][:po_number_cont_any] = params[:q][:po_number_cont_any].split(/\p{blank}/) unless params[:q].blank? || params[:q][:po_number_cont_any].blank?
+
     if params[:q].nil?
-      # ransackの検索条件がない場合はPO Dateが今週のOrderをデフォルト検索範囲とする
+      # ransackの検索条件がない場合はPO Dateが今週のOrderをオブジェクトを返す
       po_date_gteq = Time.zone.now.beginning_of_week
       po_date_lteq = Time.zone.now.end_of_week
       @search = Order.ransack(po_date_gteq:, po_date_lteq:)
-      # @search.po_date_gteq = po_date_gteq
-      # @search.po_date_lteq = po_date_lteq
     elsif params[:q][:po_date_gteq].nil? && params[:q][:po_date_lteq].nil?
       # ransackの検索条件にpo_dateがない場合はPO Dateが今週のOrderをデフォルト検索範囲とする
       po_date_gteq = Time.zone.now.beginning_of_week
       po_date_lteq = Time.zone.now.end_of_week
-      @search = Order.ransack(po_date_gteq:, po_date_lteq:)
-      # @search.po_date_gteq = po_date_gteq
-      # @search.po_date_lteq = po_date_lteq
+      @search = Order.ransack(params[:q]).where('po_date >= ? and po_date <= ?', po_date_gteq, po_date_lteq)
+    else
+      # ransackの検索条件にpo_dateがある場合はransackの検索条件にあったオブジェクトを返す
+      @search = Order.ransack(params[:q])
     end
     @search.sorts = 'id desc' if @search.sorts.empty?
 
     if params[:tab] == 'new'
-      @orders = @search.result.where('po_state = ?', 0).page(params[:page])
+      @orders_all_page = @search.result.where('po_state = ?', 0)
+      @orders = @orders_all_page.page(params[:page])
       @state = 'new'
     elsif params[:tab] == 'acknowledged'
-      @orders = @search.result.where('po_state = ?', 1).page(params[:page])
+      @orders_all_page = @search.result.where('po_state = ?', 1)
+      @orders = @orders_all_page.page(params[:page])
       @state = 'acknowledged'
     elsif params[:tab] == 'rejected'
-      @orders = @search.result.includes(order_items: :acks).references(:acks).where(:acks => { acknowledgement_code: 2 }).page(params[:page])
+      @orders_all_page = @search.result.includes(order_items: :acks).references(:acks).where(:acks => { acknowledgement_code: 2 })
+      @orders = @orders_all_page.page(params[:page])
       @state = 'rejected'
     elsif params[:tab] == 'closed'
-      @orders = @search.result.where('po_state = ?', 2).page(params[:page])
+      @orders_all_page = @search.result.where('po_state = ?', 2)
+      @orders = @orders_all_page.page(params[:page])
       @state = 'closed'
     elsif params[:tab] == 'bulk'
-      @orders = @search.result.page(params[:page])
+      @orders_all_page = @search.result
+      @orders = @orders_all_page.page(params[:page])
       @state = 'bulk'
     else
-      @orders = @search.result.page(params[:page])
+      @orders_all_page = @search.result
+      @orders = @orders_all_page.page(params[:page])
       @state = 'all'
     end
     # TODO: POのインポート時のエラーをflashで表示したい
@@ -149,6 +155,16 @@ class OrdersController < ApplicationController
     toggle_po_type(:bulk)
 
     redirect_to orders_path(tab: 'bulk'), notice: 'Selected purchase orders are set to Bulk Order.'
+  end
+
+  def carton_mapping
+    @orders = Order.where(po_number: params[:po_numbers_carton].split(' '))
+    respond_to do |format|
+      format.xlsx do
+        response.headers['Content-Disposition'] =
+          "attachment; filename=PO-#{@orders[0].po_number}_Label_Mapping_Data.xls"
+      end
+    end
   end
 
   private

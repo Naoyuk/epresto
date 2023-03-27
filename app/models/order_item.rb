@@ -19,7 +19,21 @@ class OrderItem < ApplicationRecord
     if self.item&.Case?
       self.case_quantity = self.ordered_quantity_amount
     elsif self.item&.Each? && !self.item&.pack.nil?
-      self.case_quantity = self.ordered_quantity_amount / self.item.pack
+      unless self.ordered_quantity_amount.nil?
+        self.case_quantity = self.ordered_quantity_amount / self.item.pack
+      end
+    end
+  end
+
+  def quantity_correction
+    if self.item.Case?
+      self.ordered_quantity_amount
+    else
+      if self.case_quantity.nil? || self.case_quantity == 0
+        self.ordered_quantity_amount / self.item.pack
+      else
+        self.case_quantity
+      end
     end
   end
 end
