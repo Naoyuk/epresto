@@ -110,6 +110,7 @@ class OrdersController < ApplicationController
   end
 
   def output_csv(orders)
+    @orders = orders
     ts = Time.now.to_fs(:file)
     filename = "PO-#{ts}.zip"
     temppath = "#{Rails.root}/tmp/#{filename}"
