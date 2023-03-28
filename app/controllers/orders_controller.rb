@@ -162,7 +162,7 @@ class OrdersController < ApplicationController
     respond_to do |format|
       format.xlsx do
         response.headers['Content-Disposition'] =
-          "attachment; filename=Carton_Mapping_#{@orders[0].po_date.strftime('%Y%m%d')}.xls"
+          "attachment; filename=PO-#{@orders[0].po_number}_Label_Mapping_Data.xls"
       end
     end
   end
